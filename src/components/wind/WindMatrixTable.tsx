@@ -6,10 +6,7 @@ interface WindMatrixTableProps {
   calmsPercent: number;
 }
 
-export const WindMatrixTable: React.FC<WindMatrixTableProps> = ({
-  distribution,
-  calmsPercent
-}) => {
+export const WindMatrixTable: React.FC<WindMatrixTableProps> = ({ distribution, calmsPercent }) => {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 overflow-x-auto shadow-xs">
       <div className="flex items-center justify-between mb-2">
@@ -35,7 +32,7 @@ export const WindMatrixTable: React.FC<WindMatrixTableProps> = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {distribution.map((sector) => (
+          {distribution.map(sector => (
             <tr key={sector.direction} className="hover:bg-slate-50 transition-colors">
               <td className="py-1.5 px-2.5 font-bold text-slate-800">{sector.direction}</td>
               <td className="py-1.5 px-2.5 text-slate-500">{sector.degrees}°</td>

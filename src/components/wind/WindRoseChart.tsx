@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { RunwayOrientation, WindSectorData } from '../../types/wind';
+import { isSectorFavorable } from '../../calculations/windCalculations';
 
 interface WindRoseChartProps {
   orientation: RunwayOrientation;
@@ -44,7 +45,7 @@ export const WindRoseChart: React.FC<WindRoseChartProps> = ({
 
       <svg viewBox="0 0 400 400" className="w-full max-w-[360px] h-auto aspect-square select-none">
         {/* Círculos de escala concéntricos (5%, 10%, 15%) */}
-        {[5, 10, 15].map((percent) => {
+        {[5, 10, 15].map(percent => {
           const r = (percent / maxScalePercent) * maxRadius;
           return (
             <g key={percent}>
@@ -57,13 +58,7 @@ export const WindRoseChart: React.FC<WindRoseChartProps> = ({
                 strokeWidth="1"
                 strokeDasharray="3,3"
               />
-              <text
-                x={cx + 3}
-                y={cy - r + 10}
-                fill="#94a3b8"
-                fontSize="9"
-                fontFamily="monospace"
-              >
+              <text x={cx + 3} y={cy - r + 10} fill="#94a3b8" fontSize="9" fontFamily="monospace">
                 {percent}%
               </text>
             </g>
@@ -71,12 +66,27 @@ export const WindRoseChart: React.FC<WindRoseChartProps> = ({
         })}
 
         {/* Ejes cardinales principales */}
-        <line x1={cx} y1={cy - maxRadius - 10} x2={cx} y2={cy + maxRadius + 10} stroke="#e2e8f0" strokeWidth="1" />
-        <line x1={cx - maxRadius - 10} y1={cy} x2={cx + maxRadius + 10} y2={cy} stroke="#e2e8f0" strokeWidth="1" />
+        <line
+          x1={cx}
+          y1={cy - maxRadius - 10}
+          x2={cx}
+          y2={cy + maxRadius + 10}
+          stroke="#e2e8f0"
+          strokeWidth="1"
+        />
+        <line
+          x1={cx - maxRadius - 10}
+          y1={cy}
+          x2={cx + maxRadius + 10}
+          y2={cy}
+          stroke="#e2e8f0"
+          strokeWidth="1"
+        />
 
         {/* Sectores de Viento (16 rumbos) */}
-        {windDistribution.map((sector) => {
-          const r = (Math.min(sector.totalFrequencyPercent, maxScalePercent) / maxScalePercent) * maxRadius;
+        {windDistribution.map(sector => {
+          const r =
+            (Math.min(sector.totalFrequencyPercent, maxScalePercent) / maxScalePercent) * maxRadius;
           const halfAngle = 360 / 32; // 11.25° a cada lado
           const startAngle = sector.degrees - halfAngle;
           const endAngle = sector.degrees + halfAngle;
@@ -84,12 +94,14 @@ export const WindRoseChart: React.FC<WindRoseChartProps> = ({
           const p1 = polarToCartesian(startAngle, r);
           const p2 = polarToCartesian(endAngle, r);
 
-          // Determinar si el viento cruzado para este sector supera el límite
-          const angleToRunway1 = Math.abs(sector.degrees - orientation.magneticHeading);
-          const angleToRunway2 = Math.abs(sector.degrees - orientation.reciprocalHeading);
-          const minAngle = Math.min(angleToRunway1, angleToRunway2);
-          const crosswindAt15kt = 15 * Math.sin((minAngle * Math.PI) / 180);
-          const isFavorable = crosswindAt15kt <= admissibleCrosswindKt;
+          // Determinar si el viento cruzado para este sector supera el límite usando la función pura
+          const isFavorable = isSectorFavorable(
+            sector.degrees,
+            orientation.magneticHeading,
+            orientation.reciprocalHeading,
+            15,
+            admissibleCrosswindKt
+          );
 
           const pathData = `M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z`;
 
@@ -161,9 +173,16 @@ export const WindRoseChart: React.FC<WindRoseChartProps> = ({
         </g>
 
         {/* Rótulos Cardinales Externos */}
-        {['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'].map((point) => {
+        {['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'].map(point => {
           const degMap: Record<string, number> = {
-            N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315
+            N: 0,
+            NE: 45,
+            E: 90,
+            SE: 135,
+            S: 180,
+            SW: 225,
+            W: 270,
+            NW: 315
           };
           const deg = degMap[point];
           const pos = polarToCartesian(deg, maxRadius + 18);
@@ -215,12 +234,11 @@ export const WindRoseChart: React.FC<WindRoseChartProps> = ({
 
         {hoveredSector ? (
           <div className="font-mono text-blue-700 font-semibold">
-            Sector {hoveredSector.direction} ({hoveredSector.degrees}°): {hoveredSector.totalFrequencyPercent}%
+            Sector {hoveredSector.direction} ({hoveredSector.degrees}°):{' '}
+            {hoveredSector.totalFrequencyPercent}%
           </div>
         ) : (
-          <div className="font-mono text-slate-400 text-[10px]">
-            Pasa el cursor sobre un sector
-          </div>
+          <div className="font-mono text-slate-400 text-[10px]">Pasa el cursor sobre un sector</div>
         )}
       </div>
     </div>

@@ -9,7 +9,8 @@ export function getAgentInitialStates(): AgentState[] {
     {
       type: 'DESIGN',
       name: 'Agente de Diseño & Ergonomía',
-      roleDescription: 'Visualización de esquemas acotados, ergonomía de cabina y diagramas vectoriales interactivos.',
+      roleDescription:
+        'Visualización de esquemas acotados, ergonomía de cabina y diagramas vectoriales interactivos.',
       avatarIcon: 'Palette',
       status: 'OPTIMAL',
       activeFindingsCount: 0
@@ -17,7 +18,8 @@ export function getAgentInitialStates(): AgentState[] {
     {
       type: 'COPYWRITING',
       name: 'Agente de Arquitectura & Copywriting',
-      roleDescription: 'Estandarización de nomenclatura aeronáutica (OACI/ANAC), glosario y redacción de dictámenes ejecutivos.',
+      roleDescription:
+        'Estandarización de nomenclatura aeronáutica (OACI/ANAC), glosario y redacción de dictámenes ejecutivos.',
       avatarIcon: 'FileText',
       status: 'OPTIMAL',
       activeFindingsCount: 0
@@ -25,7 +27,8 @@ export function getAgentInitialStates(): AgentState[] {
     {
       type: 'LEGAL',
       name: 'Agente Legal & Regulatorio',
-      roleDescription: 'Auditoría de cumplimiento RAAC 153/154, Código Aeronáutico Ley 17.285 y normativas ENACOM.',
+      roleDescription:
+        'Auditoría de cumplimiento RAAC 153/154, Código Aeronáutico Ley 17.285 y normativas ENACOM.',
       avatarIcon: 'Scale',
       status: 'OPTIMAL',
       activeFindingsCount: 0
@@ -33,7 +36,8 @@ export function getAgentInitialStates(): AgentState[] {
     {
       type: 'ORCHESTRATOR',
       name: 'Agente Orquestador Master',
-      roleDescription: 'Validación cruzada de datos técnicos, meteorológicos y jurídicos para la emisión del Dictamen SAI.',
+      roleDescription:
+        'Validación cruzada de datos técnicos, meteorológicos y jurídicos para la emisión del Dictamen SAI.',
       avatarIcon: 'Cpu',
       status: 'OPTIMAL',
       activeFindingsCount: 0
@@ -71,10 +75,17 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
   const catastroDocs = client.documents.filter(d => d.category === 'CATASTRO');
   const ambientalDocs = client.documents.filter(d => d.category === 'AMBIENTAL');
 
-  const isAnacOk = anacDocs.some(d => d.code === 'ANAC-F501' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS'));
-  const isEnacomOk = enacomDocs.some(d => d.code === 'ENA-RAD' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS'));
-  const isCatastroOk = catastroDocs.some(d => d.code === 'CAT-DOM' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS'));
-  const isAmbientalOk = ambientalDocs.length === 0 || ambientalDocs.some(d => d.status !== 'PENDING');
+  const isAnacOk = anacDocs.some(
+    d => d.code === 'ANAC-F501' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS')
+  );
+  const isEnacomOk = enacomDocs.some(
+    d => d.code === 'ENA-RAD' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS')
+  );
+  const isCatastroOk = catastroDocs.some(
+    d => d.code === 'CAT-DOM' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS')
+  );
+  const isAmbientalOk =
+    ambientalDocs.length === 0 || ambientalDocs.some(d => d.status !== 'PENDING');
 
   // Observaciones legales
   if (observedDocs.length > 0) {
@@ -85,9 +96,12 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
       category: 'Expediente ANAC / ENACOM',
       title: `${observedDocs.length} documento(s) con observaciones`,
       description: `Los documentos [${observedDocs.map(d => d.title).join(', ')}] registran observaciones que requieren subsanación urgente.`,
-      actionRequired: 'Corregir las observaciones y reenviar a la mesa de entradas del organismo correspondiente.'
+      actionRequired:
+        'Corregir las observaciones y reenviar a la mesa de entradas del organismo correspondiente.'
     });
-    criticalBlockers.push('Existen documentos oficiales observados por la autoridad de aplicación.');
+    criticalBlockers.push(
+      'Existen documentos oficiales observados por la autoridad de aplicación.'
+    );
   }
 
   const missingMandatory = mandatoryDocs.filter(d => d.status === 'PENDING');
@@ -98,7 +112,10 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
       severity: missingMandatory.length > 4 ? 'WARNING' : 'INFO',
       category: 'Cumplimiento Normativo Obligatorio',
       title: `${missingMandatory.length} trámites esenciales pendientes de inicio`,
-      description: `Documentación obligatoria pendiente: ${missingMandatory.slice(0, 3).map(d => d.title).join(', ')}${missingMandatory.length > 3 ? '...' : ''}.`,
+      description: `Documentación obligatoria pendiente: ${missingMandatory
+        .slice(0, 3)
+        .map(d => d.title)
+        .join(', ')}${missingMandatory.length > 3 ? '...' : ''}.`,
       actionRequired: 'Completar las carpetas técnicas para su radicación ante ANAC y ENACOM.'
     });
   }
@@ -113,7 +130,8 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
       severity: 'WARNING',
       category: 'Georreferenciación WGS84',
       title: 'Coordenadas del punto de referencia de aeródromo (ARP) no cargadas',
-      description: 'El expediente carece de coordenadas geodésicas oficiales en formato estándar WGS84 requeridas para el formulario ANAC F-501.',
+      description:
+        'El expediente carece de coordenadas geodésicas oficiales en formato estándar WGS84 requeridas para el formulario ANAC F-501.',
       actionRequired: 'Ingresar Latitud y Longitud WGS84 en la ficha del cliente.'
     });
   } else {
@@ -145,9 +163,12 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
         category: 'Rosa de los Vientos OACI',
         title: `Factor de Usabilidad ${windStudy.usabilityPercent}% por debajo del 95% reglamentario`,
         description: `La orientación de pista ${windStudy.orientation.qfuLabel} no garantiza el 95% de operatividad para el límite de viento cruzado de ${windStudy.admissibleCrosswindKt} kt.`,
-        actionRequired: 'Evaluar reorientación angular de la pista o proyectar una segunda pista cruzada de desahogo.'
+        actionRequired:
+          'Evaluar reorientación angular de la pista o proyectar una segunda pista cruzada de desahogo.'
       });
-      criticalBlockers.push(`Coeficiente de utilización de pista (${windStudy.usabilityPercent}%) insuficiente según OACI Anexo 14.`);
+      criticalBlockers.push(
+        `Coeficiente de utilización de pista (${windStudy.usabilityPercent}%) insuficiente según OACI Anexo 14.`
+      );
     } else {
       findings.push({
         id: 'wind-compliant',
@@ -171,9 +192,12 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
         category: 'Longitud de Pista RAAC 153',
         title: 'Longitud de campo disponible insuficiente',
         description: `Se requieren ${ladStudy.stripLengthRequiredM}m de terreno y solo se disponen de ${ladStudy.terrainLengthAvailableM}m para ${ladStudy.aircraft.manufacturer} ${ladStudy.aircraft.model}.`,
-        actionRequired: 'Adquirir franja adicional o restringir la aeronave de diseño a modelos STOL de despegue corto.'
+        actionRequired:
+          'Adquirir franja adicional o restringir la aeronave de diseño a modelos STOL de despegue corto.'
       });
-      criticalBlockers.push('Dimensiones físicas del terreno insuficientes para la longitud de pista requerida.');
+      criticalBlockers.push(
+        'Dimensiones físicas del terreno insuficientes para la longitud de pista requerida.'
+      );
     } else if (ladStudy.overallFeasibility === 'CONDITIONED') {
       findings.push({
         id: 'lad-cond',
@@ -207,9 +231,12 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
         category: 'Dimensionamiento FATO/TLOF RAAC 154',
         title: 'Superficie de heliplataforma insuficiente',
         description: `Se requiere un área de ${ladhStudy.totalAreaWithSafetyRequiredM}m x ${ladhStudy.totalAreaWithSafetyRequiredM}m para ${ladhStudy.helicopter.manufacturer} ${ladhStudy.helicopter.model}.`,
-        actionRequired: 'Ampliar el área despejada perimetral para cumplir con 1.5D + Área de Seguridad.'
+        actionRequired:
+          'Ampliar el área despejada perimetral para cumplir con 1.5D + Área de Seguridad.'
       });
-      criticalBlockers.push('Superficie del helipuerto no cumple con las dimensiones mínimas de FATO según RAAC 154.');
+      criticalBlockers.push(
+        'Superficie del helipuerto no cumple con las dimensiones mínimas de FATO según RAAC 154.'
+      );
     }
 
     if (!ladhStudy.isLoadFeasible) {
@@ -234,9 +261,10 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
   let scorePercent = 100;
 
   // Penalizaciones por estado legal
-  const completionPercent = client.documents.length > 0
-    ? Math.round((approvedDocs.length / client.documents.length) * 100)
-    : 0;
+  const completionPercent =
+    client.documents.length > 0
+      ? Math.round((approvedDocs.length / client.documents.length) * 100)
+      : 0;
 
   scorePercent -= (100 - completionPercent) * 0.3; // 30% del peso es avance documental
 
@@ -256,25 +284,31 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
 
   // Generar recomendaciones del orquestador
   if (pendingDocs.length > 0) {
-    recommendations.push(`Avanzar en la confección de los ${pendingDocs.length} documentos pendientes, priorizando los planos de mensura y memoria técnica.`);
+    recommendations.push(
+      `Avanzar en la confección de los ${pendingDocs.length} documentos pendientes, priorizando los planos de mensura y memoria técnica.`
+    );
   }
   if (enacomDocs.some(d => d.status === 'PENDING')) {
-    recommendations.push('Iniciar el relevamiento de radioenlaces y antenas en el radio de 5 km para evitar objeciones de ENACOM.');
+    recommendations.push(
+      'Iniciar el relevamiento de radioenlaces y antenas en el radio de 5 km para evitar objeciones de ENACOM.'
+    );
   }
   if (!windStudy) {
-    recommendations.push('Efectuar el cálculo oficial de orientación magnética y viento cruzado para respaldar la memoria técnica ANAC.');
+    recommendations.push(
+      'Efectuar el cálculo oficial de orientación magnética y viento cruzado para respaldar la memoria técnica ANAC.'
+    );
   } else if (windStudy.isCompliantOACI) {
-    recommendations.push(`Consolidar la orientación de cabecera ${windStudy.orientation.qfuLabel} en los planos de implantación definitivos.`);
+    recommendations.push(
+      `Consolidar la orientación de cabecera ${windStudy.orientation.qfuLabel} en los planos de implantación definitivos.`
+    );
   }
 
-  let executiveSummary = '';
-  if (globalStatus === 'FAVORABLE') {
-    executiveSummary = `El proyecto de ${client.projectType} para el cliente "${client.name}" presenta plena viabilidad técnica, aeronáutica y normativa. Cumple con los requerimientos de la autoridad aeronáutica nacional (ANAC) y no se detectan incompatibilidades radioeléctricas con ENACOM.`;
-  } else if (globalStatus === 'FAVORABLE_WITH_RESTRICTIONS') {
-    executiveSummary = `El proyecto presenta viabilidad técnica favorable sujeta a condicionamientos operativos o finalización de trámites documentales ante ANAC/ENACOM. Se recomienda avanzar con las recomendaciones señaladas para obtener la habilitación definitiva.`;
-  } else {
-    executiveSummary = `El proyecto presenta observaciones críticas que impiden su habilitación bajo la configuración actual. Se identificaron no conformidades que vulneran la normativa vigente (RAAC 153/154 u OACI Anexo 14).`;
-  }
+  const executiveSummary =
+    globalStatus === 'FAVORABLE'
+      ? `El proyecto de ${client.projectType} para el cliente "${client.name}" presenta plena viabilidad técnica, aeronáutica y normativa. Cumple con los requerimientos de la autoridad aeronáutica nacional (ANAC) y no se detectan incompatibilidades radioeléctricas con ENACOM.`
+      : globalStatus === 'FAVORABLE_WITH_RESTRICTIONS'
+        ? `El proyecto presenta viabilidad técnica favorable sujeta a condicionamientos operativos o finalización de trámites documentales ante ANAC/ENACOM. Se recomienda avanzar con las recomendaciones señaladas para obtener la habilitación definitiva.`
+        : `El proyecto presenta observaciones críticas que impiden su habilitación bajo la configuración actual. Se identificaron no conformidades que vulneran la normativa vigente (RAAC 153/154 u OACI Anexo 14).`;
 
   return {
     clientId: client.id,

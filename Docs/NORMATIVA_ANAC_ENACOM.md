@@ -1,10 +1,12 @@
 # COMPENDIO NORMATIVO Y REGULATORIO: ANAC, ENACOM Y CATASTRO
-> *Ruta: `Docs/NORMATIVA_ANAC_ENACOM.md`*  
-> *Marco legal y técnico de aplicación en la República Argentina para la habilitación de LAD y LADH.*
+
+> _Ruta: `Docs/NORMATIVA_ANAC_ENACOM.md`_  
+> _Marco legal y técnico de aplicación en la República Argentina para la habilitación de LAD y LADH._
 
 ---
 
 ## 1. Marco Legal General (Código Aeronáutico Ley 17.285)
+
 - **Artículos 25 al 35**: Régimen legal de los aeródromos y lugares de aterrizaje públicos y privados.
 - **Limitaciones al dominio**: Imposición de servidumbres aeronáuticas de despeje para salvaguardar las trayectorias de despegue y aterrizaje. Ninguna edificación, antena o plantación puede vulnerar las Superficies Limitadoras de Obstáculos (SLO).
 - **Habilitación de Aeródromos y Helipuertos**: Ningún lugar de aterrizaje puede operar comercial o privadamente de manera regular sin la debida autorización de la autoridad aeronáutica competente (**ANAC**).
@@ -12,7 +14,9 @@
 ---
 
 ## 2. ANAC - RAAC Parte 153 (Diseño y Operación de Aeródromos / LAD)
+
 Aplica a los Lugares de Aterrizaje y Aeródromos:
+
 - **Clave de Referencia de Aeródromo**: Determinada por dos elementos:
   - Número de clave (1 a 4): Según la longitud de campo de referencia de la aeronave de diseño.
   - Letra de clave (A a F): Según la envergadura y anchura exterior entre ruedas del tren de aterrizaje principal.
@@ -28,14 +32,16 @@ Aplica a los Lugares de Aterrizaje y Aeródromos:
 - **Orientación de Pista y Viento Cruzado (OACI Anexo 14 / RAAC 153)**:
   - El coeficiente de utilización del aeródromo **no debe ser inferior al 95%** para las aeronaves previstas.
   - Viento cruzado admisible:
-    * 20 kt (37 km/h): Claves 3 y 4 (longitud de campo $\ge 1500$ m).
-    * 13 kt (24 km/h): Clave 2 (longitud de campo $1200$ m a $1499$ m).
-    * 10 kt (19 km/h): Clave 1 (longitud de campo $< 1200$ m, aviación general ligera, fumigadores, ultralivianos).
+    - 20 kt (37 km/h): Claves 3 y 4 (longitud de campo $\ge 1500$ m).
+    - 13 kt (24 km/h): Clave 2 (longitud de campo $1200$ m a $1499$ m).
+    - 10 kt (19 km/h): Clave 1 (longitud de campo $< 1200$ m, aviación general ligera, fumigadores, ultralivianos).
 
 ---
 
 ## 3. ANAC - RAAC Parte 154 (Diseño de Helipuertos / LADH)
+
 Aplica a los Lugares de Aterrizaje para Helicópteros en superficie o elevados:
+
 - **Parámetro "D" de Diseño**: Longitud máxima total del helicóptero de diseño con los rotores girando.
 - **RD**: Diámetro del rotor principal.
 - **TLOF (Área de Toma de Contacto y Elevación)**:
@@ -56,6 +62,7 @@ Aplica a los Lugares de Aterrizaje para Helicópteros en superficie o elevados:
 ---
 
 ## 4. ENACOM (Ente Nacional de Comunicaciones)
+
 - **Certificación de No Afectación Radioeléctrica**:
   - Relevamiento de mástiles, torres de telefonía celular y radioenlaces troncales en un radio de 5 km alrededor del punto de referencia del aeródromo/helipuerto (ARP).
 - **Alturas Máximas de Emplazamiento**:
@@ -66,6 +73,7 @@ Aplica a los Lugares de Aterrizaje para Helicópteros en superficie o elevados:
 ---
 
 ## 5. Requerimientos Catastrales y Ambientales
+
 - **Título de Propiedad o Comodato**: Acreditación legítima del dominio del predio debidamente inscripto en el Registro de la Propiedad Inmueble.
 - **Plano de Mensura Aprobado**: Con determinación precisa de linderos y georreferenciación en coordenadas WGS84 (o POSGAR 07).
 - **Certificado Municipal de Zonificación**: Certificación de que el uso de suelo "Aeronáutico / Aeródromo Privado" es compatible con el plan regulador comunal.

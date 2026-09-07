@@ -1,4 +1,4 @@
-import { Client, DocumentItemModel, DocumentStatus } from '../types/client';
+import { Client, DocumentStatus } from '../types/client';
 import { WindStudyResult } from '../types/wind';
 import { LadStudy } from '../types/lad';
 import { LadhStudy } from '../types/ladh';
@@ -24,6 +24,21 @@ export class StorageService {
       localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(sample.windStudies));
       localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(sample.ladStudies));
       localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(sample.ladhStudies));
+
+      // Sincronizar muestra inicial a SQLite si estamos en Electron
+      if (typeof window !== 'undefined' && window.electronAPI) {
+        sample.clients.forEach(c => window.electronAPI?.saveClient(c));
+        sample.windStudies.forEach(s => window.electronAPI?.saveWindStudy(s));
+        sample.ladStudies.forEach(s => window.electronAPI?.saveLadStudy(s));
+        sample.ladhStudies.forEach(s => window.electronAPI?.saveLadhStudy(s));
+      }
+    } else if (typeof window !== 'undefined' && window.electronAPI) {
+      // Si ya hay clientes en SQLite, hidratar
+      window.electronAPI.getClients().then(sqliteClients => {
+        if (sqliteClients && sqliteClients.length > 0) {
+          localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(sqliteClients));
+        }
+      });
     }
   }
 
@@ -57,16 +72,25 @@ export class StorageService {
       const newClient: Client = {
         ...client,
         id: client.id || `cli-${Date.now()}`,
-        documents: client.documents && client.documents.length > 0 ? client.documents : generateInitialChecklist(),
+        documents:
+          client.documents && client.documents.length > 0
+            ? client.documents
+            : generateInitialChecklist(),
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0]
       };
       clients.push(newClient);
       localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+      if (typeof window !== 'undefined' && window.electronAPI) {
+        window.electronAPI.saveClient(newClient);
+      }
       return newClient;
     }
 
     localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.saveClient(clients[existingIdx]);
+    }
     return clients[existingIdx];
   }
 
@@ -74,6 +98,9 @@ export class StorageService {
     let clients = this.getClients();
     clients = clients.filter(c => c.id !== id);
     localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.deleteClient(id);
+    }
     return true;
   }
 
@@ -110,7 +137,7 @@ export class StorageService {
       const data = localStorage.getItem(STORAGE_KEYS.WIND_STUDIES);
       const studies: WindStudyResult[] = data ? JSON.parse(data) : [];
       return clientId ? studies.filter(s => s.clientId === clientId) : studies;
-    } catch (e) {
+    } catch {
       return [];
     }
   }
@@ -124,6 +151,9 @@ export class StorageService {
       studies.push(study);
     }
     localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(studies));
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.saveWindStudy(study);
+    }
     return study;
   }
 
@@ -133,7 +163,7 @@ export class StorageService {
       const data = localStorage.getItem(STORAGE_KEYS.LAD_STUDIES);
       const studies: LadStudy[] = data ? JSON.parse(data) : [];
       return clientId ? studies.filter(s => s.clientId === clientId) : studies;
-    } catch (e) {
+    } catch {
       return [];
     }
   }
@@ -147,6 +177,9 @@ export class StorageService {
       studies.push(study);
     }
     localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(studies));
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.saveLadStudy(study);
+    }
     return study;
   }
 
@@ -156,7 +189,7 @@ export class StorageService {
       const data = localStorage.getItem(STORAGE_KEYS.LADH_STUDIES);
       const studies: LadhStudy[] = data ? JSON.parse(data) : [];
       return clientId ? studies.filter(s => s.clientId === clientId) : studies;
-    } catch (e) {
+    } catch {
       return [];
     }
   }
@@ -170,6 +203,9 @@ export class StorageService {
       studies.push(study);
     }
     localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(studies));
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.saveLadhStudy(study);
+    }
     return study;
   }
 
@@ -189,10 +225,14 @@ export class StorageService {
   static importFullBackup(jsonString: string): boolean {
     try {
       const parsed = JSON.parse(jsonString);
-      if (parsed.clients) localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(parsed.clients));
-      if (parsed.windStudies) localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(parsed.windStudies));
-      if (parsed.ladStudies) localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(parsed.ladStudies));
-      if (parsed.ladhStudies) localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(parsed.ladhStudies));
+      if (parsed.clients)
+        localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(parsed.clients));
+      if (parsed.windStudies)
+        localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(parsed.windStudies));
+      if (parsed.ladStudies)
+        localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(parsed.ladStudies));
+      if (parsed.ladhStudies)
+        localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(parsed.ladhStudies));
       return true;
     } catch (e) {
       console.error('Error al importar backup JSON', e);

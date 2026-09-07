@@ -1,13 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Plus, 
-  FolderOpen, 
-  Compass, 
-  Plane, 
-  Disc, 
-  CheckSquare, 
-  FileText, 
-  Edit, 
+import {
+  Plus,
+  Compass,
+  Plane,
+  Disc,
+  CheckSquare,
+  FileText,
+  Edit,
   Trash2,
   Folder,
   MapPin,
@@ -22,7 +21,10 @@ interface ClientListProps {
   onOpenNewClientModal: () => void;
   onEditClient: (client: Client) => void;
   onDeleteClient: (id: string) => void;
-  onNavigateToStudy: (view: 'checklist' | 'wind' | 'lad' | 'ladh' | 'dossier', client: Client) => void;
+  onNavigateToStudy: (
+    view: 'checklist' | 'wind' | 'lad' | 'ladh' | 'dossier',
+    client: Client
+  ) => void;
 }
 
 export const ClientList: React.FC<ClientListProps> = ({
@@ -71,7 +73,7 @@ export const ClientList: React.FC<ClientListProps> = ({
         <input
           type="text"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
           placeholder="Buscar por nombre, CUIT, ubicación o tipo..."
           className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 transition-all shadow-xs"
         />
@@ -84,16 +86,20 @@ export const ClientList: React.FC<ClientListProps> = ({
             <Folder className="w-16 h-16 stroke-[1.2]" />
           </div>
           <p className="text-sm font-medium text-slate-500">
-            {clients.length === 0 ? 'No hay expedientes registrados.' : 'No se encontraron expedientes con ese criterio.'}
+            {clients.length === 0
+              ? 'No hay expedientes registrados.'
+              : 'No se encontraron expedientes con ese criterio.'}
           </p>
           <p className="text-sm text-slate-400 mt-0.5">
-            {clients.length === 0 ? 'Usá "+ Agregar" para comenzar.' : 'Intenta buscar con otro término.'}
+            {clients.length === 0
+              ? 'Usá "+ Agregar" para comenzar.'
+              : 'Intenta buscar con otro término.'}
           </p>
         </div>
       ) : (
         /* Lista de expedientes clara y limpia */
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs divide-y divide-slate-100">
-          {filteredClients.map((client) => {
+          {filteredClients.map(client => {
             const isSelected = selectedClientId === client.id;
             const approvedDocs = client.documents.filter(d => d.status === 'APPROVED').length;
             const totalDocs = client.documents.length;
@@ -103,7 +109,9 @@ export const ClientList: React.FC<ClientListProps> = ({
               <div
                 key={client.id}
                 className={`p-4 sm:px-5 sm:py-4 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                  isSelected ? 'bg-blue-50/40 border-l-4 border-l-[#1e3a8a]' : 'hover:bg-slate-50/70'
+                  isSelected
+                    ? 'bg-blue-50/40 border-l-4 border-l-[#1e3a8a]'
+                    : 'hover:bg-slate-50/70'
                 }`}
               >
                 {/* Información del cliente */}
@@ -114,11 +122,15 @@ export const ClientList: React.FC<ClientListProps> = ({
                         client.projectType === 'LAD'
                           ? 'bg-blue-50 text-blue-700 border border-blue-200'
                           : client.projectType === 'LADH'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : 'bg-purple-50 text-purple-700 border border-purple-200'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-purple-50 text-purple-700 border border-purple-200'
                       }`}
                     >
-                      {client.projectType === 'LAD' ? 'Pista LAD' : client.projectType === 'LADH' ? 'Helipuerto LADH' : 'Mixto'}
+                      {client.projectType === 'LAD'
+                        ? 'Pista LAD'
+                        : client.projectType === 'LADH'
+                          ? 'Helipuerto LADH'
+                          : 'Mixto'}
                     </span>
                     <span className="text-xs text-slate-400 font-mono">CUIT: {client.cuit}</span>
                     {isSelected && (
@@ -143,7 +155,10 @@ export const ClientList: React.FC<ClientListProps> = ({
                     </span>
                     <span className="text-slate-300">•</span>
                     <span>
-                      Avance documental: <strong className="text-slate-700">{approvedDocs}/{totalDocs} ({percent}%)</strong>
+                      Avance documental:{' '}
+                      <strong className="text-slate-700">
+                        {approvedDocs}/{totalDocs} ({percent}%)
+                      </strong>
                     </span>
                   </div>
                 </div>

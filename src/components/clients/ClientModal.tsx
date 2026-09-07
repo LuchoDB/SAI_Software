@@ -96,9 +96,10 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       terrainLengthAvailableM: Number(terrainLengthAvailableM) || 500,
       terrainWidthAvailableM: Number(terrainWidthAvailableM) || 50,
       notes: notes.trim(),
-      documents: initialClient?.documents && initialClient.documents.length > 0
-        ? initialClient.documents
-        : generateInitialChecklist(),
+      documents:
+        initialClient?.documents && initialClient.documents.length > 0
+          ? initialClient.documents
+          : generateInitialChecklist(),
       createdAt: initialClient?.createdAt || new Date().toISOString().split('T')[0],
       updatedAt: new Date().toISOString().split('T')[0]
     };
@@ -203,7 +204,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                 type="text"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
                 placeholder="Ej. AgroAérea Pergamino S.A."
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs"
               />
@@ -216,7 +217,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               <input
                 type="text"
                 value={cuit}
-                onChange={(e) => setCuit(e.target.value)}
+                onChange={e => setCuit(e.target.value)}
                 placeholder="30-71234567-9"
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-500 shadow-xs"
               />
@@ -232,19 +233,17 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               <input
                 type="text"
                 value={locationName}
-                onChange={(e) => setLocationName(e.target.value)}
+                onChange={e => setLocationName(e.target.value)}
                 placeholder="Ej. Pergamino / Campo El Trébol"
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs"
               />
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">
-                Provincia
-              </label>
+              <label className="block font-medium text-slate-700 mb-1">Provincia</label>
               <select
                 value={province}
-                onChange={(e) => setProvince(e.target.value)}
+                onChange={e => setProvince(e.target.value)}
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs cursor-pointer"
               >
                 <option value="Buenos Aires">Buenos Aires</option>
@@ -269,19 +268,17 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               <input
                 type="number"
                 value={elevationMsl}
-                onChange={(e) => setElevationMsl(parseFloat(e.target.value))}
+                onChange={e => setElevationMsl(parseFloat(e.target.value))}
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-500 shadow-xs"
               />
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">
-                Temp. Referencia (°C)
-              </label>
+              <label className="block font-medium text-slate-700 mb-1">Temp. Referencia (°C)</label>
               <input
                 type="number"
                 value={referenceTemperatureC}
-                onChange={(e) => setReferenceTemperatureC(parseFloat(e.target.value))}
+                onChange={e => setReferenceTemperatureC(parseFloat(e.target.value))}
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-500 shadow-xs"
               />
             </div>
@@ -290,25 +287,21 @@ export const ClientModal: React.FC<ClientModalProps> = ({
           {/* Dimensiones Disponibles en Predio */}
           <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
             <div>
-              <label className="block font-medium text-slate-700 mb-1">
-                Largo Disponible (m)
-              </label>
+              <label className="block font-medium text-slate-700 mb-1">Largo Disponible (m)</label>
               <input
                 type="number"
                 value={terrainLengthAvailableM}
-                onChange={(e) => setTerrainLengthAvailableM(parseFloat(e.target.value))}
+                onChange={e => setTerrainLengthAvailableM(parseFloat(e.target.value))}
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-500 shadow-xs"
               />
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">
-                Ancho Disponible (m)
-              </label>
+              <label className="block font-medium text-slate-700 mb-1">Ancho Disponible (m)</label>
               <input
                 type="number"
                 value={terrainWidthAvailableM}
-                onChange={(e) => setTerrainWidthAvailableM(parseFloat(e.target.value))}
+                onChange={e => setTerrainWidthAvailableM(parseFloat(e.target.value))}
                 className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-500 shadow-xs"
               />
             </div>

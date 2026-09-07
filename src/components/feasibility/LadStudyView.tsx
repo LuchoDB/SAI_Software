@@ -1,13 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Plane, 
-  Ruler, 
-  TrendingUp, 
-  Thermometer, 
-  Mountain, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Save, 
+import {
+  Plane,
+  Ruler,
+  TrendingUp,
+  Thermometer,
+  Mountain,
+  CheckCircle2,
+  AlertTriangle,
+  Save,
   Check
 } from 'lucide-react';
 import { Client } from '../../types/client';
@@ -27,17 +27,25 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
   clients,
   selectedClient,
   onSaveStudy,
-  savedStudies
+  savedStudies: _savedStudies
 }) => {
-  const [targetClientId, setTargetClientId] = useState<string>(selectedClient?.id || clients[0]?.id || '');
-  const [studyName, setStudyName] = useState('Estudio de Factibilidad Técnica LAD (Pista)');
+  const [targetClientId, setTargetClientId] = useState<string>(
+    selectedClient?.id || clients[0]?.id || ''
+  );
+  const [studyName] = useState('Estudio de Factibilidad Técnica LAD (Pista)');
   const [selectedAircraftId, setSelectedAircraftId] = useState<string>('c182');
   const [runwayQfu, setRunwayQfu] = useState('05 / 23');
   const [elevationMsl, setElevationMsl] = useState<number>(selectedClient?.elevationMsl || 25);
-  const [referenceTemperatureC, setReferenceTemperatureC] = useState<number>(selectedClient?.referenceTemperatureC || 32);
+  const [referenceTemperatureC, setReferenceTemperatureC] = useState<number>(
+    selectedClient?.referenceTemperatureC || 32
+  );
   const [longitudinalSlopePercent, setLongitudinalSlopePercent] = useState<number>(0.5);
-  const [terrainLengthAvailableM, setTerrainLengthAvailableM] = useState<number>(selectedClient?.terrainLengthAvailableM || 1000);
-  const [terrainWidthAvailableM, setTerrainWidthAvailableM] = useState<number>(selectedClient?.terrainWidthAvailableM || 100);
+  const [terrainLengthAvailableM, setTerrainLengthAvailableM] = useState<number>(
+    selectedClient?.terrainLengthAvailableM || 1000
+  );
+  const [terrainWidthAvailableM, setTerrainWidthAvailableM] = useState<number>(
+    selectedClient?.terrainWidthAvailableM || 100
+  );
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Sincronizar si cambia el cliente seleccionado
@@ -45,9 +53,12 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
     if (selectedClient) {
       setTargetClientId(selectedClient.id);
       if (selectedClient.elevationMsl) setElevationMsl(selectedClient.elevationMsl);
-      if (selectedClient.referenceTemperatureC) setReferenceTemperatureC(selectedClient.referenceTemperatureC);
-      if (selectedClient.terrainLengthAvailableM) setTerrainLengthAvailableM(selectedClient.terrainLengthAvailableM);
-      if (selectedClient.terrainWidthAvailableM) setTerrainWidthAvailableM(selectedClient.terrainWidthAvailableM);
+      if (selectedClient.referenceTemperatureC)
+        setReferenceTemperatureC(selectedClient.referenceTemperatureC);
+      if (selectedClient.terrainLengthAvailableM)
+        setTerrainLengthAvailableM(selectedClient.terrainLengthAvailableM);
+      if (selectedClient.terrainWidthAvailableM)
+        setTerrainWidthAvailableM(selectedClient.terrainWidthAvailableM);
     }
   }, [selectedClient]);
 
@@ -99,7 +110,8 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
             <span>Factibilidad de Pistas LAD (RAAC 153)</span>
           </h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Corrección de longitud básica de pista por elevación MSL, temperatura ISA y pendiente longitudinal
+            Corrección de longitud básica de pista por elevación MSL, temperatura ISA y pendiente
+            longitudinal
           </p>
         </div>
 
@@ -107,7 +119,11 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
           onClick={handleSave}
           className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#1a365d] hover:bg-[#0f2942] text-white text-sm font-semibold transition-colors shadow-xs"
         >
-          {savedSuccess ? <Check className="h-4 w-4 text-emerald-300" /> : <Save className="h-4 w-4" />}
+          {savedSuccess ? (
+            <Check className="h-4 w-4 text-emerald-300" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
           <span>{savedSuccess ? '¡Guardado!' : 'Guardar en expediente'}</span>
         </button>
       </div>
@@ -118,7 +134,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
           <span className="text-xs font-semibold text-slate-700">Expediente:</span>
           <select
             value={targetClientId}
-            onChange={(e) => setTargetClientId(e.target.value)}
+            onChange={e => setTargetClientId(e.target.value)}
             className="bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-400 font-medium cursor-pointer shadow-xs"
           >
             {clients.map(c => (
@@ -135,7 +151,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
             <input
               type="text"
               value={runwayQfu}
-              onChange={(e) => setRunwayQfu(e.target.value)}
+              onChange={e => setRunwayQfu(e.target.value)}
               className="w-24 bg-white border border-slate-200 rounded-lg px-2 py-1 text-center font-mono font-bold text-blue-700 text-xs"
             />
           </div>
@@ -153,12 +169,13 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
             </label>
             <select
               value={selectedAircraftId}
-              onChange={(e) => setSelectedAircraftId(e.target.value)}
+              onChange={e => setSelectedAircraftId(e.target.value)}
               className="w-full bg-white border border-slate-200 text-slate-800 text-xs rounded-lg p-2.5 font-medium focus:outline-none focus:border-blue-500 shadow-xs cursor-pointer"
             >
               {AIRCRAFT_DATABASE.map(acft => (
                 <option key={acft.id} value={acft.id}>
-                  {acft.manufacturer} {acft.model} — Longitud Base: {acft.referenceFieldLengthM}m (Clave {acft.categoryCode})
+                  {acft.manufacturer} {acft.model} — Longitud Base: {acft.referenceFieldLengthM}m
+                  (Clave {acft.categoryCode})
                 </option>
               ))}
             </select>
@@ -174,7 +191,9 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
               </div>
               <div>
                 <span className="text-[10px] text-slate-500 block">V. Cruzado Adm.</span>
-                <span className="font-bold text-blue-700">{selectedAircraft.maxDemonstratedCrosswindKt} kt</span>
+                <span className="font-bold text-blue-700">
+                  {selectedAircraft.maxDemonstratedCrosswindKt} kt
+                </span>
               </div>
             </div>
           </div>
@@ -194,7 +213,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
                 <input
                   type="number"
                   value={elevationMsl}
-                  onChange={(e) => setElevationMsl(Number(e.target.value))}
+                  onChange={e => setElevationMsl(Number(e.target.value))}
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 font-mono font-bold text-slate-800"
                 />
               </div>
@@ -207,7 +226,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
                 <input
                   type="number"
                   value={referenceTemperatureC}
-                  onChange={(e) => setReferenceTemperatureC(Number(e.target.value))}
+                  onChange={e => setReferenceTemperatureC(Number(e.target.value))}
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 font-mono font-bold text-slate-800"
                 />
               </div>
@@ -221,7 +240,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
                   type="number"
                   step="0.1"
                   value={longitudinalSlopePercent}
-                  onChange={(e) => setLongitudinalSlopePercent(Number(e.target.value))}
+                  onChange={e => setLongitudinalSlopePercent(Number(e.target.value))}
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 font-mono font-bold text-slate-800"
                 />
               </div>
@@ -234,7 +253,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
                 <input
                   type="number"
                   value={terrainLengthAvailableM}
-                  onChange={(e) => setTerrainLengthAvailableM(Number(e.target.value))}
+                  onChange={e => setTerrainLengthAvailableM(Number(e.target.value))}
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 font-mono font-bold text-slate-800"
                 />
               </div>
@@ -245,18 +264,36 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
         {/* Resultados de Factibilidad y Plano */}
         <div className="lg:col-span-6 space-y-4">
           {/* Card de Dictamen y Longitud Corregida */}
-          <div className={`border rounded-xl p-5 shadow-xs ${
-            isFeasible ? 'bg-emerald-50/70 border-emerald-200' : isConditioned ? 'bg-amber-50/70 border-amber-200' : 'bg-red-50/70 border-red-200'
-          }`}>
+          <div
+            className={`border rounded-xl p-5 shadow-xs ${
+              isFeasible
+                ? 'bg-emerald-50/70 border-emerald-200'
+                : isConditioned
+                  ? 'bg-amber-50/70 border-amber-200'
+                  : 'bg-red-50/70 border-red-200'
+            }`}
+          >
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
                 Dictamen Técnico RAAC 153
               </span>
-              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold ${
-                isFeasible ? 'bg-white border-emerald-300 text-emerald-800' : isConditioned ? 'bg-white border-amber-300 text-amber-800' : 'bg-white border-red-300 text-red-800'
-              }`}>
-                {isFeasible ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <AlertTriangle className="h-4 w-4 text-amber-600" />}
-                <span>{isFeasible ? 'FACTIBLE' : isConditioned ? 'CONDICIONADO' : 'NO FACTIBLE'}</span>
+              <div
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold ${
+                  isFeasible
+                    ? 'bg-white border-emerald-300 text-emerald-800'
+                    : isConditioned
+                      ? 'bg-white border-amber-300 text-amber-800'
+                      : 'bg-white border-red-300 text-red-800'
+                }`}
+              >
+                {isFeasible ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                ) : (
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                )}
+                <span>
+                  {isFeasible ? 'FACTIBLE' : isConditioned ? 'CONDICIONADO' : 'NO FACTIBLE'}
+                </span>
               </div>
             </div>
 
@@ -268,7 +305,9 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 block font-mono">LONGITUD CORREGIDA</span>
+                <span className="text-[10px] text-slate-500 block font-mono">
+                  LONGITUD CORREGIDA
+                </span>
                 <span className="text-2xl font-black text-blue-700 font-mono">
                   {ladStudyResult.correctedRunwayLengthRequiredM} m
                 </span>
@@ -286,10 +325,7 @@ export const LadStudyView: React.FC<LadStudyViewProps> = ({
           </div>
 
           {/* Plano Técnico Acotado */}
-          <TechnicalDrawing
-            type="LAD"
-            ladData={ladStudyResult}
-          />
+          <TechnicalDrawing type="LAD" ladData={ladStudyResult} />
         </div>
       </div>
     </div>

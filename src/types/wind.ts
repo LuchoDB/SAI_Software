@@ -1,8 +1,20 @@
 export type CompassPoint =
-  | 'N' | 'NNE' | 'NE' | 'ENE'
-  | 'E' | 'ESE' | 'SE' | 'SSE'
-  | 'S' | 'SSW' | 'SW' | 'WSW'
-  | 'W' | 'WNW' | 'NW' | 'NNW';
+  | 'N'
+  | 'NNE'
+  | 'NE'
+  | 'ENE'
+  | 'E'
+  | 'ESE'
+  | 'SE'
+  | 'SSE'
+  | 'S'
+  | 'SSW'
+  | 'SW'
+  | 'WSW'
+  | 'W'
+  | 'WNW'
+  | 'NW'
+  | 'NNW';
 
 export interface WindSpeedBracket {
   range: '0-5' | '6-10' | '11-15' | '16-20' | '>20';
@@ -15,8 +27,8 @@ export interface WindSectorData {
   degrees: number;
   totalFrequencyPercent: number;
   brackets: {
-    b0_5: number;   // 0 a 5 kt (%)
-    b6_10: number;  // 6 a 10 kt (%)
+    b0_5: number; // 0 a 5 kt (%)
+    b6_10: number; // 6 a 10 kt (%)
     b11_15: number; // 11 a 15 kt (%)
     b16_20: number; // 16 a 20 kt (%)
     b21_plus: number; // >20 kt (%)
@@ -24,13 +36,13 @@ export interface WindSectorData {
 }
 
 export interface RunwayOrientation {
-  trueHeading: number;            // Rumbo geográfico verdadero (0-359°)
-  magneticDeclination: number;    // Declinación magnética (+ Este, - Oeste)
-  magneticHeading: number;        // Rumbo magnético corregido
-  reciprocalHeading: number;      // Rumbo recíproco magnético
-  qfuPrimary: string;             // Ej. "04"
-  qfuSecondary: string;           // Ej. "22"
-  qfuLabel: string;               // Ej. "04 / 22"
+  trueHeading: number; // Rumbo geográfico verdadero (0-359°)
+  magneticDeclination: number; // Declinación magnética (+ Este, - Oeste)
+  magneticHeading: number; // Rumbo magnético corregido
+  reciprocalHeading: number; // Rumbo recíproco magnético
+  qfuPrimary: string; // Ej. "04"
+  qfuSecondary: string; // Ej. "22"
+  qfuLabel: string; // Ej. "04 / 22"
 }
 
 export interface WindVectorAnalysis {
@@ -50,9 +62,9 @@ export interface WindStudyResult {
   studyName: string;
   orientation: RunwayOrientation;
   admissibleCrosswindKt: 10 | 13 | 20; // 10 kt (clave 1), 13 kt (clave 2), 20 kt (claves 3/4)
-  usabilityPercent: number;           // Coeficiente de utilización OACI
-  isCompliantOACI: boolean;           // >= 95.0%
-  calmsPercent: number;               // Porcentaje de calmas meteorológicas
+  usabilityPercent: number; // Coeficiente de utilización OACI
+  isCompliantOACI: boolean; // >= 95.0%
+  calmsPercent: number; // Porcentaje de calmas meteorológicas
   windDistribution: WindSectorData[];
   createdAt: string;
   notes?: string;

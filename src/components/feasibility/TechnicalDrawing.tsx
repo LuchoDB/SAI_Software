@@ -8,11 +8,7 @@ interface TechnicalDrawingProps {
   ladhData?: LadhStudy;
 }
 
-export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
-  type,
-  ladData,
-  ladhData
-}) => {
+export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({ type, ladData, ladhData }) => {
   if (type === 'LAD' && ladData) {
     const svgW = 600;
     const svgH = 260;
@@ -35,11 +31,16 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-4 overflow-hidden shadow-xs">
         <div className="flex items-center justify-between text-xs text-slate-500 mb-2 font-mono">
-          <span className="font-semibold text-slate-800 uppercase">PLANO ACOTADO DE PISTA (RAAC 153)</span>
+          <span className="font-semibold text-slate-800 uppercase">
+            PLANO ACOTADO DE PISTA (RAAC 153)
+          </span>
           <span className="text-blue-700 font-bold">Pista {ladData.runwayQfu}</span>
         </div>
 
-        <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto select-none bg-slate-50/70 rounded-lg border border-slate-200">
+        <svg
+          viewBox={`0 0 ${svgW} ${svgH}`}
+          className="w-full h-auto select-none bg-slate-50/70 rounded-lg border border-slate-200"
+        >
           <defs>
             <pattern id="grid-light" width="20" height="20" patternUnits="userSpaceOnUse">
               <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e2e8f0" strokeWidth="0.5" />
@@ -93,7 +94,13 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
           />
 
           {/* Cabecera Izquierda */}
-          <rect x={centerX - rwyPixelW / 2} y={centerY - rwyPixelH / 2} width={18} height={rwyPixelH} fill="#1e3a8a" />
+          <rect
+            x={centerX - rwyPixelW / 2}
+            y={centerY - rwyPixelH / 2}
+            width={18}
+            height={rwyPixelH}
+            fill="#1e3a8a"
+          />
           <text
             x={centerX - rwyPixelW / 2 + 9}
             y={centerY + 3}
@@ -107,7 +114,13 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
           </text>
 
           {/* Cabecera Derecha */}
-          <rect x={centerX + rwyPixelW / 2 - 18} y={centerY - rwyPixelH / 2} width={18} height={rwyPixelH} fill="#1e3a8a" />
+          <rect
+            x={centerX + rwyPixelW / 2 - 18}
+            y={centerY - rwyPixelH / 2}
+            width={18}
+            height={rwyPixelH}
+            fill="#1e3a8a"
+          />
           <text
             x={centerX + rwyPixelW / 2 - 9}
             y={centerY + 3}
@@ -143,8 +156,16 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
         </svg>
 
         <div className="mt-2 text-[11px] text-slate-500 flex justify-between font-mono">
-          <span>Aeronave de Diseño: <strong className="text-slate-700">{ladData.aircraft.manufacturer} {ladData.aircraft.model}</strong></span>
-          <span>Clave de Referencia: <strong className="text-slate-700">{ladData.aircraft.categoryCode}</strong></span>
+          <span>
+            Aeronave de Diseño:{' '}
+            <strong className="text-slate-700">
+              {ladData.aircraft.manufacturer} {ladData.aircraft.model}
+            </strong>
+          </span>
+          <span>
+            Clave de Referencia:{' '}
+            <strong className="text-slate-700">{ladData.aircraft.categoryCode}</strong>
+          </span>
         </div>
       </div>
     );
@@ -170,11 +191,18 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-4 overflow-hidden shadow-xs">
         <div className="flex items-center justify-between text-xs text-slate-500 mb-2 font-mono">
-          <span className="font-semibold text-slate-800 uppercase">PLANO ACOTADO DE HELIPUERTO (RAAC 154)</span>
-          <span className="text-emerald-700 font-bold">D = {ladhData.helicopter.overallLengthD}m</span>
+          <span className="font-semibold text-slate-800 uppercase">
+            PLANO ACOTADO DE HELIPUERTO (RAAC 154)
+          </span>
+          <span className="text-emerald-700 font-bold">
+            D = {ladhData.helicopter.overallLengthD}m
+          </span>
         </div>
 
-        <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto select-none bg-slate-50/70 rounded-lg border border-slate-200">
+        <svg
+          viewBox={`0 0 ${svgW} ${svgH}`}
+          className="w-full h-auto select-none bg-slate-50/70 rounded-lg border border-slate-200"
+        >
           <defs>
             <pattern id="grid-heli" width="20" height="20" patternUnits="userSpaceOnUse">
               <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e2e8f0" strokeWidth="0.5" />
@@ -183,14 +211,37 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
           <rect width={svgW} height={svgH} fill="url(#grid-heli)" />
 
           {/* Área de Seguridad Perimetral */}
-          <circle cx={cx} cy={cy} r={rSafety} fill="#f8fafc" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3,3" />
-          <text x={cx} y={cy - rSafety + 14} fill="#64748b" fontSize="8" fontFamily="monospace" textAnchor="middle">
+          <circle
+            cx={cx}
+            cy={cy}
+            r={rSafety}
+            fill="#f8fafc"
+            stroke="#94a3b8"
+            strokeWidth="1"
+            strokeDasharray="3,3"
+          />
+          <text
+            x={cx}
+            y={cy - rSafety + 14}
+            fill="#64748b"
+            fontSize="8"
+            fontFamily="monospace"
+            textAnchor="middle"
+          >
             ÁREA DE SEGURIDAD (D total = {totalSafety}m)
           </text>
 
           {/* FATO (Área de Aproximación Final y Despegue) */}
           <circle cx={cx} cy={cy} r={rFato} fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
-          <text x={cx} y={cy - rFato + 14} fill="#0369a1" fontSize="8" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+          <text
+            x={cx}
+            y={cy - rFato + 14}
+            fill="#0369a1"
+            fontSize="8"
+            fontFamily="monospace"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
             FATO (1.5D = {fatoDim}m)
           </text>
 
@@ -198,14 +249,30 @@ export const TechnicalDrawing: React.FC<TechnicalDrawingProps> = ({
           <circle cx={cx} cy={cy} r={rTlof} fill="#1e293b" stroke="#0f172a" strokeWidth="2" />
 
           {/* Letra H estándar blanca de helipuerto */}
-          <text x={cx} y={cy + 8} fill="#ffffff" fontSize="24" fontFamily="sans-serif" fontWeight="900" textAnchor="middle">
+          <text
+            x={cx}
+            y={cy + 8}
+            fill="#ffffff"
+            fontSize="24"
+            fontFamily="sans-serif"
+            fontWeight="900"
+            textAnchor="middle"
+          >
             H
           </text>
         </svg>
 
         <div className="mt-2 text-[11px] text-slate-500 flex justify-between font-mono">
-          <span>Helicóptero: <strong className="text-slate-700">{ladhData.helicopter.manufacturer} {ladhData.helicopter.model}</strong></span>
-          <span>Carga Dinámica (1.5x): <strong className="text-slate-700">{ladhData.dynamicLoadDesignKg} kg</strong></span>
+          <span>
+            Helicóptero:{' '}
+            <strong className="text-slate-700">
+              {ladhData.helicopter.manufacturer} {ladhData.helicopter.model}
+            </strong>
+          </span>
+          <span>
+            Carga Dinámica (1.5x):{' '}
+            <strong className="text-slate-700">{ladhData.dynamicLoadDesignKg} kg</strong>
+          </span>
         </div>
       </div>
     );

@@ -61,12 +61,12 @@ export const WelcomeSplash: React.FC<WelcomeSplashProps> = ({ onFinish }) => {
         stage === 'exit' ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
       style={{
-        background: 'radial-gradient(circle at 50% 48%, #ffffff 0%, #f8fafc 70%, #f1f5f9 100%)',
+        background: 'radial-gradient(circle at 50% 48%, #ffffff 0%, #f8fafc 70%, #f1f5f9 100%)'
       }}
     >
       {/* Botón sutil en la esquina para omitir la animación */}
       <button
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation();
           handleSkip();
         }}
@@ -84,8 +84,8 @@ export const WelcomeSplash: React.FC<WelcomeSplashProps> = ({ onFinish }) => {
             stage === 'enter'
               ? 'opacity-0 scale-90 translate-y-3 blur-[1px]'
               : stage === 'active'
-              ? 'opacity-100 scale-100 translate-y-0 blur-0'
-              : 'opacity-0 scale-105 -translate-y-2'
+                ? 'opacity-100 scale-100 translate-y-0 blur-0'
+                : 'opacity-0 scale-105 -translate-y-2'
           }`}
         >
           {/* Logo Completo Oficial (Emblema + Servicios Aeronáuticos Integrados) */}
@@ -95,7 +95,7 @@ export const WelcomeSplash: React.FC<WelcomeSplashProps> = ({ onFinish }) => {
               alt="Servicios Aeronáuticos Integrados"
               className="w-full max-w-[520px] h-auto object-contain pointer-events-none select-none"
               style={{
-                filter: 'drop-shadow(0 14px 28px rgba(15, 23, 42, 0.08))',
+                filter: 'drop-shadow(0 14px 28px rgba(15, 23, 42, 0.08))'
               }}
             />
 

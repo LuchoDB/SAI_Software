@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  Edit2, 
-  Check
-} from 'lucide-react';
+import { CheckCircle2, Clock, AlertCircle, Edit2, Check } from 'lucide-react';
 import { DocumentItemModel, DocumentStatus } from '../../types/client';
 
 interface DocumentItemProps {
@@ -13,14 +7,20 @@ interface DocumentItemProps {
   onUpdateStatus: (id: string, status: DocumentStatus, notes?: string) => void;
 }
 
-export const DocumentItem: React.FC<DocumentItemProps> = ({
-  document,
-  onUpdateStatus
-}) => {
+export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateStatus }) => {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(document.notes || '');
 
-  const statusConfig: Record<DocumentStatus, { label: string; bg: string; text: string; border: string; icon: React.ComponentType<{ className?: string }> }> = {
+  const statusConfig: Record<
+    DocumentStatus,
+    {
+      label: string;
+      bg: string;
+      text: string;
+      border: string;
+      icon: React.ComponentType<{ className?: string }>;
+    }
+  > = {
     APPROVED: {
       label: 'Aprobado / Presentado',
       bg: 'bg-emerald-50',
@@ -75,9 +75,7 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({
             ) : (
               <span className="text-[10px] text-slate-500 font-medium">Condicional</span>
             )}
-            <span className="text-[11px] text-slate-500 font-mono">
-              {document.category}
-            </span>
+            <span className="text-[11px] text-slate-500 font-mono">{document.category}</span>
           </div>
 
           <h4 className="font-semibold text-slate-900 text-sm">{document.title}</h4>
@@ -86,14 +84,18 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({
 
         {/* Selector de Estado */}
         <div className="flex items-center gap-2 shrink-0">
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold ${currentStatus.bg} ${currentStatus.text} ${currentStatus.border}`}>
+          <div
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold ${currentStatus.bg} ${currentStatus.text} ${currentStatus.border}`}
+          >
             <StatusIcon className="h-3.5 w-3.5" />
             <span>{currentStatus.label}</span>
           </div>
 
           <select
             value={document.status}
-            onChange={(e) => onUpdateStatus(document.id, e.target.value as DocumentStatus, document.notes)}
+            onChange={e =>
+              onUpdateStatus(document.id, e.target.value as DocumentStatus, document.notes)
+            }
             className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-slate-400 cursor-pointer shadow-xs"
           >
             <option value="PENDING">Pendiente</option>
@@ -111,7 +113,7 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({
             <input
               type="text"
               value={notesText}
-              onChange={(e) => setNotesText(e.target.value)}
+              onChange={e => setNotesText(e.target.value)}
               placeholder="Escribe una observación o número de expediente..."
               className="flex-1 bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
             />

@@ -55,7 +55,7 @@ export const HELICOPTER_DATABASE: HelicopterDesign[] = [
     id: 'b429',
     model: 'Bell 429 GlobalRanger',
     manufacturer: 'Bell',
-    overallLengthD: 13.00,
+    overallLengthD: 13.0,
     rotorDiameterRD: 10.97,
     mtowKg: 3402,
     performanceClass: 1,
@@ -66,7 +66,7 @@ export const HELICOPTER_DATABASE: HelicopterDesign[] = [
     model: 'AW139',
     manufacturer: 'Leonardo',
     overallLengthD: 16.66,
-    rotorDiameterRD: 13.80,
+    rotorDiameterRD: 13.8,
     mtowKg: 6800,
     performanceClass: 1,
     typicalUse: 'Offshore / Búsqueda y Salvamento / Presidencial'

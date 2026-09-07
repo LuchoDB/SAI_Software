@@ -1,20 +1,21 @@
 import React from 'react';
-import { 
-  Users, 
-  CheckSquare, 
-  Compass, 
-  Plane, 
-  Disc, 
-  FileText, 
+import {
+  Users,
+  CheckSquare,
+  Compass,
+  Plane,
+  Disc,
+  FileText,
   Database,
-  HelpCircle, 
+  HelpCircle,
   LogOut,
   Plus,
   Play
 } from 'lucide-react';
 import { Client } from '../../types/client';
 
-export type MainView = 'clients' | 'checklist' | 'wind' | 'lad' | 'ladh' | 'dossier' | 'backups' | 'manual';
+export type MainView =
+  'clients' | 'checklist' | 'wind' | 'lad' | 'ladh' | 'dossier' | 'backups' | 'manual';
 
 interface SidebarProps {
   currentView: MainView;
@@ -81,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-1">
         {/* Lista de navegación principal idéntica a DentaSoft */}
         <nav className="space-y-0.5">
-          {primaryMenuItems.map((item) => {
+          {primaryMenuItems.map(item => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
 
@@ -95,7 +96,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
-                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#0f2942]' : item.iconColor}`} />
+                <Icon
+                  className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#0f2942]' : item.iconColor}`}
+                />
                 <span className="truncate">{item.label}</span>
               </button>
             );
@@ -114,7 +117,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Indicador de cliente activo si está seleccionado */}
         {selectedClient && (
           <div className="mx-3 mt-4 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Activo</div>
+            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+              Activo
+            </div>
             <div className="font-semibold text-slate-800 truncate" title={selectedClient.name}>
               {selectedClient.name}
             </div>

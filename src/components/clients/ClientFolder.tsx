@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
-import { 
-  Folder, 
-  MapPin, 
-  Compass, 
-  Plane, 
-  Disc, 
-  FileText, 
-  ShieldCheck, 
-  Cpu, 
-  ArrowLeft, 
-  Plus, 
-  ExternalLink,
+import {
+  Folder,
+  MapPin,
+  Compass,
+  Plane,
+  Disc,
+  FileText,
+  Cpu,
+  ArrowLeft,
+  Plus,
   Building,
-  Phone,
-  Mail,
-  Calendar,
   Layers,
-  ChevronRight,
-  CheckCircle2
+  ChevronRight
 } from 'lucide-react';
 import { Client, DocumentStatus } from '../../types/client';
 import { WindStudyResult } from '../../types/wind';
@@ -45,7 +39,9 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
   ladhStudies,
   onNavigateToStudy
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'studies' | 'verdict'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'studies' | 'verdict'>(
+    'overview'
+  );
 
   // Filtrar estudios del cliente
   const clientWindStudies = windStudies.filter(s => s.clientId === client.id);
@@ -87,7 +83,9 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
               <h1 className="text-xl font-bold text-white font-heading mt-1">{client.name}</h1>
               <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
                 <MapPin className="h-3.5 w-3.5 text-slate-500" />
-                <span>{client.locationName}, {client.province}</span>
+                <span>
+                  {client.locationName}, {client.province}
+                </span>
                 <span className="text-slate-600">•</span>
                 <span>Elev: {client.elevationMsl}m MSL</span>
               </div>
@@ -103,20 +101,22 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                   auditVerdict.globalStatus === 'FAVORABLE'
                     ? 'text-emerald-400'
                     : auditVerdict.globalStatus === 'FAVORABLE_WITH_RESTRICTIONS'
-                    ? 'text-amber-400'
-                    : 'text-red-400'
+                      ? 'text-amber-400'
+                      : 'text-red-400'
                 }`}
               >
                 {auditVerdict.globalStatus === 'FAVORABLE'
                   ? 'FAVORABLE'
                   : auditVerdict.globalStatus === 'FAVORABLE_WITH_RESTRICTIONS'
-                  ? 'FAVORABLE CONDICIONADO'
-                  : 'NO FAVORABLE'}
+                    ? 'FAVORABLE CONDICIONADO'
+                    : 'NO FAVORABLE'}
               </span>
             </div>
             <div className="text-right pl-3 border-l border-slate-800">
               <span className="text-[10px] text-slate-500 font-mono block">VIABILIDAD</span>
-              <span className="text-sm font-bold text-white font-mono">{auditVerdict.scorePercent}%</span>
+              <span className="text-sm font-bold text-white font-mono">
+                {auditVerdict.scorePercent}%
+              </span>
             </div>
           </div>
         </div>
@@ -157,7 +157,10 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
           }`}
         >
           <Layers className="h-4 w-4" />
-          <span>Estudios Técnicos ({clientWindStudies.length + clientLadStudies.length + clientLadhStudies.length})</span>
+          <span>
+            Estudios Técnicos (
+            {clientWindStudies.length + clientLadStudies.length + clientLadhStudies.length})
+          </span>
         </button>
 
         <button
@@ -195,15 +198,21 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                 </div>
                 <div>
                   <span className="text-slate-500 block">Representante Legal</span>
-                  <span className="text-slate-100 font-semibold">{client.contactPerson || 'No asignado'}</span>
+                  <span className="text-slate-100 font-semibold">
+                    {client.contactPerson || 'No asignado'}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Correo Electrónico</span>
-                  <span className="text-sky-400 font-mono">{client.email || 'No especificado'}</span>
+                  <span className="text-sky-400 font-mono">
+                    {client.email || 'No especificado'}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Teléfono de Contacto</span>
-                  <span className="text-slate-100 font-mono">{client.phone || 'No especificado'}</span>
+                  <span className="text-slate-100 font-mono">
+                    {client.phone || 'No especificado'}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Fecha de Alta de Expediente</span>
@@ -213,7 +222,9 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
 
               {client.notes && (
                 <div className="pt-3 border-t border-slate-800/80">
-                  <span className="text-slate-500 text-xs block mb-1">Memoria de Emplazamiento:</span>
+                  <span className="text-slate-500 text-xs block mb-1">
+                    Memoria de Emplazamiento:
+                  </span>
                   <p className="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-800/60">
                     {client.notes}
                   </p>
@@ -232,16 +243,21 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
                   <span className="text-slate-500 text-[10px] block">COORDENADAS WGS84</span>
                   <span className="text-slate-200 font-mono font-semibold block truncate">
-                    {client.coordinates.formatted || `${client.coordinates.lat}°, ${client.coordinates.lng}°`}
+                    {client.coordinates.formatted ||
+                      `${client.coordinates.lat}°, ${client.coordinates.lng}°`}
                   </span>
                 </div>
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
                   <span className="text-slate-500 text-[10px] block">ELEVACIÓN</span>
-                  <span className="text-slate-200 font-mono font-semibold block">{client.elevationMsl} m s.n.m.</span>
+                  <span className="text-slate-200 font-mono font-semibold block">
+                    {client.elevationMsl} m s.n.m.
+                  </span>
                 </div>
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
                   <span className="text-slate-500 text-[10px] block">TEMP. REF. ISA</span>
-                  <span className="text-slate-200 font-mono font-semibold block">{client.referenceTemperatureC || 31}°C</span>
+                  <span className="text-slate-200 font-mono font-semibold block">
+                    {client.referenceTemperatureC || 31}°C
+                  </span>
                 </div>
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
                   <span className="text-slate-500 text-[10px] block">TERRENO DISPONIBLE</span>
@@ -270,9 +286,13 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                       <Compass className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-white">Orientación & Viento Cruzado</div>
+                      <div className="text-xs font-semibold text-white">
+                        Orientación & Viento Cruzado
+                      </div>
                       <div className="text-[10px] text-slate-400">
-                        {clientWindStudies.length > 0 ? `${clientWindStudies.length} estudio guardado` : 'Sin estudio de vientos'}
+                        {clientWindStudies.length > 0
+                          ? `${clientWindStudies.length} estudio guardado`
+                          : 'Sin estudio de vientos'}
                       </div>
                     </div>
                   </div>
@@ -289,9 +309,13 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                         <Plane className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-semibold text-white">Factibilidad Pista LAD (RAAC 153)</div>
+                        <div className="text-xs font-semibold text-white">
+                          Factibilidad Pista LAD (RAAC 153)
+                        </div>
                         <div className="text-[10px] text-slate-400">
-                          {clientLadStudies.length > 0 ? `${clientLadStudies.length} estudio guardado` : 'Configurar pista'}
+                          {clientLadStudies.length > 0
+                            ? `${clientLadStudies.length} estudio guardado`
+                            : 'Configurar pista'}
                         </div>
                       </div>
                     </div>
@@ -309,9 +333,13 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                         <Disc className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-semibold text-white">Factibilidad Helipuerto LADH (RAAC 154)</div>
+                        <div className="text-xs font-semibold text-white">
+                          Factibilidad Helipuerto LADH (RAAC 154)
+                        </div>
                         <div className="text-[10px] text-slate-400">
-                          {clientLadhStudies.length > 0 ? `${clientLadhStudies.length} estudio guardado` : 'Configurar helipuerto'}
+                          {clientLadhStudies.length > 0
+                            ? `${clientLadhStudies.length} estudio guardado`
+                            : 'Configurar helipuerto'}
                         </div>
                       </div>
                     </div>
@@ -360,7 +388,9 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
       {activeTab === 'documents' && (
         <DocumentChecklist
           documents={client.documents}
-          onUpdateDocumentStatus={(docId, status, notes) => onUpdateDocumentStatus(docId, status, notes)}
+          onUpdateDocumentStatus={(docId, status, notes) =>
+            onUpdateDocumentStatus(docId, status, notes)
+          }
         />
       )}
 
@@ -385,12 +415,16 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
 
             {clientWindStudies.length === 0 ? (
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 text-center text-xs text-slate-400">
-                Aún no se ha realizado un estudio de orientación y rosa de los vientos para este cliente.
+                Aún no se ha realizado un estudio de orientación y rosa de los vientos para este
+                cliente.
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {clientWindStudies.map(ws => (
-                  <div key={ws.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+                  <div
+                    key={ws.id}
+                    className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2"
+                  >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-white">{ws.studyName}</span>
                       <span className="text-[10px] font-mono text-slate-500">{ws.createdAt}</span>
@@ -402,12 +436,16 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                       </div>
                       <div>
                         <span className="text-slate-500 block text-[10px]">USABILIDAD OACI</span>
-                        <span className={`font-bold ${ws.isCompliantOACI ? 'text-emerald-400' : 'text-red-400'}`}>
+                        <span
+                          className={`font-bold ${ws.isCompliantOACI ? 'text-emerald-400' : 'text-red-400'}`}
+                        >
                           {ws.usabilityPercent}% {ws.isCompliantOACI ? '(>=95%)' : '(<95%)'}
                         </span>
                       </div>
                     </div>
-                    {ws.notes && <p className="text-[11px] text-slate-400 italic pt-1">{ws.notes}</p>}
+                    {ws.notes && (
+                      <p className="text-[11px] text-slate-400 italic pt-1">{ws.notes}</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -438,30 +476,42 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {clientLadStudies.map(ls => (
-                    <div key={ls.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+                    <div
+                      key={ls.id}
+                      className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2"
+                    >
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-white">{ls.studyName}</span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                          ls.overallFeasibility === 'FEASIBLE'
-                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                            : ls.overallFeasibility === 'CONDITIONED'
-                            ? 'bg-amber-950 text-amber-400 border border-amber-800'
-                            : 'bg-red-950 text-red-400 border border-red-800'
-                        }`}>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                            ls.overallFeasibility === 'FEASIBLE'
+                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                              : ls.overallFeasibility === 'CONDITIONED'
+                                ? 'bg-amber-950 text-amber-400 border border-amber-800'
+                                : 'bg-red-950 text-red-400 border border-red-800'
+                          }`}
+                        >
                           {ls.overallFeasibility}
                         </span>
                       </div>
                       <div className="text-xs text-slate-300">
-                        Aeronave: <span className="font-semibold">{ls.aircraft.manufacturer} {ls.aircraft.model}</span>
+                        Aeronave:{' '}
+                        <span className="font-semibold">
+                          {ls.aircraft.manufacturer} {ls.aircraft.model}
+                        </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-950 p-2 rounded-lg border border-slate-800/80">
                         <div>
                           <span className="text-slate-500 text-[10px]">PISTA REQUERIDA</span>
-                          <span className="text-white block">{ls.correctedRunwayLengthRequiredM}m x {ls.runwayWidthRequiredM}m</span>
+                          <span className="text-white block">
+                            {ls.correctedRunwayLengthRequiredM}m x {ls.runwayWidthRequiredM}m
+                          </span>
                         </div>
                         <div>
                           <span className="text-slate-500 text-[10px]">FRANJA SEGURIDAD</span>
-                          <span className="text-white block">{ls.stripLengthRequiredM}m x {ls.stripWidthRequiredM}m</span>
+                          <span className="text-white block">
+                            {ls.stripLengthRequiredM}m x {ls.stripWidthRequiredM}m
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -495,19 +545,28 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {clientLadhStudies.map(hs => (
-                    <div key={hs.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+                    <div
+                      key={hs.id}
+                      className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2"
+                    >
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-white">{hs.studyName}</span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                          hs.overallFeasibility === 'FEASIBLE'
-                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                            : 'bg-amber-950 text-amber-400 border border-amber-800'
-                        }`}>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                            hs.overallFeasibility === 'FEASIBLE'
+                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                              : 'bg-amber-950 text-amber-400 border border-amber-800'
+                          }`}
+                        >
                           {hs.overallFeasibility}
                         </span>
                       </div>
                       <div className="text-xs text-slate-300">
-                        Helicóptero: <span className="font-semibold">{hs.helicopter.manufacturer} {hs.helicopter.model}</span> (D = {hs.dValueM}m)
+                        Helicóptero:{' '}
+                        <span className="font-semibold">
+                          {hs.helicopter.manufacturer} {hs.helicopter.model}
+                        </span>{' '}
+                        (D = {hs.dValueM}m)
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs font-mono bg-slate-950 p-2 rounded-lg border border-slate-800/80">
                         <div>
@@ -538,20 +597,26 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-mono text-slate-500">AUDITORÍA Y VALIDACIÓN CRUZADA</span>
+                <span className="text-xs font-mono text-slate-500">
+                  AUDITORÍA Y VALIDACIÓN CRUZADA
+                </span>
                 <h3 className="text-lg font-bold text-white font-heading">
                   Dictamen Oficial del Agente Orquestador
                 </h3>
               </div>
               <div className="text-right font-mono">
                 <span className="text-xs text-slate-400">Fecha de Evaluación:</span>
-                <span className="text-xs text-sky-400 font-bold ml-1">{auditVerdict.evaluatedAt}</span>
+                <span className="text-xs text-sky-400 font-bold ml-1">
+                  {auditVerdict.evaluatedAt}
+                </span>
               </div>
             </div>
 
             {/* Resumen Ejecutivo */}
             <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 leading-relaxed text-xs text-slate-200">
-              <span className="text-sky-400 font-semibold block mb-1">Resumen Ejecutivo del Proyecto:</span>
+              <span className="text-sky-400 font-semibold block mb-1">
+                Resumen Ejecutivo del Proyecto:
+              </span>
               {auditVerdict.executiveSummary}
             </div>
 
@@ -559,29 +624,45 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
                 <span className="text-slate-500 text-[10px] block">ANAC (RAAC 153/154)</span>
-                <span className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.legalCompliance.anac ? 'text-emerald-400' : 'text-amber-400'}`}>
+                <span
+                  className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.legalCompliance.anac ? 'text-emerald-400' : 'text-amber-400'}`}
+                >
                   {auditVerdict.legalCompliance.anac ? 'Conforme / En Curso' : 'Pendiente F-501'}
                 </span>
               </div>
 
               <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
-                <span className="text-slate-500 text-[10px] block">ENACOM (Telecomunicaciones)</span>
-                <span className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.legalCompliance.enacom ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  {auditVerdict.legalCompliance.enacom ? 'Sin Interferencias' : 'Verificación Pendiente'}
+                <span className="text-slate-500 text-[10px] block">
+                  ENACOM (Telecomunicaciones)
+                </span>
+                <span
+                  className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.legalCompliance.enacom ? 'text-emerald-400' : 'text-amber-400'}`}
+                >
+                  {auditVerdict.legalCompliance.enacom
+                    ? 'Sin Interferencias'
+                    : 'Verificación Pendiente'}
                 </span>
               </div>
 
               <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
                 <span className="text-slate-500 text-[10px] block">CATASTRO & DOMINIO</span>
-                <span className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.legalCompliance.catastro ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  {auditVerdict.legalCompliance.catastro ? 'Título Acreditado' : 'Pendiente Dominio'}
+                <span
+                  className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.legalCompliance.catastro ? 'text-emerald-400' : 'text-amber-400'}`}
+                >
+                  {auditVerdict.legalCompliance.catastro
+                    ? 'Título Acreditado'
+                    : 'Pendiente Dominio'}
                 </span>
               </div>
 
               <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
                 <span className="text-slate-500 text-[10px] block">VIENTO CRUZADO (OACI)</span>
-                <span className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.technicalFeasibility.windUsability ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {auditVerdict.technicalFeasibility.windUsability ? 'Usabilidad >= 95%' : 'No Verificado / Bajo'}
+                <span
+                  className={`font-bold flex items-center gap-1 mt-1 ${auditVerdict.technicalFeasibility.windUsability ? 'text-emerald-400' : 'text-red-400'}`}
+                >
+                  {auditVerdict.technicalFeasibility.windUsability
+                    ? 'Usabilidad >= 95%'
+                    : 'No Verificado / Bajo'}
                 </span>
               </div>
             </div>
@@ -598,20 +679,24 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                     f.severity === 'CRITICAL'
                       ? 'bg-red-950/40 border-red-800/80 text-red-200'
                       : f.severity === 'WARNING'
-                      ? 'bg-amber-950/40 border-amber-800/80 text-amber-200'
-                      : f.severity === 'SUCCESS'
-                      ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-200'
-                      : 'bg-slate-950 border-slate-800 text-slate-300'
+                        ? 'bg-amber-950/40 border-amber-800/80 text-amber-200'
+                        : f.severity === 'SUCCESS'
+                          ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-200'
+                          : 'bg-slate-950 border-slate-800 text-slate-300'
                   }`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-mono text-[10px] uppercase font-bold text-sky-400">[{f.agent}]</span>
+                      <span className="font-mono text-[10px] uppercase font-bold text-sky-400">
+                        [{f.agent}]
+                      </span>
                       <span className="font-semibold text-white">{f.title}</span>
                     </div>
                     <p className="text-slate-400 text-[11px] leading-relaxed">{f.description}</p>
                     {f.actionRequired && (
-                      <p className="text-sky-300 text-[11px] mt-1 font-mono">Acción sugerida: {f.actionRequired}</p>
+                      <p className="text-sky-300 text-[11px] mt-1 font-mono">
+                        Acción sugerida: {f.actionRequired}
+                      </p>
                     )}
                   </div>
                 </div>

@@ -5,7 +5,11 @@ import { LadhStudy } from '../types/ladh';
 import { generateInitialChecklist } from './regulatoryRequirements';
 import { AIRCRAFT_DATABASE } from './aircraftDatabase';
 import { HELICOPTER_DATABASE } from './helicopterDatabase';
-import { getDefaultArgentineWindDistribution, calculateRunwayOrientation, calculateOACIUsability } from '../services/windEngine';
+import {
+  getDefaultArgentineWindDistribution,
+  calculateRunwayOrientation,
+  calculateOACIUsability
+} from '../services/windEngine';
 
 // Generador de datos iniciales representativos de clientes de SAI Consult
 export function getSampleClients(): {
@@ -20,11 +24,11 @@ export function getSampleClients(): {
   docsClient1[0].submittedDate = '2026-06-15';
   docsClient1[0].approvalDate = '2026-07-10';
   docsClient1[0].notes = 'Aprobado formalmente por Mesa de Entradas ANAC.';
-  
+
   docsClient1[1].status = 'APPROVED';
   docsClient1[1].submittedDate = '2026-06-18';
   docsClient1[1].approvalDate = '2026-07-20';
-  
+
   docsClient1[2].status = 'IN_PROGRESS';
   docsClient1[2].submittedDate = '2026-07-02';
   docsClient1[2].notes = 'En revisión de curvas de nivel y cerco olímpico.';
@@ -56,7 +60,8 @@ export function getSampleClients(): {
     referenceTemperatureC: 31.5,
     terrainLengthAvailableM: 1100,
     terrainWidthAvailableM: 120,
-    notes: 'Pista de tierra compactada con siembra de césped de alta densidad. Operaciones agrícolas diurnas VFR y traslado ejecutivo Cessna 182 / Piper Pawnee.',
+    notes:
+      'Pista de tierra compactada con siembra de césped de alta densidad. Operaciones agrícolas diurnas VFR y traslado ejecutivo Cessna 182 / Piper Pawnee.',
     documents: docsClient1,
     createdAt: '2026-06-10',
     updatedAt: '2026-08-20'
@@ -65,7 +70,12 @@ export function getSampleClients(): {
   // Estudio de viento para Cliente 1
   const windDefaults = getDefaultArgentineWindDistribution();
   const orientation1 = calculateRunwayOrientation(45, -8.2); // TH 045°, Decl -8.2° W -> MH 053° -> QFU 05/23
-  const usability1 = calculateOACIUsability(orientation1, windDefaults.distribution, windDefaults.calmsPercent, 10);
+  const usability1 = calculateOACIUsability(
+    orientation1,
+    windDefaults.distribution,
+    windDefaults.calmsPercent,
+    10
+  );
 
   const windStudy1: WindStudyResult = {
     id: 'ws-agro-01',
@@ -78,7 +88,8 @@ export function getSampleClients(): {
     calmsPercent: windDefaults.calmsPercent,
     windDistribution: windDefaults.distribution,
     createdAt: '2026-07-15',
-    notes: 'Orientación de pista 05/23 alineada con el Pampero (SW) y vientos cálidos del ENE. Coeficiente supera el 95% reglamentario.'
+    notes:
+      'Orientación de pista 05/23 alineada con el Pampero (SW) y vientos cálidos del ENE. Coeficiente supera el 95% reglamentario.'
   };
 
   // Estudio LAD para Cliente 1
@@ -142,7 +153,8 @@ export function getSampleClients(): {
     referenceTemperatureC: 33.0,
     terrainLengthAvailableM: 32,
     terrainWidthAvailableM: 32,
-    notes: 'Helipuerto elevado sobre cubierta de edificio para traslados de alta complejidad y ablación de órganos. Helicóptero de diseño Bell 429 GlobalRanger bimotor.',
+    notes:
+      'Helipuerto elevado sobre cubierta de edificio para traslados de alta complejidad y ablación de órganos. Helicóptero de diseño Bell 429 GlobalRanger bimotor.',
     documents: docsClient2,
     createdAt: '2026-07-01',
     updatedAt: '2026-08-25'

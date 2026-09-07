@@ -1,20 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Compass, 
-  Wind, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Save, 
-  Check,
-  Sliders
-} from 'lucide-react';
+import { Compass, Wind, CheckCircle2, AlertTriangle, Save, Check, Sliders } from 'lucide-react';
 import { Client } from '../../types/client';
 import { WindStudyResult } from '../../types/wind';
 import { WindRoseChart } from './WindRoseChart';
 import { WindMatrixTable } from './WindMatrixTable';
-import { 
-  calculateRunwayOrientation, 
-  calculateOACIUsability, 
+import {
+  calculateRunwayOrientation,
+  calculateOACIUsability,
   getDefaultArgentineWindDistribution,
   calculateWindComponents
 } from '../../services/windEngine';
@@ -30,9 +22,11 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
   clients,
   selectedClient,
   onSaveStudy,
-  savedStudies
+  savedStudies: _savedStudies
 }) => {
-  const [targetClientId, setTargetClientId] = useState<string>(selectedClient?.id || clients[0]?.id || '');
+  const [targetClientId, setTargetClientId] = useState<string>(
+    selectedClient?.id || clients[0]?.id || ''
+  );
   const [studyName, setStudyName] = useState('Estudio de Orientación de Pista & Viento Cruzado');
   const [trueHeading, setTrueHeading] = useState<number>(45);
   const [magneticDeclination, setMagneticDeclination] = useState<number>(-8.2); // Típico Argentina (-8.2° W)
@@ -90,7 +84,8 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
             <span>Orientación & Viento Cruzado</span>
           </h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Cálculo de QFU, rosa de vientos vectorial y factor de utilización según OACI Anexo 14 y RAAC 153
+            Cálculo de QFU, rosa de vientos vectorial y factor de utilización según OACI Anexo 14 y
+            RAAC 153
           </p>
         </div>
 
@@ -98,7 +93,11 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
           onClick={handleSave}
           className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#1a365d] hover:bg-[#0f2942] text-white text-sm font-semibold transition-colors shadow-xs"
         >
-          {savedSuccess ? <Check className="h-4 w-4 text-emerald-300" /> : <Save className="h-4 w-4" />}
+          {savedSuccess ? (
+            <Check className="h-4 w-4 text-emerald-300" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
           <span>{savedSuccess ? '¡Guardado!' : 'Guardar en expediente'}</span>
         </button>
       </div>
@@ -109,7 +108,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
           <span className="text-xs font-semibold text-slate-700">Expediente:</span>
           <select
             value={targetClientId}
-            onChange={(e) => setTargetClientId(e.target.value)}
+            onChange={e => setTargetClientId(e.target.value)}
             className="bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-400 font-medium cursor-pointer shadow-xs"
           >
             {clients.map(c => (
@@ -124,7 +123,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
           <input
             type="text"
             value={studyName}
-            onChange={(e) => setStudyName(e.target.value)}
+            onChange={e => setStudyName(e.target.value)}
             placeholder="Título del estudio..."
             className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-400 shadow-xs"
           />
@@ -164,7 +163,9 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                 <span className="text-2xl font-black text-[#0f2942] font-mono tracking-widest">
                   {orientation.qfuLabel}
                 </span>
-                <span className="text-[11px] text-emerald-600 font-semibold block">Eje Bipodal</span>
+                <span className="text-[11px] text-emerald-600 font-semibold block">
+                  Eje Bipodal
+                </span>
               </div>
 
               <div className="h-10 w-px bg-slate-200" />
@@ -200,7 +201,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                     min="0"
                     max="359"
                     value={trueHeading}
-                    onChange={(e) => setTrueHeading(Number(e.target.value))}
+                    onChange={e => setTrueHeading(Number(e.target.value))}
                     className="w-16 bg-white border border-slate-200 rounded px-2 py-0.5 text-right font-bold text-slate-900 text-xs focus:outline-none focus:border-blue-500"
                   />
                   <span className="text-slate-500">°</span>
@@ -211,7 +212,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                 min="0"
                 max="359"
                 value={trueHeading}
-                onChange={(e) => setTrueHeading(Number(e.target.value))}
+                onChange={e => setTrueHeading(Number(e.target.value))}
                 className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-700"
               />
             </div>
@@ -229,7 +230,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                     min="-25"
                     max="25"
                     value={magneticDeclination}
-                    onChange={(e) => setMagneticDeclination(parseFloat(e.target.value))}
+                    onChange={e => setMagneticDeclination(parseFloat(e.target.value))}
                     className="w-16 bg-white border border-slate-200 rounded px-2 py-0.5 text-right font-bold text-blue-700 text-xs focus:outline-none focus:border-blue-500"
                   />
                   <span className="text-slate-500">°</span>
@@ -241,7 +242,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                 max="25"
                 step="0.1"
                 value={magneticDeclination}
-                onChange={(e) => setMagneticDeclination(parseFloat(e.target.value))}
+                onChange={e => setMagneticDeclination(parseFloat(e.target.value))}
                 className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-700"
               />
             </div>
@@ -252,7 +253,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                 Viento Cruzado Admisible de la Aeronave de Diseño:
               </label>
               <div className="grid grid-cols-3 gap-2">
-                {[10, 13, 20].map((kt) => (
+                {[10, 13, 20].map(kt => (
                   <button
                     key={kt}
                     type="button"
@@ -271,31 +272,37 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
           </div>
 
           {/* Resultado de Usabilidad OACI */}
-          <div className={`border rounded-xl p-4 shadow-xs ${
-            usabilityAnalysis.isCompliantOACI
-              ? 'bg-emerald-50/70 border-emerald-200'
-              : 'bg-amber-50/70 border-amber-200'
-          }`}>
+          <div
+            className={`border rounded-xl p-4 shadow-xs ${
+              usabilityAnalysis.isCompliantOACI
+                ? 'bg-emerald-50/70 border-emerald-200'
+                : 'bg-amber-50/70 border-amber-200'
+            }`}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
                   Factor de Utilización OACI Anexo 14
                 </span>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className={`text-3xl font-extrabold font-mono ${
-                    usabilityAnalysis.isCompliantOACI ? 'text-emerald-700' : 'text-amber-700'
-                  }`}>
+                  <span
+                    className={`text-3xl font-extrabold font-mono ${
+                      usabilityAnalysis.isCompliantOACI ? 'text-emerald-700' : 'text-amber-700'
+                    }`}
+                  >
                     {usabilityAnalysis.usabilityPercent}%
                   </span>
                   <span className="text-xs text-slate-500">Mínimo reglamentario: 95.0%</span>
                 </div>
               </div>
 
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold ${
-                usabilityAnalysis.isCompliantOACI
-                  ? 'bg-white border-emerald-300 text-emerald-800'
-                  : 'bg-white border-amber-300 text-amber-800'
-              }`}>
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold ${
+                  usabilityAnalysis.isCompliantOACI
+                    ? 'bg-white border-emerald-300 text-emerald-800'
+                    : 'bg-white border-amber-300 text-amber-800'
+                }`}
+              >
                 {usabilityAnalysis.isCompliantOACI ? (
                   <>
                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -336,7 +343,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                   min="0"
                   max="359"
                   value={testWindDir}
-                  onChange={(e) => setTestWindDir(Number(e.target.value))}
+                  onChange={e => setTestWindDir(Number(e.target.value))}
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 font-mono font-bold text-slate-800"
                 />
               </div>
@@ -347,7 +354,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
                   min="0"
                   max="60"
                   value={testWindSpeed}
-                  onChange={(e) => setTestWindSpeed(Number(e.target.value))}
+                  onChange={e => setTestWindSpeed(Number(e.target.value))}
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 font-mono font-bold text-slate-800"
                 />
               </div>
@@ -356,17 +363,23 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
             <div className="grid grid-cols-3 gap-2 text-center pt-2 border-t border-slate-100 font-mono text-xs">
               <div className="bg-slate-50 p-2 rounded-lg">
                 <span className="text-[10px] text-slate-500 block">V. Cruzado</span>
-                <span className={`font-bold text-sm ${liveComponents.crosswind > admissibleCrosswindKt ? 'text-red-600' : 'text-slate-800'}`}>
+                <span
+                  className={`font-bold text-sm ${liveComponents.crosswind > admissibleCrosswindKt ? 'text-red-600' : 'text-slate-800'}`}
+                >
                   {liveComponents.crosswind} kt
                 </span>
               </div>
               <div className="bg-slate-50 p-2 rounded-lg">
                 <span className="text-[10px] text-slate-500 block">De Frente</span>
-                <span className="font-bold text-sm text-emerald-700">{liveComponents.headwind} kt</span>
+                <span className="font-bold text-sm text-emerald-700">
+                  {liveComponents.headwind} kt
+                </span>
               </div>
               <div className="bg-slate-50 p-2 rounded-lg">
                 <span className="text-[10px] text-slate-500 block">De Cola</span>
-                <span className="font-bold text-sm text-amber-700">{liveComponents.tailwind} kt</span>
+                <span className="font-bold text-sm text-amber-700">
+                  {liveComponents.tailwind} kt
+                </span>
               </div>
             </div>
           </div>
@@ -374,10 +387,7 @@ export const WindStudyView: React.FC<WindStudyViewProps> = ({
       </div>
 
       {/* Matriz Completa de Vientos */}
-      <WindMatrixTable
-        distribution={distribution}
-        calmsPercent={calmsPercent}
-      />
+      <WindMatrixTable distribution={distribution} calmsPercent={calmsPercent} />
     </div>
   );
 };

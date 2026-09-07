@@ -1,5 +1,5 @@
 import React from 'react';
-import { Printer, Plane, ArrowLeft, Download, ShieldCheck } from 'lucide-react';
+import { Printer, ArrowLeft } from 'lucide-react';
 import { Client } from '../../types/client';
 import { WindStudyResult } from '../../types/wind';
 import { LadStudy } from '../../types/lad';
@@ -88,8 +88,12 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
           </div>
 
           <div className="text-right font-mono">
-            <span className="text-[10px] text-slate-500 block uppercase">EXPEDIENTE TÉCNICO Nº</span>
-            <span className="text-sm font-bold text-slate-900">{client.cuit || 'SAI-2026-001'}</span>
+            <span className="text-[10px] text-slate-500 block uppercase">
+              EXPEDIENTE TÉCNICO Nº
+            </span>
+            <span className="text-sm font-bold text-slate-900">
+              {client.cuit || 'SAI-2026-001'}
+            </span>
             <span className="text-[10px] text-slate-500 block mt-1">
               Fecha: {new Date().toLocaleDateString('es-AR')}
             </span>
@@ -105,7 +109,8 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             ESTUDIO INTEGRAL DE FACTIBILIDAD TÉCNICA Y OPERATIVA ({client.projectType})
           </h2>
           <p className="text-xs text-slate-600 mt-1">
-            Conforme Código Aeronáutico Ley 17.285, ANAC RAAC Parte {client.projectType === 'LADH' ? '154' : '153'} y OACI Anexo 14
+            Conforme Código Aeronáutico Ley 17.285, ANAC RAAC Parte{' '}
+            {client.projectType === 'LADH' ? '154' : '153'} y OACI Anexo 14
           </p>
         </div>
 
@@ -125,12 +130,15 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             </div>
             <div>
               <span className="text-slate-500 block">Ubicación / Predio:</span>
-              <span className="font-semibold text-slate-900">{client.locationName}, {client.province}</span>
+              <span className="font-semibold text-slate-900">
+                {client.locationName}, {client.province}
+              </span>
             </div>
             <div>
               <span className="text-slate-500 block">Punto de Referencia (ARP):</span>
               <span className="font-semibold text-slate-900">
-                {client.coordinates.formatted || `${client.coordinates.lat}°, ${client.coordinates.lng}°`}
+                {client.coordinates.formatted ||
+                  `${client.coordinates.lat}°, ${client.coordinates.lng}°`}
               </span>
             </div>
             <div>
@@ -139,7 +147,9 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             </div>
             <div>
               <span className="text-slate-500 block">Temperatura Referencia ISA:</span>
-              <span className="font-semibold text-slate-900">{client.referenceTemperatureC || 31}°C</span>
+              <span className="font-semibold text-slate-900">
+                {client.referenceTemperatureC || 31}°C
+              </span>
             </div>
           </div>
         </div>
@@ -153,24 +163,28 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             <div className="grid grid-cols-3 gap-3 text-xs font-mono bg-slate-50 p-3 rounded-lg border border-slate-200">
               <div>
                 <span className="text-slate-500 block">Designación QFU:</span>
-                <span className="font-bold text-sky-800 text-sm">{clientWindStudy.orientation.qfuLabel}</span>
+                <span className="font-bold text-sky-800 text-sm">
+                  {clientWindStudy.orientation.qfuLabel}
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Rumbo Magnético:</span>
                 <span className="font-semibold text-slate-800">
-                  {clientWindStudy.orientation.magneticHeading}° / {clientWindStudy.orientation.reciprocalHeading}°
+                  {clientWindStudy.orientation.magneticHeading}° /{' '}
+                  {clientWindStudy.orientation.reciprocalHeading}°
                 </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Factor de Usabilidad:</span>
-                <span className={`font-bold text-sm ${clientWindStudy.isCompliantOACI ? 'text-emerald-700' : 'text-red-700'}`}>
-                  {clientWindStudy.usabilityPercent}% {clientWindStudy.isCompliantOACI ? '(Conforme OACI ≥95%)' : '(<95%)'}
+                <span
+                  className={`font-bold text-sm ${clientWindStudy.isCompliantOACI ? 'text-emerald-700' : 'text-red-700'}`}
+                >
+                  {clientWindStudy.usabilityPercent}%{' '}
+                  {clientWindStudy.isCompliantOACI ? '(Conforme OACI ≥95%)' : '(<95%)'}
                 </span>
               </div>
             </div>
-            <p className="text-[11px] text-slate-600 mt-1 italic">
-              {clientWindStudy.notes}
-            </p>
+            <p className="text-[11px] text-slate-600 mt-1 italic">{clientWindStudy.notes}</p>
           </div>
         )}
 
@@ -183,19 +197,27 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg border border-slate-200">
               <div>
                 <span className="text-slate-500 block">Aeronave Diseño:</span>
-                <span className="font-semibold text-slate-900">{clientLadStudy.aircraft.model}</span>
+                <span className="font-semibold text-slate-900">
+                  {clientLadStudy.aircraft.model}
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Longitud Pista:</span>
-                <span className="font-bold text-slate-900">{clientLadStudy.correctedRunwayLengthRequiredM} m</span>
+                <span className="font-bold text-slate-900">
+                  {clientLadStudy.correctedRunwayLengthRequiredM} m
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Franja de Seguridad:</span>
-                <span className="font-bold text-slate-900">{clientLadStudy.stripLengthRequiredM} m</span>
+                <span className="font-bold text-slate-900">
+                  {clientLadStudy.stripLengthRequiredM} m
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Disponibilidad:</span>
-                <span className="font-bold text-emerald-700">{clientLadStudy.terrainLengthAvailableM} m (Apto)</span>
+                <span className="font-bold text-emerald-700">
+                  {clientLadStudy.terrainLengthAvailableM} m (Apto)
+                </span>
               </div>
             </div>
           </div>
@@ -209,19 +231,27 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-lg border border-slate-200">
               <div>
                 <span className="text-slate-500 block">Helicóptero Diseño:</span>
-                <span className="font-semibold text-slate-900">{clientLadhStudy.helicopter.model}</span>
+                <span className="font-semibold text-slate-900">
+                  {clientLadhStudy.helicopter.model}
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">FATO Requerida (1.5D):</span>
-                <span className="font-bold text-slate-900">{clientLadhStudy.fatoDimensionRequiredM} m</span>
+                <span className="font-bold text-slate-900">
+                  {clientLadhStudy.fatoDimensionRequiredM} m
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Área con Seguridad:</span>
-                <span className="font-bold text-slate-900">{clientLadhStudy.totalAreaWithSafetyRequiredM} m</span>
+                <span className="font-bold text-slate-900">
+                  {clientLadhStudy.totalAreaWithSafetyRequiredM} m
+                </span>
               </div>
               <div>
                 <span className="text-slate-500 block">Carga Estructural (1.5x):</span>
-                <span className="font-bold text-emerald-700">{clientLadhStudy.dynamicLoadDesignKg} kg</span>
+                <span className="font-bold text-emerald-700">
+                  {clientLadhStudy.dynamicLoadDesignKg} kg
+                </span>
               </div>
             </div>
           </div>
@@ -242,13 +272,19 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {client.documents.map((doc) => (
+              {client.documents.map(doc => (
                 <tr key={doc.id}>
                   <td className="py-1 px-2 font-bold">{doc.code}</td>
                   <td className="py-1 px-2">{doc.category}</td>
                   <td className="py-1 px-2">{doc.title}</td>
                   <td className="py-1 px-2 font-semibold">
-                    {doc.status === 'APPROVED' ? 'Presentado / Aprobado' : doc.status === 'IN_PROGRESS' ? 'En Trámite' : doc.status === 'OBSERVED' ? 'Observado' : 'Pendiente'}
+                    {doc.status === 'APPROVED'
+                      ? 'Presentado / Aprobado'
+                      : doc.status === 'IN_PROGRESS'
+                        ? 'En Trámite'
+                        : doc.status === 'OBSERVED'
+                          ? 'Observado'
+                          : 'Pendiente'}
                   </td>
                 </tr>
               ))}
@@ -267,7 +303,9 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             </span>
           </div>
           <p className="text-xs text-slate-800 leading-relaxed font-serif">
-            {verdict.executiveSummary} Se concluye que el emplazamiento reúne las condiciones reglamentarias para su prosecución formal ante la Dirección Nacional de Infraestructura Aeroportuaria (DINAyG - ANAC) y el Ente Nacional de Comunicaciones (ENACOM).
+            {verdict.executiveSummary} Se concluye que el emplazamiento reúne las condiciones
+            reglamentarias para su prosecución formal ante la Dirección Nacional de Infraestructura
+            Aeroportuaria (DINAyG - ANAC) y el Ente Nacional de Comunicaciones (ENACOM).
           </p>
         </div>
 
@@ -276,7 +314,9 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
           <div>
             <div className="border-b border-slate-400 w-48 mx-auto mb-2 h-12" />
             <span className="font-bold block text-slate-900">Ing. Aeronáutico Matriculado</span>
-            <span className="text-slate-500 text-[10px]">Consejo Profesional de Aeronáutica (CPA)</span>
+            <span className="text-slate-500 text-[10px]">
+              Consejo Profesional de Aeronáutica (CPA)
+            </span>
           </div>
           <div>
             <div className="border-b border-slate-400 w-48 mx-auto mb-2 h-12" />

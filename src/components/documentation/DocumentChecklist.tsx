@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  ShieldCheck, 
-  Radio, 
-  Landmark, 
-  Building2, 
-  Leaf, 
-  CheckCircle2, 
-  Clock, 
+import {
+  ShieldCheck,
+  Radio,
+  Landmark,
+  Building2,
+  Leaf,
+  CheckCircle2,
+  Clock,
   AlertCircle
 } from 'lucide-react';
 import { DocumentItemModel, DocumentStatus, DocumentCategory } from '../../types/client';
@@ -24,7 +24,11 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
   const [activeCategory, setActiveCategory] = useState<DocumentCategory | 'ALL'>('ALL');
   const [statusFilter, setStatusFilter] = useState<DocumentStatus | 'ALL'>('ALL');
 
-  const categories: Array<{ id: DocumentCategory; label: string; icon: React.ComponentType<{ className?: string }> }> = [
+  const categories: Array<{
+    id: DocumentCategory;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }> = [
     { id: 'ANAC', label: 'ANAC (Infraestructura)', icon: ShieldCheck },
     { id: 'ENACOM', label: 'ENACOM (Radioenlaces)', icon: Radio },
     { id: 'CATASTRO', label: 'Catastro & Jurídico', icon: Landmark },
@@ -122,7 +126,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
           Todos ({totalCount})
         </button>
 
-        {categories.map((cat) => {
+        {categories.map(cat => {
           const Icon = cat.icon;
           const count = documents.filter(d => d.category === cat.id).length;
           const isActive = activeCategory === cat.id;
@@ -139,7 +143,9 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
             >
               <Icon className="h-3.5 w-3.5" />
               <span>{cat.label}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}
+              >
                 {count}
               </span>
             </button>
@@ -150,11 +156,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
       {/* Lista de Documentos Filtrados */}
       <div className="space-y-2">
         {filteredDocuments.map(doc => (
-          <DocumentItem
-            key={doc.id}
-            document={doc}
-            onUpdateStatus={onUpdateDocumentStatus}
-          />
+          <DocumentItem key={doc.id} document={doc} onUpdateStatus={onUpdateDocumentStatus} />
         ))}
       </div>
     </div>
