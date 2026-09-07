@@ -1,12 +1,3 @@
-> [!IMPORTANT]
-> **AVISO OBLIGATORIO PARA AGENTES DE INTELIGENCIA ARTIFICIAL (AI AGENTS)**:
-> Si eres un modelo de lenguaje o agente de IA asistiendo en este proyecto, **NO explores el repositorio archivo por archivo**.
-> Debes dirigirte de forma inmediata al documento maestro de mapeo ubicado en:
-> 👉 **[`Docs/SYSTEM_MAP.md`](file:///c:/Users/Luciano/Desktop/Proyectos/SAI_Software/Docs/SYSTEM_MAP.md)**
-> Allí encontrarás el grafo de arquitectura completo, el índice de una sola línea de cada archivo, los flujos clave de tiempo de ejecución y el inventario de artefactos generados para comprender el 100% del sistema en una sola lectura.
-
----
-
 # SAI Consult - Software de Ingeniería Aeronáutica & Factibilidad Técnica
 ### Estudio Integral LAD / LADH, Orientación Magnética & Viento Cruzado y Gestión de Expedientes
 
@@ -38,9 +29,18 @@ La aplicación se abrirá en `http://localhost:5173`.
 
 ---
 
-## 📚 Documentación Técnica
+## Documentación para colaboradores (humanos e IA)
 
-Toda la documentación arquitectónica, normativa y de diseño se encuentra centralizada en la carpeta [`Docs/`](file:///c:/Users/Luciano/Desktop/Proyectos/SAI_Software/Docs/):
-- **[`Docs/SYSTEM_MAP.md`](file:///c:/Users/Luciano/Desktop/Proyectos/SAI_Software/Docs/SYSTEM_MAP.md)**: Mapeo integral del sistema, grafo de componentes, flujos y directrices.
-- **[`Docs/NORMATIVA_ANAC_ENACOM.md`](file:///c:/Users/Luciano/Desktop/Proyectos/SAI_Software/Docs/NORMATIVA_ANAC_ENACOM.md)**: Referencias normativas RAAC 153/154, Código Aeronáutico y exigencias radioeléctricas ENACOM.
-- **[`Docs/CALCULOS_AERONAUTICOS.md`](file:///c:/Users/Luciano/Desktop/Proyectos/SAI_Software/Docs/CALCULOS_AERONAUTICOS.md)**: Fórmulas de corrección de pista, parámetros helipuerto $D$, componentes de viento y usabilidad OACI.
+Este proyecto mantiene su documentación de arquitectura centralizada en `Docs/`,
+pensada para que cualquier colaborador —humano o asistente de IA— pueda
+orientarse rápido sin depender de explorar archivo por archivo:
+
+- **`Docs/SYSTEM_MAP.md`**: descripción general de la arquitectura, componentes
+  principales y flujos de datos del sistema.
+- **`Docs/NORMATIVA_ANAC_ENACOM.md`**: referencias normativas (RAAC 153/154,
+  Código Aeronáutico, exigencias ENACOM) usadas en los cálculos del sistema.
+- **`Docs/CALCULOS_AERONAUTICOS.md`**: fórmulas y parámetros usados para los
+  cálculos de factibilidad técnica.
+
+Estos documentos son un punto de partida útil, pero no reemplazan la lectura
+del código cuando se trata de cambios específicos.

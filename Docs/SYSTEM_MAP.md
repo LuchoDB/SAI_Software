@@ -61,7 +61,7 @@ graph TD
 
 ## 2. Índice de Una Sola Línea por Archivo
 
-- `README.md`: Portada del proyecto con advertencia superior obligatoria para redirigir a agentes de IA hacia este mapa.
+- `README.md`: Portada del proyecto, descripción de módulos, inicio rápido y guía de documentación para colaboradores.
 - `.gitignore`: Configuración de exclusión para control de versiones Git (node_modules, dist, logs y temporales).
 - `package.json`: Manifiesto de dependencias (React 19, Lucide-React, TypeScript, Vite, TailwindCSS).
 - `vite.config.ts`: Configuración del empaquetador Vite con plugin de React y alias de rutas.
