@@ -1,0 +1,202 @@
+import { Client, DocumentItemModel, DocumentStatus } from '../types/client';
+import { WindStudyResult } from '../types/wind';
+import { LadStudy } from '../types/lad';
+import { LadhStudy } from '../types/ladh';
+import { getSampleClients } from '../data/sampleData';
+import { generateInitialChecklist } from '../data/regulatoryRequirements';
+
+const STORAGE_KEYS = {
+  CLIENTS: 'sai_consult_clients',
+  WIND_STUDIES: 'sai_consult_wind_studies',
+  LAD_STUDIES: 'sai_consult_lad_studies',
+  LADH_STUDIES: 'sai_consult_ladh_studies'
+};
+
+export class StorageService {
+  /**
+   * Inicializa el almacenamiento local con datos de muestra si está vacío
+   */
+  static initialize(): void {
+    const existingClients = localStorage.getItem(STORAGE_KEYS.CLIENTS);
+    if (!existingClients) {
+      const sample = getSampleClients();
+      localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(sample.clients));
+      localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(sample.windStudies));
+      localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(sample.ladStudies));
+      localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(sample.ladhStudies));
+    }
+  }
+
+  // --- CLIENTES ---
+  static getClients(): Client[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.CLIENTS);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error('Error al leer clientes de localStorage', e);
+      return [];
+    }
+  }
+
+  static getClientById(id: string): Client | undefined {
+    const clients = this.getClients();
+    return clients.find(c => c.id === id);
+  }
+
+  static saveClient(client: Client): Client {
+    const clients = this.getClients();
+    const existingIdx = clients.findIndex(c => c.id === client.id);
+
+    if (existingIdx >= 0) {
+      clients[existingIdx] = {
+        ...client,
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+    } else {
+      // Cliente nuevo: asegurar que tenga la lista de documentos regulatorios inicializada
+      const newClient: Client = {
+        ...client,
+        id: client.id || `cli-${Date.now()}`,
+        documents: client.documents && client.documents.length > 0 ? client.documents : generateInitialChecklist(),
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      clients.push(newClient);
+      localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+      return newClient;
+    }
+
+    localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+    return clients[existingIdx];
+  }
+
+  static deleteClient(id: string): boolean {
+    let clients = this.getClients();
+    clients = clients.filter(c => c.id !== id);
+    localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
+    return true;
+  }
+
+  // --- DOCUMENTACIÓN REGULATORIA ---
+  static updateClientDocumentStatus(
+    clientId: string,
+    documentId: string,
+    newStatus: DocumentStatus,
+    notes?: string
+  ): Client | undefined {
+    const client = this.getClientById(clientId);
+    if (!client) return undefined;
+
+    const docIdx = client.documents.findIndex(d => d.id === documentId);
+    if (docIdx >= 0) {
+      client.documents[docIdx].status = newStatus;
+      if (notes !== undefined) {
+        client.documents[docIdx].notes = notes;
+      }
+      if (newStatus === 'APPROVED') {
+        client.documents[docIdx].approvalDate = new Date().toISOString().split('T')[0];
+      }
+      if (newStatus === 'IN_PROGRESS' && !client.documents[docIdx].submittedDate) {
+        client.documents[docIdx].submittedDate = new Date().toISOString().split('T')[0];
+      }
+      return this.saveClient(client);
+    }
+    return client;
+  }
+
+  // --- ESTUDIOS DE VIENTO ---
+  static getWindStudies(clientId?: string): WindStudyResult[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.WIND_STUDIES);
+      const studies: WindStudyResult[] = data ? JSON.parse(data) : [];
+      return clientId ? studies.filter(s => s.clientId === clientId) : studies;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static saveWindStudy(study: WindStudyResult): WindStudyResult {
+    const studies = this.getWindStudies();
+    const existingIdx = studies.findIndex(s => s.id === study.id);
+    if (existingIdx >= 0) {
+      studies[existingIdx] = study;
+    } else {
+      studies.push(study);
+    }
+    localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(studies));
+    return study;
+  }
+
+  // --- ESTUDIOS LAD (PISTAS) ---
+  static getLadStudies(clientId?: string): LadStudy[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.LAD_STUDIES);
+      const studies: LadStudy[] = data ? JSON.parse(data) : [];
+      return clientId ? studies.filter(s => s.clientId === clientId) : studies;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static saveLadStudy(study: LadStudy): LadStudy {
+    const studies = this.getLadStudies();
+    const existingIdx = studies.findIndex(s => s.id === study.id);
+    if (existingIdx >= 0) {
+      studies[existingIdx] = study;
+    } else {
+      studies.push(study);
+    }
+    localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(studies));
+    return study;
+  }
+
+  // --- ESTUDIOS LADH (HELIPUERTOS) ---
+  static getLadhStudies(clientId?: string): LadhStudy[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.LADH_STUDIES);
+      const studies: LadhStudy[] = data ? JSON.parse(data) : [];
+      return clientId ? studies.filter(s => s.clientId === clientId) : studies;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static saveLadhStudy(study: LadhStudy): LadhStudy {
+    const studies = this.getLadhStudies();
+    const existingIdx = studies.findIndex(s => s.id === study.id);
+    if (existingIdx >= 0) {
+      studies[existingIdx] = study;
+    } else {
+      studies.push(study);
+    }
+    localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(studies));
+    return study;
+  }
+
+  // --- EXPORTACIÓN E IMPORTACIÓN DE EXPEDIENTES (BACKUP JSON) ---
+  static exportFullBackup(): string {
+    const backup = {
+      version: '1.0.0',
+      exportedAt: new Date().toISOString(),
+      clients: this.getClients(),
+      windStudies: this.getWindStudies(),
+      ladStudies: this.getLadStudies(),
+      ladhStudies: this.getLadhStudies()
+    };
+    return JSON.stringify(backup, null, 2);
+  }
+
+  static importFullBackup(jsonString: string): boolean {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (parsed.clients) localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(parsed.clients));
+      if (parsed.windStudies) localStorage.setItem(STORAGE_KEYS.WIND_STUDIES, JSON.stringify(parsed.windStudies));
+      if (parsed.ladStudies) localStorage.setItem(STORAGE_KEYS.LAD_STUDIES, JSON.stringify(parsed.ladStudies));
+      if (parsed.ladhStudies) localStorage.setItem(STORAGE_KEYS.LADH_STUDIES, JSON.stringify(parsed.ladhStudies));
+      return true;
+    } catch (e) {
+      console.error('Error al importar backup JSON', e);
+      return false;
+    }
+  }
+}

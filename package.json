@@ -1,0 +1,41 @@
+{
+  "name": "sai-consult-desktop",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Software de Factibilidad Aeronáutica LAD/LADH y Viento Cruzado - SAI Consult",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "sai-consult",
+    "aeronautica",
+    "lad",
+    "ladh",
+    "helipuerto",
+    "aerodromo",
+    "viento-cruzado",
+    "anac",
+    "enacom"
+  ],
+  "author": "SAI Consult",
+  "license": "Proprietary",
+  "dependencies": {
+    "lucide-react": "^1.41.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.5.5",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  }
+}
