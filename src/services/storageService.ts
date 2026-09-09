@@ -67,7 +67,37 @@ export class StorageService {
   static getClients(): Client[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.CLIENTS);
-      return data ? JSON.parse(data) : [];
+      const clients: Client[] = data ? JSON.parse(data) : [];
+      let needsResave = false;
+      const sanitized = clients.map(c => {
+        const hasLegacy =
+          !c.documents ||
+          c.documents.length === 0 ||
+          c.documents.some(
+            d =>
+              !d.categoria ||
+              !d.organismo ||
+              d.code === 'ANAC-F501' ||
+              (d as unknown as { category: string }).category === 'ENACOM' ||
+              d.id === 'ANAC-F501'
+          );
+        if (hasLegacy) {
+          needsResave = true;
+          return {
+            ...c,
+            documents: generateInitialChecklist({
+              projectType: c.projectType,
+              isFrontierZone: c.isFrontierZone,
+              isAgroEventual: c.isAgroEventual
+            })
+          };
+        }
+        return c;
+      });
+      if (needsResave) {
+        localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(sanitized));
+      }
+      return sanitized;
     } catch (e) {
       console.error('Error al leer clientes de localStorage', e);
       return [];
