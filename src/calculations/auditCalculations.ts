@@ -16,22 +16,16 @@ export interface DocumentSummary {
  */
 export function calculateDocumentSummary(documents: DocumentItemModel[]): DocumentSummary {
   const total = documents.length;
-  const approved = documents.filter(
-    d => d.status === 'APPROVED' || d.estado === 'Aprobado'
-  ).length;
+  const approved = documents.filter(d => d.status === 'APPROVED' || d.estado === 'Aprobado').length;
   const inProgress = documents.filter(
     d => d.status === 'IN_PROGRESS' || d.estado === 'En trámite'
   ).length;
   const observed = documents.filter(
     d => d.status === 'OBSERVED' || d.estado === 'Observado'
   ).length;
-  const pending = documents.filter(
-    d => d.status === 'PENDING' || d.estado === 'Pendiente'
-  ).length;
+  const pending = documents.filter(d => d.status === 'PENDING' || d.estado === 'Pendiente').length;
 
-  const mandatory = documents.filter(
-    d => d.isMandatory || d.categoria === 'Obligatorio'
-  );
+  const mandatory = documents.filter(d => d.isMandatory || d.categoria === 'Obligatorio');
   const mandatoryApproved = mandatory.filter(
     d => d.status === 'APPROVED' || d.estado === 'Aprobado'
   ).length;

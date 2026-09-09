@@ -107,16 +107,17 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
       id: 'group-anac-main',
       organismo: 'ANAC',
       title: 'ANAC — Dirección de Aeródromos / DGIySA / CAD',
-      subtitle: 'Trámites de presentación formal, datos técnicos, arancel A.D.1.9 y libros de registro',
+      subtitle:
+        'Trámites de presentación formal, datos técnicos, arancel A.D.1.9 y libros de registro',
       icon: ShieldCheck,
-      filter: d =>
-        (d.organismo === 'ANAC' || d.category === 'ANAC') && d.id !== 'AGRO-RAAC137'
+      filter: d => (d.organismo === 'ANAC' || d.category === 'ANAC') && d.id !== 'AGRO-RAAC137'
     },
     {
       id: 'group-escribania',
       organismo: 'ESCRIBANÍA',
       title: 'ESCRIBANÍA — Instrumentos Notariales & Dominiales',
-      subtitle: 'Título o contrato certificado, plano de mensura y acreditación de personería jurídica',
+      subtitle:
+        'Título o contrato certificado, plano de mensura y acreditación de personería jurídica',
       icon: Landmark,
       filter: d => d.organismo === 'ESCRIBANÍA' || d.category === 'ESCRIBANÍA'
     },
@@ -132,10 +133,10 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
       id: 'group-defensa',
       organismo: 'DEFENSA',
       title: 'DEFENSA — Zona de Frontera',
-      subtitle: 'Aplica a predios en zona de seguridad de frontera (Ley 23.554 y Decreto-Ley 15.385/44)',
+      subtitle:
+        'Aplica a predios en zona de seguridad de frontera (Ley 23.554 y Decreto-Ley 15.385/44)',
       icon: ShieldCheck,
-      filter: d =>
-        (d.organismo === 'DEFENSA' || d.category === 'DEFENSA') || d.id === 'FRONT-LEY'
+      filter: d => d.organismo === 'DEFENSA' || d.category === 'DEFENSA' || d.id === 'FRONT-LEY'
     },
     {
       id: 'group-anac-dnso',
@@ -173,7 +174,9 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
         <button
           onClick={() =>
             setStatusFilter(
-              statusFilter === 'IN_PROGRESS' || statusFilter === 'En trámite' ? 'ALL' : 'IN_PROGRESS'
+              statusFilter === 'IN_PROGRESS' || statusFilter === 'En trámite'
+                ? 'ALL'
+                : 'IN_PROGRESS'
             )
           }
           className={`p-3 rounded-xl border text-left transition cursor-pointer ${
@@ -233,7 +236,9 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 text-blue-600 shrink-0" />
-            <span className="font-semibold text-slate-700">Condiciones Específicas del Predio:</span>
+            <span className="font-semibold text-slate-700">
+              Condiciones Específicas del Predio:
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -279,9 +284,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
 
         {categories.map(cat => {
           const Icon = cat.icon;
-          const count = documents.filter(
-            d => (d.organismo || d.category) === cat.id
-          ).length;
+          const count = documents.filter(d => (d.organismo || d.category) === cat.id).length;
 
           // Si el organismo no tiene documentos aplicables en este cliente (ej. DEFENSA en zona no fronteriza), no mostrar la pestaña
           if (count === 0 && cat.id === 'DEFENSA') return null;
@@ -327,9 +330,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
                     <GroupIcon className="h-4 w-4 text-[#0f2942]" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[#0f2942] font-heading">
-                      {group.title}
-                    </h3>
+                    <h3 className="text-sm font-bold text-[#0f2942] font-heading">{group.title}</h3>
                     <p className="text-[11px] text-slate-500">{group.subtitle}</p>
                   </div>
                 </div>
@@ -367,10 +368,15 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
           <span>Normativa Aplicable al Registro LAD/LADH (Anexo IX ANAC)</span>
         </div>
         <p className="text-[11px] text-slate-500">
-          Esta nómina constituye la lista canónica oficial requerida para el registro de Lugares Aptos por Exclusividad (LAD / LADH). Los trámites propios de una habilitación completa de aeródromo o helipuerto público/privado (Memoria Técnica con cálculo de resistencia, Plano SLO perimétrico 360°, Estudio Climatológico, Estudio Geotécnico, Plan SSEI, dictámenes de telecomunicaciones ENACOM, Catastro y Zonificación Municipal) corresponden a un régimen de habilitación independiente (RAAC 153/154) y no forman parte del flujo simplificado LAD/LADH.
+          Esta nómina constituye la lista canónica oficial requerida para el registro de Lugares
+          Aptos por Exclusividad (LAD / LADH). Los trámites propios de una habilitación completa de
+          aeródromo o helipuerto público/privado (Memoria Técnica con cálculo de resistencia, Plano
+          SLO perimétrico 360°, Estudio Climatológico, Estudio Geotécnico, Plan SSEI, dictámenes de
+          telecomunicaciones ENACOM, Catastro y Zonificación Municipal) corresponden a un régimen de
+          habilitación independiente (RAAC 153/154) y no forman parte del flujo simplificado
+          LAD/LADH.
         </p>
       </div>
     </div>
   );
 };
-

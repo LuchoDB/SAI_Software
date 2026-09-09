@@ -84,10 +84,13 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
     d => d.organismo === 'ANAC' || (d as unknown as { category: string }).category === 'ANAC'
   );
   const escribaniaDocs = client.documents.filter(
-    d => d.organismo === 'ESCRIBANÍA' || (d as unknown as { category: string }).category === 'ESCRIBANÍA'
+    d =>
+      d.organismo === 'ESCRIBANÍA' ||
+      (d as unknown as { category: string }).category === 'ESCRIBANÍA'
   );
   const ambientalDocs = client.documents.filter(
-    d => d.organismo === 'AMBIENTAL' || (d as unknown as { category: string }).category === 'AMBIENTAL'
+    d =>
+      d.organismo === 'AMBIENTAL' || (d as unknown as { category: string }).category === 'AMBIENTAL'
   );
 
   const isAnacOk = anacDocs.some(

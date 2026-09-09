@@ -68,8 +68,7 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
     setIsEditingNotes(false);
   };
 
-  const isObligatorio =
-    document.categoria === 'Obligatorio' || document.isMandatory === true;
+  const isObligatorio = document.categoria === 'Obligatorio' || document.isMandatory === true;
 
   const organismoBadgeColors: Record<string, string> = {
     ANAC: 'bg-blue-50 text-blue-800 border-blue-200',
@@ -184,4 +183,3 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
     </div>
   );
 };
-

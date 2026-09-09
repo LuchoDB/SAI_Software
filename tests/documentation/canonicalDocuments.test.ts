@@ -82,13 +82,19 @@ describe('Documentación Regulatoria - Lista Canónica LAD/LADH', () => {
   });
 
   it('omits FRONT-LEY when isFrontierZone is false or not provided', () => {
-    const docsNoFrontier = generateCanonicalDocumentation({ projectType: 'LAD', isFrontierZone: false });
+    const docsNoFrontier = generateCanonicalDocumentation({
+      projectType: 'LAD',
+      isFrontierZone: false
+    });
     const ids = docsNoFrontier.map(d => d.id);
     expect(ids).not.toContain('FRONT-LEY');
   });
 
   it('includes FRONT-LEY under DEFENSA when isFrontierZone is true', () => {
-    const docsFrontier = generateCanonicalDocumentation({ projectType: 'LAD', isFrontierZone: true });
+    const docsFrontier = generateCanonicalDocumentation({
+      projectType: 'LAD',
+      isFrontierZone: true
+    });
     const frontItem = docsFrontier.find(d => d.id === 'FRONT-LEY');
     expect(frontItem).toBeDefined();
     expect(frontItem?.organismo).toBe('DEFENSA');
@@ -106,8 +112,12 @@ describe('Documentación Regulatoria - Lista Canónica LAD/LADH', () => {
     const agroItem = docs.find(d => d.id === 'AGRO-RAAC137');
     expect(agroItem).toBeDefined();
     expect(agroItem?.organismo).toBe('ANAC');
-    expect(agroItem?.organismo_dependencia).toBe('Dirección Nacional de Seguridad Operacional (DNSO)');
-    expect(agroItem?.descripcion).toContain('reemplaza al registro LAD estándar, no lo complementa');
+    expect(agroItem?.organismo_dependencia).toBe(
+      'Dirección Nacional de Seguridad Operacional (DNSO)'
+    );
+    expect(agroItem?.descripcion).toContain(
+      'reemplaza al registro LAD estándar, no lo complementa'
+    );
   });
 
   it('strictly groups and orders documents: ANAC -> ESCRIBANÍA -> AMBIENTAL -> DEFENSA -> ANAC (DNSO)', () => {

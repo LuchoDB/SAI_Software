@@ -260,4 +260,3 @@ export function generateInitialChecklist(
 ): DocumentItemModel[] {
   return generateCanonicalDocumentation(options);
 }
-

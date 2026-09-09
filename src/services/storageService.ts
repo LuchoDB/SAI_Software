@@ -38,7 +38,10 @@ export class StorageService {
         const parsed = JSON.parse(existingClients);
         const hasLegacy = parsed.some((c: Client) =>
           c.documents?.some(
-            d => d.code === 'ANAC-F501' || (d as unknown as { category: string }).category === 'ENACOM' || d.id === 'ANAC-F501'
+            d =>
+              d.code === 'ANAC-F501' ||
+              (d as unknown as { category: string }).category === 'ENACOM' ||
+              d.id === 'ANAC-F501'
           )
         );
         if (hasLegacy) {

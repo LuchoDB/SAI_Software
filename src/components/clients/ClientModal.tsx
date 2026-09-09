@@ -214,7 +214,8 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                   className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-slate-300 cursor-pointer"
                 />
                 <span>
-                  <strong>Zona de Frontera:</strong> Emplazado en zona de seguridad de frontera (Aplica Ley 23.554 y Dec-Ley 15.385/44).
+                  <strong>Zona de Frontera:</strong> Emplazado en zona de seguridad de frontera
+                  (Aplica Ley 23.554 y Dec-Ley 15.385/44).
                 </span>
               </label>
 
@@ -226,7 +227,8 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                   className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-slate-300 cursor-pointer"
                 />
                 <span>
-                  <strong>Campo Eventual Agroaéreo:</strong> Denuncia ante DNSO bajo RAAC 137 Subparte E-137.41 (reemplaza al registro LAD).
+                  <strong>Campo Eventual Agroaéreo:</strong> Denuncia ante DNSO bajo RAAC 137
+                  Subparte E-137.41 (reemplaza al registro LAD).
                 </span>
               </label>
             </div>

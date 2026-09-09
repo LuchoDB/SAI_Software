@@ -306,8 +306,8 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
           </div>
           <p className="text-xs text-slate-800 leading-relaxed font-serif">
             {verdict.executiveSummary} Se concluye que el emplazamiento reúne las condiciones
-            reglamentarias para su prosecución formal ante la Dirección de Aeródromos (DGIySA - ANAC)
-            conforme Anexo IX.
+            reglamentarias para su prosecución formal ante la Dirección de Aeródromos (DGIySA -
+            ANAC) conforme Anexo IX.
           </p>
         </div>
 
