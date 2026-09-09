@@ -8,29 +8,47 @@ import { DocumentItemModel } from '../../src/types/client';
 describe('auditCalculations', () => {
   const sampleDocs: DocumentItemModel[] = [
     {
-      id: 'd1',
+      id: 'ANAC-NOTA',
+      categoria: 'Obligatorio',
+      organismo: 'ANAC',
+      organismo_dependencia: 'Dirección de Aeródromos - DGIySA',
+      titulo: 'Nota de Presentación',
+      descripcion: 'Nota dirigida a la Dirección de Aeródromos describiendo el sitio...',
+      estado: 'Aprobado',
       category: 'ANAC',
-      code: 'ANAC-F501',
-      title: 'Formulario de Solicitud',
-      description: 'Formulario oficial',
+      code: 'ANAC-NOTA',
+      title: 'Nota de Presentación',
+      description: 'Nota dirigida a la Dirección de Aeródromos describiendo el sitio...',
       isMandatory: true,
       status: 'APPROVED'
     },
     {
-      id: 'd2',
-      category: 'ANAC',
-      code: 'ANAC-MEM',
-      title: 'Memoria Técnica',
-      description: 'Memoria descriptiva',
+      id: 'ESC-DOM',
+      categoria: 'Obligatorio',
+      organismo: 'ESCRIBANÍA',
+      organismo_dependencia: 'Escribano público',
+      titulo: 'Título de Propiedad o Contrato de Locación',
+      descripcion: 'Copia certificada por escribano público...',
+      estado: 'En trámite',
+      category: 'ESCRIBANÍA',
+      code: 'ESC-DOM',
+      title: 'Título de Propiedad o Contrato de Locación',
+      description: 'Copia certificada por escribano público...',
       isMandatory: true,
       status: 'IN_PROGRESS'
     },
     {
-      id: 'd3',
-      category: 'ENACOM',
-      code: 'ENA-RAD',
-      title: 'No Afectación Radioeléctrica',
-      description: 'Certificado ENACOM',
+      id: 'AMB-DJA',
+      categoria: 'Obligatorio',
+      organismo: 'AMBIENTAL',
+      organismo_dependencia: 'Autoridad ambiental competente',
+      titulo: 'Declaración Jurada Ambiental',
+      descripcion: 'Declaración Jurada conforme Ley 25.675...',
+      estado: 'Pendiente',
+      category: 'AMBIENTAL',
+      code: 'AMB-DJA',
+      title: 'Declaración Jurada Ambiental',
+      description: 'Declaración Jurada conforme Ley 25.675...',
       isMandatory: true,
       status: 'PENDING'
     }
@@ -49,7 +67,11 @@ describe('auditCalculations', () => {
   });
 
   it('returns FAVORABLE when all conditions, documentation, and technical studies are met', () => {
-    const allApprovedDocs = sampleDocs.map(d => ({ ...d, status: 'APPROVED' as const }));
+    const allApprovedDocs = sampleDocs.map(d => ({
+      ...d,
+      estado: 'Aprobado' as const,
+      status: 'APPROVED' as const
+    }));
     const summary = calculateDocumentSummary(allApprovedDocs);
 
     const scoreResult = calculateViabilityScore({
@@ -63,16 +85,22 @@ describe('auditCalculations', () => {
   });
 
   it('penalizes and returns NOT_FEASIBLE when documents are observed or technical feasibility is negative', () => {
-    const observedDocs = [
+    const observedDocs: DocumentItemModel[] = [
       ...sampleDocs,
       {
-        id: 'd4',
-        category: 'ANAC' as const,
-        code: 'ANAC-PL',
-        title: 'Plano Implantación',
-        description: 'Plano',
+        id: 'ESC-PLANO',
+        categoria: 'Obligatorio',
+        organismo: 'ESCRIBANÍA',
+        organismo_dependencia: 'Escribano público / Catastro',
+        titulo: 'Plano Catastral o de Mensura',
+        descripcion: 'Plano catastral o de mensura según título...',
+        estado: 'Observado',
+        category: 'ESCRIBANÍA',
+        code: 'ESC-PLANO',
+        title: 'Plano Catastral o de Mensura',
+        description: 'Plano catastral o de mensura según título...',
         isMandatory: true,
-        status: 'OBSERVED' as const
+        status: 'OBSERVED'
       }
     ];
     const summary = calculateDocumentSummary(observedDocs);

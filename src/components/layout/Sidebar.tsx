@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'checklist' as MainView,
-      label: 'Checklist documental',
+      label: 'Documentación',
       icon: CheckSquare,
       iconColor: 'text-[#0284c7]'
     },

@@ -258,15 +258,15 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
           </div>
         )}
 
-        {/* 4. Matriz de Seguimiento Documental */}
+        {/* 4. Matriz de Documentación Regulatoria LAD/LADH */}
         <div className="mb-6">
           <h3 className="text-xs font-bold text-slate-900 uppercase border-b border-slate-300 pb-1 mb-2">
-            4. Estado de Tramitaciones ante Organismos de Aplicación
+            4. Documentación Regulatoria Oficial (LAD/LADH - Anexo IX ANAC)
           </h3>
           <table className="w-full text-[10px] font-mono text-left border border-slate-200">
             <thead className="bg-slate-100 text-slate-700">
               <tr>
-                <th className="py-1 px-2 border-b">Código</th>
+                <th className="py-1 px-2 border-b">ID</th>
                 <th className="py-1 px-2 border-b">Organismo</th>
                 <th className="py-1 px-2 border-b">Trámite / Requisito</th>
                 <th className="py-1 px-2 border-b">Estado Oficial</th>
@@ -275,17 +275,18 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             <tbody className="divide-y divide-slate-200">
               {client.documents.map(doc => (
                 <tr key={doc.id}>
-                  <td className="py-1 px-2 font-bold">{doc.code}</td>
-                  <td className="py-1 px-2">{doc.category}</td>
-                  <td className="py-1 px-2">{doc.title}</td>
+                  <td className="py-1 px-2 font-bold">{doc.id}</td>
+                  <td className="py-1 px-2">{doc.organismo || doc.category}</td>
+                  <td className="py-1 px-2">{doc.titulo || doc.title}</td>
                   <td className="py-1 px-2 font-semibold">
-                    {doc.status === 'APPROVED'
-                      ? 'Presentado / Aprobado'
-                      : doc.status === 'IN_PROGRESS'
-                        ? 'En Trámite'
-                        : doc.status === 'OBSERVED'
-                          ? 'Observado'
-                          : 'Pendiente'}
+                    {doc.estado ||
+                      (doc.status === 'APPROVED'
+                        ? 'Aprobado'
+                        : doc.status === 'IN_PROGRESS'
+                          ? 'En Trámite'
+                          : doc.status === 'OBSERVED'
+                            ? 'Observado'
+                            : 'Pendiente')}
                   </td>
                 </tr>
               ))}
@@ -305,8 +306,8 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
           </div>
           <p className="text-xs text-slate-800 leading-relaxed font-serif">
             {verdict.executiveSummary} Se concluye que el emplazamiento reúne las condiciones
-            reglamentarias para su prosecución formal ante la Dirección Nacional de Infraestructura
-            Aeroportuaria (DINAyG - ANAC) y el Ente Nacional de Comunicaciones (ENACOM).
+            reglamentarias para su prosecución formal ante la Dirección de Aeródromos (DGIySA - ANAC)
+            conforme Anexo IX.
           </p>
         </div>
 

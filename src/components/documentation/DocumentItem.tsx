@@ -11,8 +11,17 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(document.notes || '');
 
+  const normalizedEstado =
+    document.estado === 'Aprobado' || document.status === 'APPROVED'
+      ? 'Aprobado'
+      : document.estado === 'En trámite' || document.status === 'IN_PROGRESS'
+        ? 'En trámite'
+        : document.estado === 'Observado' || document.status === 'OBSERVED'
+          ? 'Observado'
+          : 'Pendiente';
+
   const statusConfig: Record<
-    DocumentStatus,
+    string,
     {
       label: string;
       bg: string;
@@ -21,28 +30,28 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
       icon: React.ComponentType<{ className?: string }>;
     }
   > = {
-    APPROVED: {
-      label: 'Aprobado / Presentado',
+    Aprobado: {
+      label: 'Aprobado',
       bg: 'bg-emerald-50',
       text: 'text-emerald-700',
       border: 'border-emerald-200',
       icon: CheckCircle2
     },
-    IN_PROGRESS: {
+    'En trámite': {
       label: 'En Trámite',
       bg: 'bg-blue-50',
       text: 'text-blue-700',
       border: 'border-blue-200',
       icon: Clock
     },
-    PENDING: {
+    Pendiente: {
       label: 'Pendiente',
       bg: 'bg-slate-100',
       text: 'text-slate-600',
       border: 'border-slate-200',
       icon: Clock
     },
-    OBSERVED: {
+    Observado: {
       label: 'Observado',
       bg: 'bg-red-50',
       text: 'text-red-700',
@@ -51,39 +60,71 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
     }
   };
 
-  const currentStatus = statusConfig[document.status];
+  const currentStatus = statusConfig[normalizedEstado] || statusConfig['Pendiente'];
   const StatusIcon = currentStatus.icon;
 
   const handleSaveNotes = () => {
-    onUpdateStatus(document.id, document.status, notesText);
+    onUpdateStatus(document.id, normalizedEstado as DocumentStatus, notesText);
     setIsEditingNotes(false);
   };
 
+  const isObligatorio =
+    document.categoria === 'Obligatorio' || document.isMandatory === true;
+
+  const organismoBadgeColors: Record<string, string> = {
+    ANAC: 'bg-blue-50 text-blue-800 border-blue-200',
+    ESCRIBANÍA: 'bg-amber-50 text-amber-900 border-amber-200',
+    AMBIENTAL: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+    DEFENSA: 'bg-purple-50 text-purple-800 border-purple-200'
+  };
+
+  const badgeColor =
+    organismoBadgeColors[document.organismo || 'ANAC'] ||
+    'bg-slate-100 text-slate-700 border-slate-200';
+
   return (
-    <div className="bg-white hover:bg-slate-50 border border-slate-200 rounded-xl p-3.5 transition-colors shadow-xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        {/* Información del Documento */}
+    <div className="bg-white hover:bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-colors shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        {/* Información del Documento Canónico */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              {document.code}
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <span className="font-mono text-xs font-bold text-[#0f2942] bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              {document.id}
             </span>
-            {document.isMandatory ? (
-              <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+
+            {isObligatorio ? (
+              <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
                 Obligatorio
               </span>
             ) : (
-              <span className="text-[10px] text-slate-500 font-medium">Condicional</span>
+              <span className="text-[10px] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                Condicional
+              </span>
             )}
-            <span className="text-[11px] text-slate-500 font-mono">{document.category}</span>
+
+            <span
+              className={`text-[10px] font-bold border px-2 py-0.5 rounded uppercase tracking-wider ${badgeColor}`}
+            >
+              {document.organismo}
+            </span>
+
+            {document.organismo_dependencia && (
+              <span className="text-[11px] text-slate-400 font-mono">
+                • {document.organismo_dependencia}
+              </span>
+            )}
           </div>
 
-          <h4 className="font-semibold text-slate-900 text-sm">{document.title}</h4>
-          <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{document.description}</p>
+          <h4 className="font-bold text-slate-900 text-sm leading-snug">
+            {document.titulo || document.title}
+          </h4>
+          <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+            {document.descripcion || document.description}
+          </p>
         </div>
 
-        {/* Selector de Estado */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Selector de Estado Canónico */}
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
           <div
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold ${currentStatus.bg} ${currentStatus.text} ${currentStatus.border}`}
           >
@@ -92,30 +133,30 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
           </div>
 
           <select
-            value={document.status}
+            value={normalizedEstado}
             onChange={e =>
               onUpdateStatus(document.id, e.target.value as DocumentStatus, document.notes)
             }
-            className="bg-white border border-slate-200 text-slate-700 text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-slate-400 cursor-pointer shadow-xs"
+            className="bg-white border border-slate-200 text-slate-700 text-xs font-medium rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-slate-400 cursor-pointer shadow-2xs"
           >
-            <option value="PENDING">Pendiente</option>
-            <option value="IN_PROGRESS">En Trámite</option>
-            <option value="APPROVED">Aprobado</option>
-            <option value="OBSERVED">Observado</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En trámite">En Trámite</option>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Observado">Observado</option>
           </select>
         </div>
       </div>
 
       {/* Notas / Observaciones */}
-      <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
         {isEditingNotes ? (
           <div className="flex-1 flex items-center gap-2">
             <input
               type="text"
               value={notesText}
               onChange={e => setNotesText(e.target.value)}
-              placeholder="Escribe una observación o número de expediente..."
-              className="flex-1 bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+              placeholder="Escribe una observación, número de expediente o trámite..."
+              className="flex-1 bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
             />
             <button
               onClick={handleSaveNotes}
@@ -127,8 +168,8 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-between text-slate-500">
-            <span className="truncate italic">
-              {document.notes ? `Nota: ${document.notes}` : 'Sin notas u observaciones'}
+            <span className="truncate italic text-[11px]">
+              {document.notes ? `Observación: ${document.notes}` : 'Sin notas u observaciones'}
             </span>
             <button
               onClick={() => setIsEditingNotes(true)}
@@ -143,3 +184,4 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
     </div>
   );
 };
+

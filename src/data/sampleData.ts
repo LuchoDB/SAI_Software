@@ -18,28 +18,35 @@ export function getSampleClients(): {
   ladStudies: LadStudy[];
   ladhStudies: LadhStudy[];
 } {
-  const docsClient1 = generateInitialChecklist();
+  const docsClient1 = generateInitialChecklist({ projectType: 'LAD' });
   // Personalizar estados para el cliente 1
   docsClient1[0].status = 'APPROVED';
+  docsClient1[0].estado = 'Aprobado';
   docsClient1[0].submittedDate = '2026-06-15';
   docsClient1[0].approvalDate = '2026-07-10';
   docsClient1[0].notes = 'Aprobado formalmente por Mesa de Entradas ANAC.';
 
   docsClient1[1].status = 'APPROVED';
+  docsClient1[1].estado = 'Aprobado';
   docsClient1[1].submittedDate = '2026-06-18';
   docsClient1[1].approvalDate = '2026-07-20';
 
   docsClient1[2].status = 'IN_PROGRESS';
+  docsClient1[2].estado = 'En trámite';
   docsClient1[2].submittedDate = '2026-07-02';
-  docsClient1[2].notes = 'En revisión de curvas de nivel y cerco olímpico.';
+  docsClient1[2].notes = 'Denominación en evaluación técnica.';
 
-  docsClient1[3].status = 'IN_PROGRESS';
-  docsClient1[4].status = 'APPROVED';
-  docsClient1[4].notes = 'Estudio de vientos concluido con 96.8% de factor de utilización OACI.';
-
-  docsClient1[8].status = 'APPROVED'; // ENACOM No afectación
-  docsClient1[11].status = 'APPROVED'; // Título de Propiedad
-  docsClient1[12].status = 'APPROVED'; // Plano de Mensura
+  // Título de propiedad y plano
+  const docEscDom = docsClient1.find(d => d.id === 'ESC-DOM');
+  if (docEscDom) {
+    docEscDom.status = 'APPROVED';
+    docEscDom.estado = 'Aprobado';
+  }
+  const docEscPlano = docsClient1.find(d => d.id === 'ESC-PLANO');
+  if (docEscPlano) {
+    docEscPlano.status = 'APPROVED';
+    docEscPlano.estado = 'Aprobado';
+  }
 
   const client1: Client = {
     id: 'cli-agro-salado',
@@ -128,11 +135,17 @@ export function getSampleClients(): {
   };
 
   // Cliente 2: Helipuerto Hospitalario LADH
-  const docsClient2 = generateInitialChecklist();
+  const docsClient2 = generateInitialChecklist({ projectType: 'LADH' });
   docsClient2[0].status = 'IN_PROGRESS';
+  docsClient2[0].estado = 'En trámite';
   docsClient2[1].status = 'APPROVED';
-  docsClient2[8].status = 'APPROVED'; // ENACOM No afectación aprobado
-  docsClient2[11].status = 'APPROVED'; // Dominio sanatorio
+  docsClient2[1].estado = 'Aprobado';
+
+  const doc2EscDom = docsClient2.find(d => d.id === 'ESC-DOM');
+  if (doc2EscDom) {
+    doc2EscDom.status = 'APPROVED';
+    doc2EscDom.estado = 'Aprobado';
+  }
 
   const client2: Client = {
     id: 'cli-sanatorio-norte',

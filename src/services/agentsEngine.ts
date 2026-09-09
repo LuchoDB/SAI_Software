@@ -64,28 +64,51 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
   // ==========================================
   // 1. EVALUACIÓN DEL AGENTE LEGAL & REGULATORIO
   // ==========================================
-  const mandatoryDocs = client.documents.filter(d => d.isMandatory);
-  const approvedDocs = client.documents.filter(d => d.status === 'APPROVED');
-  const inProgressDocs = client.documents.filter(d => d.status === 'IN_PROGRESS');
-  const pendingDocs = client.documents.filter(d => d.status === 'PENDING');
-  const observedDocs = client.documents.filter(d => d.status === 'OBSERVED');
+  const mandatoryDocs = client.documents.filter(
+    d => d.isMandatory || d.categoria === 'Obligatorio'
+  );
+  const approvedDocs = client.documents.filter(
+    d => d.status === 'APPROVED' || d.estado === 'Aprobado'
+  );
+  const inProgressDocs = client.documents.filter(
+    d => d.status === 'IN_PROGRESS' || d.estado === 'En trámite'
+  );
+  const pendingDocs = client.documents.filter(
+    d => d.status === 'PENDING' || d.estado === 'Pendiente'
+  );
+  const observedDocs = client.documents.filter(
+    d => d.status === 'OBSERVED' || d.estado === 'Observado'
+  );
 
-  const anacDocs = client.documents.filter(d => d.category === 'ANAC');
-  const enacomDocs = client.documents.filter(d => d.category === 'ENACOM');
-  const catastroDocs = client.documents.filter(d => d.category === 'CATASTRO');
-  const ambientalDocs = client.documents.filter(d => d.category === 'AMBIENTAL');
+  const anacDocs = client.documents.filter(
+    d => d.organismo === 'ANAC' || (d as unknown as { category: string }).category === 'ANAC'
+  );
+  const escribaniaDocs = client.documents.filter(
+    d => d.organismo === 'ESCRIBANÍA' || (d as unknown as { category: string }).category === 'ESCRIBANÍA'
+  );
+  const ambientalDocs = client.documents.filter(
+    d => d.organismo === 'AMBIENTAL' || (d as unknown as { category: string }).category === 'AMBIENTAL'
+  );
 
   const isAnacOk = anacDocs.some(
-    d => d.code === 'ANAC-F501' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS')
+    d =>
+      (d.id === 'ANAC-NOTA' || d.id === 'ANAC-FORM') &&
+      (d.status === 'APPROVED' ||
+        d.status === 'IN_PROGRESS' ||
+        d.estado === 'Aprobado' ||
+        d.estado === 'En trámite')
   );
-  const isEnacomOk = enacomDocs.some(
-    d => d.code === 'ENA-RAD' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS')
-  );
-  const isCatastroOk = catastroDocs.some(
-    d => d.code === 'CAT-DOM' && (d.status === 'APPROVED' || d.status === 'IN_PROGRESS')
+  const isEscribaniaOk = escribaniaDocs.some(
+    d =>
+      d.id === 'ESC-DOM' &&
+      (d.status === 'APPROVED' ||
+        d.status === 'IN_PROGRESS' ||
+        d.estado === 'Aprobado' ||
+        d.estado === 'En trámite')
   );
   const isAmbientalOk =
-    ambientalDocs.length === 0 || ambientalDocs.some(d => d.status !== 'PENDING');
+    ambientalDocs.length === 0 ||
+    ambientalDocs.some(d => d.status !== 'PENDING' && d.estado !== 'Pendiente');
 
   // Observaciones legales
   if (observedDocs.length > 0) {
@@ -93,9 +116,9 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
       id: 'leg-obs',
       agent: 'LEGAL',
       severity: 'CRITICAL',
-      category: 'Expediente ANAC / ENACOM',
+      category: 'Expediente Documental LAD/LADH',
       title: `${observedDocs.length} documento(s) con observaciones`,
-      description: `Los documentos [${observedDocs.map(d => d.title).join(', ')}] registran observaciones que requieren subsanación urgente.`,
+      description: `Los documentos [${observedDocs.map(d => d.titulo || d.title).join(', ')}] registran observaciones que requieren subsanación urgente.`,
       actionRequired:
         'Corregir las observaciones y reenviar a la mesa de entradas del organismo correspondiente.'
     });
@@ -104,7 +127,9 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
     );
   }
 
-  const missingMandatory = mandatoryDocs.filter(d => d.status === 'PENDING');
+  const missingMandatory = mandatoryDocs.filter(
+    d => d.status === 'PENDING' || d.estado === 'Pendiente'
+  );
   if (missingMandatory.length > 0) {
     findings.push({
       id: 'leg-mand',
@@ -114,9 +139,9 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
       title: `${missingMandatory.length} trámites esenciales pendientes de inicio`,
       description: `Documentación obligatoria pendiente: ${missingMandatory
         .slice(0, 3)
-        .map(d => d.title)
+        .map(d => d.titulo || d.title)
         .join(', ')}${missingMandatory.length > 3 ? '...' : ''}.`,
-      actionRequired: 'Completar las carpetas técnicas para su radicación ante ANAC y ENACOM.'
+      actionRequired: 'Completar las carpetas técnicas para su radicación ante ANAC y Escribanía.'
     });
   }
 
@@ -131,7 +156,7 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
       category: 'Georreferenciación WGS84',
       title: 'Coordenadas del punto de referencia de aeródromo (ARP) no cargadas',
       description:
-        'El expediente carece de coordenadas geodésicas oficiales en formato estándar WGS84 requeridas para el formulario ANAC F-501.',
+        'El expediente carece de coordenadas geodésicas oficiales en formato estándar WGS84 requeridas para el formulario oficial ANAC (Anexo IX).',
       actionRequired: 'Ingresar Latitud y Longitud WGS84 en la ficha del cliente.'
     });
   } else {
@@ -285,30 +310,30 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
   // Generar recomendaciones del orquestador
   if (pendingDocs.length > 0) {
     recommendations.push(
-      `Avanzar en la confección de los ${pendingDocs.length} documentos pendientes, priorizando los planos de mensura y memoria técnica.`
+      `Avanzar en la confección de los ${pendingDocs.length} documentos pendientes, priorizando los trámites ante ANAC y escrituración ante escribano.`
     );
   }
-  if (enacomDocs.some(d => d.status === 'PENDING')) {
+  if (escribaniaDocs.some(d => d.status === 'PENDING' || d.estado === 'Pendiente')) {
     recommendations.push(
-      'Iniciar el relevamiento de radioenlaces y antenas en el radio de 5 km para evitar objeciones de ENACOM.'
+      'Asegurar la certificación notarial del título de propiedad o contrato de locación y plano catastral/mensura.'
     );
   }
   if (!windStudy) {
     recommendations.push(
-      'Efectuar el cálculo oficial de orientación magnética y viento cruzado para respaldar la memoria técnica ANAC.'
+      'Efectuar el cálculo oficial de orientación magnética y viento cruzado para respaldar el expediente técnico ANAC.'
     );
   } else if (windStudy.isCompliantOACI) {
     recommendations.push(
-      `Consolidar la orientación de cabecera ${windStudy.orientation.qfuLabel} en los planos de implantación definitivos.`
+      `Consolidar la orientación de cabecera ${windStudy.orientation.qfuLabel} para el formulario técnico oficial.`
     );
   }
 
   const executiveSummary =
     globalStatus === 'FAVORABLE'
-      ? `El proyecto de ${client.projectType} para el cliente "${client.name}" presenta plena viabilidad técnica, aeronáutica y normativa. Cumple con los requerimientos de la autoridad aeronáutica nacional (ANAC) y no se detectan incompatibilidades radioeléctricas con ENACOM.`
+      ? `El proyecto de ${client.projectType} para el cliente "${client.name}" presenta plena viabilidad técnica, aeronáutica y normativa. Cumple con los requerimientos de registro LAD/LADH ante la autoridad aeronáutica nacional (ANAC Anexo IX) y documentación legal notarial y ambiental.`
       : globalStatus === 'FAVORABLE_WITH_RESTRICTIONS'
-        ? `El proyecto presenta viabilidad técnica favorable sujeta a condicionamientos operativos o finalización de trámites documentales ante ANAC/ENACOM. Se recomienda avanzar con las recomendaciones señaladas para obtener la habilitación definitiva.`
-        : `El proyecto presenta observaciones críticas que impiden su habilitación bajo la configuración actual. Se identificaron no conformidades que vulneran la normativa vigente (RAAC 153/154 u OACI Anexo 14).`;
+        ? `El proyecto presenta viabilidad técnica favorable sujeta a condicionamientos operativos o finalización de trámites documentales ante ANAC/Escribanía. Se recomienda avanzar con las recomendaciones señaladas para obtener el registro definitivo.`
+        : `El proyecto presenta observaciones críticas que impiden su registro bajo la configuración actual. Se identificaron no conformidades que vulneran la normativa vigente (RAAC 153/154 u OACI Anexo 14).`;
 
   return {
     clientId: client.id,
@@ -319,8 +344,7 @@ export function runMultiAgentAudit(context: EvaluateContext): OrchestratorVerdic
     executiveSummary,
     legalCompliance: {
       anac: isAnacOk,
-      enacom: isEnacomOk,
-      catastro: isCatastroOk,
+      escribania: isEscribaniaOk,
       ambiental: isAmbientalOk
     },
     technicalFeasibility: {

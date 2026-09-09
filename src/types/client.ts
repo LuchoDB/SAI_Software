@@ -1,21 +1,31 @@
 export type ProjectType = 'LAD' | 'LADH' | 'MIXED';
 
-export type DocumentCategory = 'ANAC' | 'ENACOM' | 'CATASTRO' | 'AMBIENTAL' | 'MUNICIPAL';
+export type DocumentCategory = 'ANAC' | 'ESCRIBANÍA' | 'AMBIENTAL' | 'DEFENSA';
 
-export type DocumentStatus = 'PENDING' | 'IN_PROGRESS' | 'OBSERVED' | 'APPROVED';
+export type CanonicalDocumentStatus = 'Pendiente' | 'En trámite' | 'Observado' | 'Aprobado';
+export type LegacyDocumentStatus = 'PENDING' | 'IN_PROGRESS' | 'OBSERVED' | 'APPROVED';
+export type DocumentStatus = CanonicalDocumentStatus | LegacyDocumentStatus;
 
 export interface DocumentItemModel {
   id: string;
-  category: DocumentCategory;
-  code: string;
-  title: string;
-  description: string;
-  status: DocumentStatus;
+  categoria: 'Obligatorio' | 'Condicional';
+  organismo: 'ANAC' | 'ESCRIBANÍA' | 'AMBIENTAL' | 'DEFENSA';
+  organismo_dependencia: string;
+  titulo: string;
+  descripcion: string;
+  estado: DocumentStatus;
+
+  // Campos de compatibilidad y UI
+  code?: string;
+  category?: DocumentCategory | string;
+  title?: string;
+  description?: string;
+  status?: DocumentStatus;
+  isMandatory?: boolean;
   submittedDate?: string;
   approvalDate?: string;
   notes?: string;
   fileReference?: string;
-  isMandatory: boolean;
 }
 
 export interface ClientCoordinates {
@@ -42,6 +52,8 @@ export interface Client {
   terrainLengthAvailable?: number; // Compatibilidad
   terrainWidthAvailable?: number; // Compatibilidad
   notes?: string;
+  isFrontierZone?: boolean; // Aplica Ley 23.554 (FRONT-LEY)
+  isAgroEventual?: boolean; // Campo eventual agroaéreo RAAC 137 (AGRO-RAAC137)
   documents: DocumentItemModel[];
   createdAt: string;
   updatedAt: string;

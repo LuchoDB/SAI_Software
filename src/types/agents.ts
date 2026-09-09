@@ -30,9 +30,11 @@ export interface OrchestratorVerdict {
   executiveSummary: string;
   legalCompliance: {
     anac: boolean;
-    enacom: boolean;
-    catastro: boolean;
+    escribania?: boolean;
     ambiental: boolean;
+    defensa?: boolean;
+    enacom?: boolean;
+    catastro?: boolean;
   };
   technicalFeasibility: {
     windUsability: boolean;

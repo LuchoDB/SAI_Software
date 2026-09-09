@@ -31,6 +31,8 @@ export const ClientModal: React.FC<ClientModalProps> = ({
   const [terrainLengthAvailableM, setTerrainLengthAvailableM] = useState<number>(900);
   const [terrainWidthAvailableM, setTerrainWidthAvailableM] = useState<number>(100);
   const [notes, setNotes] = useState('');
+  const [isFrontierZone, setIsFrontierZone] = useState(false);
+  const [isAgroEventual, setIsAgroEventual] = useState(false);
 
   useEffect(() => {
     if (initialClient) {
@@ -49,6 +51,8 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setTerrainLengthAvailableM(initialClient.terrainLengthAvailableM || 900);
       setTerrainWidthAvailableM(initialClient.terrainWidthAvailableM || 100);
       setNotes(initialClient.notes || '');
+      setIsFrontierZone(Boolean(initialClient.isFrontierZone));
+      setIsAgroEventual(Boolean(initialClient.isAgroEventual));
     } else {
       setName('');
       setCuit('');
@@ -65,6 +69,8 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setTerrainLengthAvailableM(1000);
       setTerrainWidthAvailableM(100);
       setNotes('');
+      setIsFrontierZone(false);
+      setIsAgroEventual(false);
     }
   }, [initialClient, isOpen]);
 
@@ -96,10 +102,12 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       terrainLengthAvailableM: Number(terrainLengthAvailableM) || 500,
       terrainWidthAvailableM: Number(terrainWidthAvailableM) || 50,
       notes: notes.trim(),
+      isFrontierZone,
+      isAgroEventual,
       documents:
         initialClient?.documents && initialClient.documents.length > 0
           ? initialClient.documents
-          : generateInitialChecklist(),
+          : generateInitialChecklist({ projectType, isFrontierZone, isAgroEventual }),
       createdAt: initialClient?.createdAt || new Date().toISOString().split('T')[0],
       updatedAt: new Date().toISOString().split('T')[0]
     };
@@ -122,7 +130,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                 {initialClient ? 'Editar Expediente de Cliente' : 'Nuevo Expediente de Cliente'}
               </h2>
               <p className="text-xs text-slate-500">
-                Alta de carpeta técnica y checklist regulatorio ANAC/ENACOM
+                Alta de carpeta técnica y documentación regulatoria LAD/LADH
               </p>
             </div>
           </div>
@@ -191,6 +199,36 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               >
                 <span>Mixto (Pista + Heli)</span>
               </button>
+            </div>
+
+            {/* Condiciones Regulatorias Especiales (Frontera y Agro) */}
+            <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 text-xs">
+              <div className="font-semibold text-slate-700 text-xs">
+                Condiciones Regulatorias Especiales
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={isFrontierZone}
+                  onChange={e => setIsFrontierZone(e.target.checked)}
+                  className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-slate-300 cursor-pointer"
+                />
+                <span>
+                  <strong>Zona de Frontera:</strong> Emplazado en zona de seguridad de frontera (Aplica Ley 23.554 y Dec-Ley 15.385/44).
+                </span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={isAgroEventual}
+                  onChange={e => setIsAgroEventual(e.target.checked)}
+                  className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-slate-300 cursor-pointer"
+                />
+                <span>
+                  <strong>Campo Eventual Agroaéreo:</strong> Denuncia ante DNSO bajo RAAC 137 Subparte E-137.41 (reemplaza al registro LAD).
+                </span>
+              </label>
             </div>
           </div>
 

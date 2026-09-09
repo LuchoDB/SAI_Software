@@ -377,7 +377,7 @@ export const ClientFolder: React.FC<ClientFolderProps> = ({
                 onClick={() => setActiveTab('documents')}
                 className="w-full mt-2 text-center text-xs text-sky-400 hover:text-sky-300 font-semibold py-1.5 border border-slate-800 hover:border-sky-800 rounded-xl transition"
               >
-                Abrir Checklist Completo
+                Abrir Documentación Completa
               </button>
             </div>
           </div>

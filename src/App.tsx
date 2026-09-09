@@ -14,6 +14,7 @@ import { Client, DocumentStatus } from './types/client';
 import { WindStudyResult } from './types/wind';
 import { LadStudy } from './types/lad';
 import { LadhStudy } from './types/ladh';
+import { generateCanonicalDocumentation } from './data/regulatoryRequirements';
 
 import { StorageService } from './services/storageService';
 import {
@@ -95,6 +96,70 @@ export const App: React.FC = () => {
       setSelectedClient(updated);
       setClients(prev => prev.map(c => (c.id === updated.id ? updated : c)));
     }
+  };
+
+  const handleToggleFrontierZone = (isFrontier: boolean) => {
+    if (!selectedClient) return;
+    const newDocs = generateCanonicalDocumentation({
+      projectType: selectedClient.projectType,
+      isFrontierZone: isFrontier,
+      isAgroEventual: selectedClient.isAgroEventual
+    });
+    const oldMap = new Map(selectedClient.documents.map(d => [d.id, d]));
+    const mergedDocs = newDocs.map(nd => {
+      const old = oldMap.get(nd.id);
+      if (old) {
+        return {
+          ...nd,
+          status: old.status,
+          estado: old.estado,
+          notes: old.notes,
+          submittedDate: old.submittedDate,
+          approvalDate: old.approvalDate
+        };
+      }
+      return nd;
+    });
+    const updatedClient: Client = {
+      ...selectedClient,
+      isFrontierZone: isFrontier,
+      documents: mergedDocs
+    };
+    StorageService.saveClient(updatedClient);
+    setSelectedClient(updatedClient);
+    setClients(prev => prev.map(c => (c.id === updatedClient.id ? updatedClient : c)));
+  };
+
+  const handleToggleAgroEventual = (isAgro: boolean) => {
+    if (!selectedClient) return;
+    const newDocs = generateCanonicalDocumentation({
+      projectType: selectedClient.projectType,
+      isFrontierZone: selectedClient.isFrontierZone,
+      isAgroEventual: isAgro
+    });
+    const oldMap = new Map(selectedClient.documents.map(d => [d.id, d]));
+    const mergedDocs = newDocs.map(nd => {
+      const old = oldMap.get(nd.id);
+      if (old) {
+        return {
+          ...nd,
+          status: old.status,
+          estado: old.estado,
+          notes: old.notes,
+          submittedDate: old.submittedDate,
+          approvalDate: old.approvalDate
+        };
+      }
+      return nd;
+    });
+    const updatedClient: Client = {
+      ...selectedClient,
+      isAgroEventual: isAgro,
+      documents: mergedDocs
+    };
+    StorageService.saveClient(updatedClient);
+    setSelectedClient(updatedClient);
+    setClients(prev => prev.map(c => (c.id === updatedClient.id ? updatedClient : c)));
   };
 
   // Guardar estudio de vientos
@@ -191,7 +256,7 @@ export const App: React.FC = () => {
             />
           )}
 
-          {/* Vista 2: Checklist Documental */}
+          {/* Vista 2: Documentación */}
           {currentView === 'checklist' &&
             (selectedClient ? (
               <div className="max-w-5xl mx-auto space-y-5">
@@ -199,17 +264,17 @@ export const App: React.FC = () => {
                   <div>
                     <h1 className="text-2xl font-bold text-[#0f2942] tracking-tight font-heading flex items-center gap-2">
                       <CheckSquare className="h-6 w-6 text-blue-700" />
-                      <span>Checklist regulatorio: {selectedClient.name}</span>
+                      <span>Documentación regulatoria: {selectedClient.name}</span>
                     </h1>
                     <p className="text-xs text-slate-500 mt-0.5">
-                      Matriz de control documental ANAC, ENACOM, Catastro y Medio Ambiente (
+                      Nómina canónica oficial ANAC, Escribanía, Ambiental y Defensa (
                       {selectedClient.projectType})
                     </p>
                   </div>
 
                   <button
                     onClick={() => setCurrentView('dossier')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#0f2942] text-[#0f2942] hover:bg-slate-50 text-xs font-semibold transition"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#0f2942] text-[#0f2942] hover:bg-slate-50 text-xs font-semibold transition cursor-pointer"
                   >
                     <span>Ver en Dossier</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -219,6 +284,10 @@ export const App: React.FC = () => {
                 <DocumentChecklist
                   documents={selectedClient.documents}
                   onUpdateDocumentStatus={handleUpdateDocumentStatus}
+                  isFrontierZone={selectedClient.isFrontierZone}
+                  isAgroEventual={selectedClient.isAgroEventual}
+                  onToggleFrontierZone={handleToggleFrontierZone}
+                  onToggleAgroEventual={handleToggleAgroEventual}
                 />
               </div>
             ) : (

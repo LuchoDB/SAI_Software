@@ -178,7 +178,7 @@ export const ClientList: React.FC<ClientListProps> = ({
 
                   <button
                     onClick={() => onNavigateToStudy('checklist', client)}
-                    title="Checklist Documental ANAC / ENACOM"
+                    title="Documentación Regulatoria LAD/LADH"
                     className="p-2 text-slate-500 hover:text-blue-700 hover:bg-slate-100 rounded-lg transition"
                   >
                     <CheckSquare className="h-4 w-4" />

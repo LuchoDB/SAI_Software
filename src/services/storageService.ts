@@ -32,13 +32,31 @@ export class StorageService {
         sample.ladStudies.forEach(s => window.electronAPI?.saveLadStudy(s));
         sample.ladhStudies.forEach(s => window.electronAPI?.saveLadhStudy(s));
       }
-    } else if (typeof window !== 'undefined' && window.electronAPI) {
-      // Si ya hay clientes en SQLite, hidratar
-      window.electronAPI.getClients().then(sqliteClients => {
-        if (sqliteClients && sqliteClients.length > 0) {
-          localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(sqliteClients));
+    } else {
+      // Migración automática: Si los clientes guardados en localStorage tienen la estructura vieja no canónica
+      try {
+        const parsed = JSON.parse(existingClients);
+        const hasLegacy = parsed.some((c: Client) =>
+          c.documents?.some(
+            d => d.code === 'ANAC-F501' || (d as unknown as { category: string }).category === 'ENACOM' || d.id === 'ANAC-F501'
+          )
+        );
+        if (hasLegacy) {
+          const sample = getSampleClients();
+          localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(sample.clients));
         }
-      });
+      } catch {
+        // En caso de parse error ignorar
+      }
+
+      if (typeof window !== 'undefined' && window.electronAPI) {
+        // Si ya hay clientes en SQLite, hidratar
+        window.electronAPI.getClients().then(sqliteClients => {
+          if (sqliteClients && sqliteClients.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.CLIENTS, JSON.stringify(sqliteClients));
+          }
+        });
+      }
     }
   }
 
@@ -117,13 +135,25 @@ export class StorageService {
     const docIdx = client.documents.findIndex(d => d.id === documentId);
     if (docIdx >= 0) {
       client.documents[docIdx].status = newStatus;
+      client.documents[docIdx].estado =
+        newStatus === 'APPROVED' || newStatus === 'Aprobado'
+          ? 'Aprobado'
+          : newStatus === 'IN_PROGRESS' || newStatus === 'En trámite'
+            ? 'En trámite'
+            : newStatus === 'OBSERVED' || newStatus === 'Observado'
+              ? 'Observado'
+              : 'Pendiente';
+
       if (notes !== undefined) {
         client.documents[docIdx].notes = notes;
       }
-      if (newStatus === 'APPROVED') {
+      if (newStatus === 'APPROVED' || newStatus === 'Aprobado') {
         client.documents[docIdx].approvalDate = new Date().toISOString().split('T')[0];
       }
-      if (newStatus === 'IN_PROGRESS' && !client.documents[docIdx].submittedDate) {
+      if (
+        (newStatus === 'IN_PROGRESS' || newStatus === 'En trámite') &&
+        !client.documents[docIdx].submittedDate
+      ) {
         client.documents[docIdx].submittedDate = new Date().toISOString().split('T')[0];
       }
       return this.saveClient(client);
