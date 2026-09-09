@@ -12,6 +12,7 @@ import {
   Plus
 } from 'lucide-react';
 import { Client } from '../../types/client';
+import saiLogoEmblem from '../../assets/sai_logo_emblem.png';
 
 export type MainView =
   'clients' | 'checklist' | 'wind' | 'lad' | 'ladh' | 'dossier' | 'backups' | 'manual';
@@ -74,9 +75,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   ];
 
+  const isDesktop = typeof window !== 'undefined' && Boolean(window.electronAPI?.isElectron);
+
   return (
     <aside className="w-56 bg-white border-r border-slate-200 flex flex-col justify-between select-none shrink-0 no-print py-3">
       <div className="space-y-1">
+        {/* Cabecera de marca para la versión Web / Online */}
+        {!isDesktop && (
+          <div className="px-4 pb-3 mb-2 border-b border-slate-100 flex items-center gap-2.5">
+            <div className="h-8 w-9 flex items-center justify-center">
+              <img
+                src={saiLogoEmblem}
+                alt="Logo SAI Consult"
+                className="h-full w-auto object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-extrabold tracking-tight text-[#0f2942] text-sm font-heading leading-tight">
+                SAI Consult
+              </span>
+              <span className="text-[9px] font-mono text-slate-400 tracking-wider uppercase">
+                Aeronáutica
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Lista de navegación principal idéntica a DentaSoft */}
         <nav className="space-y-0.5">
           {primaryMenuItems.map(item => {

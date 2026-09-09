@@ -144,13 +144,15 @@ export const App: React.FC = () => {
     reader.readAsText(file);
   };
 
+  const isDesktop = typeof window !== 'undefined' && Boolean(window.electronAPI?.isElectron);
+
   return (
-    <div className="min-h-screen bg-white text-slate-800 flex flex-col font-sans">
+    <div className="h-screen min-h-screen bg-white text-slate-800 flex flex-col font-sans">
       {/* Animación Cinematográfica de Bienvenida */}
       {showWelcomeSplash && <WelcomeSplash onFinish={() => setShowWelcomeSplash(false)} />}
 
-      {/* Barra Superior estilo Desktop App (Ventana + Logo) */}
-      <Navbar />
+      {/* Barra Superior estilo Desktop App (Ventana + Logo) - Solo en versión Desktop */}
+      {isDesktop && <Navbar />}
 
       {/* Contenedor Principal: Menú Lateral + Área de Trabajo */}
       <div className="flex-1 flex overflow-hidden">
