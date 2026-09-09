@@ -1,4 +1,5 @@
 import React from 'react';
+import saiLogoEmblem from '../../assets/sai_logo_emblem.png';
 
 export const Navbar: React.FC = () => {
   return (
@@ -17,7 +18,7 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="h-10 w-12 flex items-center justify-center">
             <img
-              src="/sai_logo_emblem.png"
+              src={saiLogoEmblem}
               alt="Logo SAI Consult"
               className="h-full w-auto object-contain"
             />

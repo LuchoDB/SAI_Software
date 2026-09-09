@@ -9,8 +9,7 @@ import {
   Database,
   HelpCircle,
   LogOut,
-  Plus,
-  Play
+  Plus
 } from 'lucide-react';
 import { Client } from '../../types/client';
 
@@ -22,15 +21,13 @@ interface SidebarProps {
   onViewChange: (view: MainView) => void;
   selectedClient: Client | null;
   onOpenNewClient: () => void;
-  onShowWelcome: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentView,
   onViewChange,
   selectedClient,
-  onOpenNewClient,
-  onShowWelcome
+  onOpenNewClient
 }) => {
   const primaryMenuItems = [
     {
@@ -130,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Enlaces inferiores: Manual, Ver bienvenida y Cerrar sesión */}
+      {/* Enlaces inferiores: Manual y Cerrar sesión */}
       <div className="border-t border-slate-200 pt-3 px-2 space-y-1">
         <button
           onClick={() => onViewChange('manual')}
@@ -138,15 +135,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           <HelpCircle className="h-4 w-4 text-red-500 shrink-0" />
           <span>Manual</span>
-        </button>
-
-        <button
-          onClick={onShowWelcome}
-          title="Reproducir animación de bienvenida del logo"
-          className="w-full flex items-center gap-3 px-3 py-2 text-left text-[13px] text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
-        >
-          <Play className="h-4 w-4 text-blue-600 shrink-0" />
-          <span>Ver bienvenida</span>
         </button>
 
         <button

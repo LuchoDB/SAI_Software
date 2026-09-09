@@ -163,7 +163,6 @@ export const App: React.FC = () => {
             setClientToEdit(null);
             setIsClientModalOpen(true);
           }}
-          onShowWelcome={() => setShowWelcomeSplash(true)}
         />
 
         {/* Área de Trabajo Limpia */}

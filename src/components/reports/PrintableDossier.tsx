@@ -1,5 +1,6 @@
 import React from 'react';
 import { Printer, ArrowLeft } from 'lucide-react';
+import saiLogoEmblem from '../../assets/sai_logo_emblem.png';
 import { Client } from '../../types/client';
 import { WindStudyResult } from '../../types/wind';
 import { LadStudy } from '../../types/lad';
@@ -70,7 +71,7 @@ export const PrintableDossier: React.FC<PrintableDossierProps> = ({
             <div className="flex items-center gap-2.5">
               <div className="h-9 w-10 flex items-center justify-center">
                 <img
-                  src="/sai_logo_emblem.png"
+                  src={saiLogoEmblem}
                   alt="Logo SAI Consult"
                   className="h-full w-auto object-contain"
                 />

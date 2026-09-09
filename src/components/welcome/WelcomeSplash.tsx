@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronRight } from 'lucide-react';
+import saiLogoFull from '../../assets/sai_logo_full.png';
 
 interface WelcomeSplashProps {
   onFinish: () => void;
@@ -91,7 +92,7 @@ export const WelcomeSplash: React.FC<WelcomeSplashProps> = ({ onFinish }) => {
           {/* Logo Completo Oficial (Emblema + Servicios Aeronáuticos Integrados) */}
           <div className="relative overflow-hidden rounded-xl p-2">
             <img
-              src="/sai_logo_full.png"
+              src={saiLogoFull}
               alt="Servicios Aeronáuticos Integrados"
               className="w-full max-w-[520px] h-auto object-contain pointer-events-none select-none"
               style={{
