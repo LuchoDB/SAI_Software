@@ -44,7 +44,7 @@ export const NotaPresentacionView: React.FC<NotaPresentacionViewProps> = ({
 
     const c = selectedClient;
     const ownership = c.ownershipType || 'Razon Social';
-    const socType = c.sociedadType || 'S.A.';
+    const socType = c.sociedadType;
     const isAgro =
       Boolean(c.isAgroEventual) || c.pistaSubtype === 'aerodromo privado para uso agroaereo';
     const isGestoria = c.category === 'Gestoria';
@@ -77,8 +77,9 @@ Balcarce 290, Ciudad Autónoma de Buenos Aires`;
     let petitorioPlural: string;
 
     if (ownership === 'Razon Social') {
-      const representante = c.contactPerson || 'Representante Legal';
-      encabezadoSujeto = `La firma ${c.name}, CUIT Nº ${c.cuit}, legalmente constituida como ${socType}, con domicilio en la localidad de ${c.locationName}, Provincia de ${c.province}, representada en este acto por su representante legal y/o presidente ${representante}, acreditando personería legal y facultades vigentes mediante los instrumentos notariales adjuntos, respetuosamente se presenta ante esa autoridad aeronáutica nacional y expone:`;
+      const representante = c.contactPerson || 'Titular / Director';
+      const socTypePhrase = socType ? ` legalmente constituida como ${socType},` : '';
+      encabezadoSujeto = `La firma ${c.name}, CUIT Nº ${c.cuit},${socTypePhrase} con domicilio en la localidad de ${c.locationName}, Provincia de ${c.province}, representada en este acto por su representante legal, titular o director ${representante}, acreditando personería legal y facultades vigentes mediante los instrumentos notariales adjuntos, respetuosamente se presenta ante esa autoridad aeronáutica nacional y expone:`;
       petitorioPlural = 'la firma peticiona y solicita a esa autoridad';
     } else if (ownership === 'Titulares Varios') {
       const listaTitulares =
@@ -180,7 +181,7 @@ Sin otro particular, saludamos a Ud. con nuestra más atenta y distinguida consi
 ___________________________________________
 FIRMA Y ACLARACIÓN DEL RESPONSABLE
 ${c.contactPerson || c.name}
-${c.ownershipType === 'Razon Social' ? `${c.sociedadType} - ${c.name}` : `DNI / CUIT: ${c.cuit}`}
+${c.ownershipType === 'Razon Social' ? `${c.sociedadType ? `${c.sociedadType} - ` : ''}${c.name}` : `DNI / CUIT: ${c.cuit}`}
 `;
   }, [selectedClient, currentDateFormatted]);
 

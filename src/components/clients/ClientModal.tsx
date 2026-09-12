@@ -48,7 +48,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
 
   // 2. Personería / Titularidad
   const [ownershipType, setOwnershipType] = useState<OwnershipType>('Razon Social');
-  const [sociedadType, setSociedadType] = useState<SociedadType>('S.A.');
+  const [sociedadType, setSociedadType] = useState<SociedadType | undefined>(undefined);
 
   // Titular único / Razón Social principal
   const [name, setName] = useState('');
@@ -150,7 +150,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setCategory(initialClient.category || 'Pistas');
       setPistaSubtype(initialClient.pistaSubtype || 'LAD');
       setOwnershipType(initialClient.ownershipType || 'Razon Social');
-      setSociedadType(initialClient.sociedadType || 'S.A.');
+      setSociedadType(initialClient.sociedadType);
 
       setName(initialClient.name);
       setCuit(initialClient.cuit);
@@ -218,7 +218,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setCategory('Pistas');
       setPistaSubtype('LAD');
       setOwnershipType('Razon Social');
-      setSociedadType('S.A.');
+      setSociedadType(undefined);
 
       setName('');
       setCuit('');
@@ -393,7 +393,10 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       category,
       pistaSubtype: category === 'Pistas' ? pistaSubtype : undefined,
       ownershipType: category === 'Alquiler de Aeronave' ? undefined : ownershipType,
-      sociedadType: category === 'Alquiler de Aeronave' ? undefined : sociedadType,
+      sociedadType:
+        category === 'Alquiler de Aeronave' || ownershipType !== 'Razon Social'
+          ? undefined
+          : sociedadType || initialClient?.sociedadType || undefined,
       titulares:
         category !== 'Alquiler de Aeronave' && ownershipType === 'Titulares Varios'
           ? titulares
@@ -434,7 +437,10 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               projectType: computedProjectType,
               pistaSubtype: category === 'Pistas' ? pistaSubtype : undefined,
               ownershipType: category === 'Alquiler de Aeronave' ? undefined : ownershipType,
-              sociedadType: category === 'Alquiler de Aeronave' ? undefined : sociedadType,
+              sociedadType:
+                category === 'Alquiler de Aeronave' || ownershipType !== 'Razon Social'
+                  ? undefined
+                  : sociedadType || initialClient?.sociedadType || undefined,
               isFrontierZone: category === 'Pistas' ? isFrontierZone : false,
               isAgroEventual: category === 'Pistas' ? effectiveIsAgro : false,
               gestoriaData
@@ -821,49 +827,21 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                   </button>
                 </div>
 
-                {/* CASO A: RAZÓN SOCIAL (Sociedad Anónima, SRL, Cooperativas, etc.) */}
+                {/* CASO A: RAZÓN SOCIAL (Nombre, CUIT y Titular/Director) */}
                 {ownershipType === 'Razon Social' && (
                   <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block font-medium text-slate-700 mb-1">
-                          Tipo de Sociedad *
-                        </label>
-                        <select
-                          value={sociedadType}
-                          onChange={e => setSociedadType(e.target.value as SociedadType)}
-                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-medium focus:outline-none focus:border-blue-600 shadow-2xs cursor-pointer"
-                        >
-                          <option value="S.A.">S.A. (Sociedad Anónima)</option>
-                          <option value="S.R.L.">S.R.L. (Resp. Limitada)</option>
-                          <option value="Cooperativa">Cooperativa (INAES)</option>
-                          <option value="S.A.S.">S.A.S. (Acciones Simplificadas)</option>
-                          <option value="Fideicomiso">
-                            Fideicomiso (Inmobiliario / Agropecuario)
-                          </option>
-                          <option value="Asociación Civil / Aeroclub">
-                            Asociación Civil / Aeroclub
-                          </option>
-                          <option value="Sociedad de Hecho / Consorcio">
-                            Sociedad de Hecho / Consorcio
-                          </option>
-                          <option value="Otra">Otra Persona Jurídica</option>
-                        </select>
-                      </div>
-
-                      <div className="sm:col-span-2">
-                        <label className="block font-medium text-slate-700 mb-1">
-                          Razón Social Completa *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={name}
-                          onChange={e => setName(e.target.value)}
-                          placeholder={`Ej. AgroAérea Pergamino ${sociedadType}`}
-                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-                        />
-                      </div>
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Nombre / Razón Social *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="Ej. AgroAérea Pergamino S.A."
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -882,13 +860,13 @@ export const ClientModal: React.FC<ClientModalProps> = ({
 
                       <div>
                         <label className="block font-medium text-slate-700 mb-1">
-                          Representante Legal / Presidente / Gerente *
+                          Titular / Director *
                         </label>
                         <input
                           type="text"
                           value={contactPerson}
                           onChange={e => setContactPerson(e.target.value)}
-                          placeholder="Nombre y cargo del apoderado o presidente"
+                          placeholder="Nombre y cargo del titular o director"
                           className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
                         />
                       </div>
@@ -896,9 +874,9 @@ export const ClientModal: React.FC<ClientModalProps> = ({
 
                     <div className="text-[11px] text-blue-800 bg-blue-50/70 p-2.5 rounded-lg border border-blue-200">
                       <ShieldCheck className="h-3.5 w-3.5 inline mr-1 text-blue-700" />
-                      <strong>Documentación societaria requerida ({sociedadType}):</strong> Estatuto
+                      <strong>Documentación societaria requerida:</strong> Estatuto
                       / Contrato Social inscripto, Acta de designación de autoridades vigentes y
-                      Autorización expresa del Directorio, Gerencia o Consejo de Administración.
+                      Poder Notarial de representación o autorización de administración.
                     </div>
                   </div>
                 )}

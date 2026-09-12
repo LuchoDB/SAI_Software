@@ -154,6 +154,20 @@ describe('Documentación Regulatoria Canónica - SAI Consult', () => {
     expect(fidAutoriz?.titulo).toContain('Fiduciario');
   });
 
+  it('generates generic corporate documentation when sociedadType is omitted for Razon Social', () => {
+    const docs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social'
+    });
+    const acta = docs.find(d => d.id === 'ESC-ACTA-CONST');
+    const autoriz = docs.find(d => d.id === 'ESC-AUTORIZ-DIR');
+    const poder = docs.find(d => d.id === 'ESC-PODER');
+
+    expect(acta?.titulo).toBe('Instrumento Constitutivo inscripto');
+    expect(autoriz?.titulo).toBe('Acta de Designación de Autoridades y Autorización');
+    expect(poder?.titulo).toBe('Poder Notarial de Representación Legal');
+  });
+
   it('adjusts documentation for Titular Único vs Titulares Varios (Condominio)', () => {
     // Titular Único
     const unicoDocs = generateCanonicalDocumentation({

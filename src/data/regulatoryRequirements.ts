@@ -278,11 +278,33 @@ export interface CanonicalDocsFilterOptions {
  * (S.A., S.R.L., Cooperativa, S.A.S., Fideicomiso, etc.)
  */
 export function getCorporateDocuments(
-  sociedadType: SociedadType = 'S.A.',
+  sociedadType: SociedadType | undefined,
   baseActa: CanonicalDocDefinition,
   baseAutoriz: CanonicalDocDefinition,
   basePoder: CanonicalDocDefinition
 ): CanonicalDocDefinition[] {
+  if (!sociedadType) {
+    return [
+      {
+        ...baseActa,
+        titulo: 'Instrumento Constitutivo inscripto',
+        descripcion:
+          'Copia certificada por escribano público del Estatuto o Contrato Social inscripto ante el Registro Público u organismo de contralor.'
+      },
+      {
+        ...baseAutoriz,
+        titulo: 'Acta de Designación de Autoridades y Autorización',
+        descripcion:
+          'Copia certificada del Acta de designación de autoridades vigentes y expresa autorización para el trámite.'
+      },
+      {
+        ...basePoder,
+        titulo: 'Poder Notarial de Representación Legal',
+        descripcion:
+          'Poder notarial con facultades suficientes conferido por las autoridades para actuar ante la autoridad aeronáutica.'
+      }
+    ];
+  }
   switch (sociedadType) {
     case 'S.A.':
       return [
@@ -467,7 +489,7 @@ export function generateCanonicalDocumentation(
 ): DocumentItemModel[] {
   const category = options?.category || 'Pistas';
   const ownershipType = options?.ownershipType || 'Razon Social';
-  const sociedadType = options?.sociedadType || 'S.A.';
+  const sociedadType = options?.sociedadType;
   const isFrontier = Boolean(options?.isFrontierZone);
   const isAgroEventual =
     Boolean(options?.isAgroEventual) ||
