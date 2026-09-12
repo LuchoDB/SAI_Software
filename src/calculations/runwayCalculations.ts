@@ -187,3 +187,143 @@ export function computeRunwayFeasibility(
     feasibilityNotes
   };
 }
+
+export interface ThresholdsCalculationResult {
+  distanceMeters: number;
+  trueHeading1to2: number;
+  trueHeading2to1: number;
+  magneticHeading1to2: number;
+  magneticHeading2to1: number;
+  qfuPrimary: string;
+  qfuSecondary: string;
+  qfuLabel: string;
+  magneticOrientationString: string;
+  midpoint: {
+    lat: number;
+    lng: number;
+  };
+}
+
+/**
+ * Convierte grados sexagesimales a radianes
+ */
+export function toRadians(degrees: number): number {
+  return (degrees * Math.PI) / 180;
+}
+
+/**
+ * Convierte radianes a grados sexagesimales
+ */
+export function toDegrees(radians: number): number {
+  return (radians * 180) / Math.PI;
+}
+
+/**
+ * Calcula el rumbo geográfico verdadero (azimut geodésico inicial) entre dos coordenadas WGS-84
+ * @returns Rumbo verdadero en grados [0, 360)
+ */
+export function calculateBearingBetweenCoordinates(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  if (lat1 === lat2 && lng1 === lng2) return 0;
+
+  const phi1 = toRadians(lat1);
+  const phi2 = toRadians(lat2);
+  const deltaLambda = toRadians(lng2 - lng1);
+
+  const y = Math.sin(deltaLambda) * Math.cos(phi2);
+  const x =
+    Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
+
+  const theta = Math.atan2(y, x);
+  const bearing = ((toDegrees(theta) % 360) + 360) % 360;
+
+  return Math.round(bearing * 10) / 10;
+}
+
+/**
+ * Calcula la distancia ortodrómica geodésica entre dos coordenadas WGS-84 en metros
+ */
+export function calculateDistanceBetweenCoordinates(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  if (lat1 === lat2 && lng1 === lng2) return 0;
+
+  const R = 6371000; // Radio medio de la Tierra en metros
+  const phi1 = toRadians(lat1);
+  const phi2 = toRadians(lat2);
+  const deltaPhi = toRadians(lat2 - lat1);
+  const deltaLambda = toRadians(lng2 - lng1);
+
+  const a =
+    Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+    Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)));
+  return Math.round(R * c);
+}
+
+/**
+ * Calcula el rumbo geográfico, rumbo magnético, designador QFU y longitud de pista a partir de las coordenadas de sus umbrales
+ * @param lat1 Latitud Umbral 1 (grados decimales WGS-84)
+ * @param lng1 Longitud Umbral 1 (grados decimales WGS-84)
+ * @param lat2 Latitud Umbral 2 (grados decimales WGS-84)
+ * @param lng2 Longitud Umbral 2 (grados decimales WGS-84)
+ * @param magneticDeclination Declinación magnética en grados (por defecto -8.2° W para Argentina)
+ */
+export function calculateRunwayFromThresholds(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+  magneticDeclination: number = -8.2
+): ThresholdsCalculationResult {
+  const distanceMeters = calculateDistanceBetweenCoordinates(lat1, lng1, lat2, lng2);
+  const trueHeading1to2 = calculateBearingBetweenCoordinates(lat1, lng1, lat2, lng2);
+  const trueHeading2to1 = Math.round(((trueHeading1to2 + 180) % 360) * 10) / 10;
+
+  // Rumbo magnético = Rumbo verdadero - declinación magnética
+  // Con declinación negativa (Oeste/West): RM = RV - (-8.2) = RV + 8.2°
+  const magneticHeading1to2 =
+    Math.round(((((trueHeading1to2 - magneticDeclination) % 360) + 360) % 360) * 10) / 10;
+  const magneticHeading2to1 =
+    Math.round(((((trueHeading2to1 - magneticDeclination) % 360) + 360) % 360) * 10) / 10;
+
+  // Designadores de cabecera QFU (redondeo a la decena más cercana)
+  let qfu1Num = Math.round(magneticHeading1to2 / 10);
+  if (qfu1Num === 0 || qfu1Num === 36) qfu1Num = 36;
+  const qfuPrimary = qfu1Num.toString().padStart(2, '0');
+
+  let qfu2Num = Math.round(magneticHeading2to1 / 10);
+  if (qfu2Num === 0 || qfu2Num === 36) qfu2Num = 36;
+  const qfuSecondary = qfu2Num.toString().padStart(2, '0');
+
+  const qfuLabel =
+    qfu1Num <= qfu2Num ? `${qfuPrimary} / ${qfuSecondary}` : `${qfuSecondary} / ${qfuPrimary}`;
+
+  const h1 = Math.round(magneticHeading1to2).toString().padStart(3, '0');
+  const h2 = Math.round(magneticHeading2to1).toString().padStart(3, '0');
+  const magneticOrientationString = `${h1}° / ${h2}° (QFU ${qfuLabel})`;
+
+  return {
+    distanceMeters,
+    trueHeading1to2,
+    trueHeading2to1,
+    magneticHeading1to2,
+    magneticHeading2to1,
+    qfuPrimary,
+    qfuSecondary,
+    qfuLabel,
+    magneticOrientationString,
+    midpoint: {
+      lat: Math.round(((lat1 + lat2) / 2) * 1000000) / 1000000,
+      lng: Math.round(((lng1 + lng2) / 2) * 1000000) / 1000000
+    }
+  };
+}

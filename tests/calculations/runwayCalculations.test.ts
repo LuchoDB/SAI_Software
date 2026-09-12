@@ -6,7 +6,10 @@ import {
   calculateSlopeCorrection,
   calculateRunwayWidth,
   calculateStripDimensions,
-  computeRunwayFeasibility
+  computeRunwayFeasibility,
+  calculateBearingBetweenCoordinates,
+  calculateDistanceBetweenCoordinates,
+  calculateRunwayFromThresholds
 } from '../../src/calculations/runwayCalculations';
 import { AircraftDesign } from '../../src/types/lad';
 
@@ -100,5 +103,53 @@ describe('runwayCalculations (RAAC 153)', () => {
 
     expect(result.overallFeasibility).toBe('NOT_FEASIBLE');
     expect(result.isLengthFeasible).toBe(false);
+  });
+
+  describe('Cálculo geodésico y magnético de umbrales de pista', () => {
+    // Umbrales de ejemplo representativos: Pista ~1000m en Argentina orientada NE-SW
+    const thr1 = { lat: -34.6, lng: -58.38 };
+    const thr2 = { lat: -34.59368, lng: -58.37192 };
+
+    it('calculates geodetic distance between thresholds accurately', () => {
+      const distance = calculateDistanceBetweenCoordinates(thr1.lat, thr1.lng, thr2.lat, thr2.lng);
+      // Debe rondar los 1010-1030 metros
+      expect(distance).toBeGreaterThan(950);
+      expect(distance).toBeLessThan(1100);
+    });
+
+    it('calculates geodetic true bearing between thresholds accurately', () => {
+      const bearing = calculateBearingBetweenCoordinates(thr1.lat, thr1.lng, thr2.lat, thr2.lng);
+      // Apunta al Noreste (~40°-55°)
+      expect(bearing).toBeGreaterThan(35);
+      expect(bearing).toBeLessThan(60);
+    });
+
+    it('calculates magnetic orientation and QFU designators from threshold coordinates', () => {
+      // Con declinación magnética típica de Argentina -8.2° W
+      const result = calculateRunwayFromThresholds(thr1.lat, thr1.lng, thr2.lat, thr2.lng, -8.2);
+
+      expect(result.distanceMeters).toBeGreaterThan(950);
+      expect(result.trueHeading1to2).toBeGreaterThan(35);
+      expect(result.trueHeading2to1).toBeCloseTo((result.trueHeading1to2 + 180) % 360, 0);
+
+      // Rumbo magnético debe ser True Heading - (-8.2) = True Heading + 8.2°
+      expect(result.magneticHeading1to2).toBeCloseTo(result.trueHeading1to2 + 8.2, 1);
+
+      // Debe generar designadores de dos dígitos (ej. 05 / 23)
+      expect(result.qfuPrimary).toHaveLength(2);
+      expect(result.qfuSecondary).toHaveLength(2);
+      expect(result.qfuLabel).toContain('/');
+      expect(result.magneticOrientationString).toContain('QFU');
+
+      // Punto central / ARP
+      expect(result.midpoint.lat).toBeCloseTo((thr1.lat + thr2.lat) / 2, 4);
+      expect(result.midpoint.lng).toBeCloseTo((thr1.lng + thr2.lng) / 2, 4);
+    });
+
+    it('handles identical threshold coordinates gracefully', () => {
+      const res = calculateRunwayFromThresholds(thr1.lat, thr1.lng, thr1.lat, thr1.lng);
+      expect(res.distanceMeters).toBe(0);
+      expect(res.trueHeading1to2).toBe(0);
+    });
   });
 });

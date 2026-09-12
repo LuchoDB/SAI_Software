@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   X,
   Save,
@@ -11,7 +11,8 @@ import {
   Compass,
   FileCheck,
   ShieldCheck,
-  Navigation
+  Navigation,
+  Ruler
 } from 'lucide-react';
 import {
   Client,
@@ -22,9 +23,11 @@ import {
   SociedadType,
   TitularData,
   AircraftRentalData,
-  GestoriaData
+  GestoriaData,
+  RunwayThresholdsData
 } from '../../types/client';
 import { generateInitialChecklist } from '../../data/regulatoryRequirements';
+import { calculateRunwayFromThresholds } from '../../calculations/runwayCalculations';
 
 interface ClientModalProps {
   isOpen: boolean;
@@ -100,6 +103,43 @@ export const ClientModal: React.FC<ClientModalProps> = ({
   const [terrainLengthAvailableM, setTerrainLengthAvailableM] = useState<number>(1000);
   const [terrainWidthAvailableM, setTerrainWidthAvailableM] = useState<number>(100);
 
+  // Coordenadas geográficas de los umbrales para cálculo automático de rumbo y orientación magnética
+  const [thr1Lat, setThr1Lat] = useState<number>(-34.6);
+  const [thr1Lng, setThr1Lng] = useState<number>(-58.38);
+  const [thr2Lat, setThr2Lat] = useState<number>(-34.59368);
+  const [thr2Lng, setThr2Lng] = useState<number>(-58.37192);
+  const [magneticDeclination, setMagneticDeclination] = useState<number>(-8.2);
+
+  // Cálculo geodésico y magnético en tiempo real a partir de los umbrales
+  const thresholdsCalc = useMemo(() => {
+    if (
+      isNaN(thr1Lat) ||
+      isNaN(thr1Lng) ||
+      isNaN(thr2Lat) ||
+      isNaN(thr2Lng) ||
+      (thr1Lat === 0 && thr1Lng === 0) ||
+      (thr2Lat === 0 && thr2Lng === 0)
+    ) {
+      return null;
+    }
+    return calculateRunwayFromThresholds(
+      thr1Lat,
+      thr1Lng,
+      thr2Lat,
+      thr2Lng,
+      isNaN(magneticDeclination) ? -8.2 : magneticDeclination
+    );
+  }, [thr1Lat, thr1Lng, thr2Lat, thr2Lng, magneticDeclination]);
+
+  // Actualizar automáticamente rumbo, orientación magnética y centro al modificar coordenadas de umbrales
+  useEffect(() => {
+    if (category === 'Pistas' && thresholdsCalc && thresholdsCalc.distanceMeters > 0) {
+      setMagneticOrientation(thresholdsCalc.magneticOrientationString);
+      setLat(thresholdsCalc.midpoint.lat);
+      setLng(thresholdsCalc.midpoint.lng);
+    }
+  }, [thresholdsCalc, category]);
+
   // 6. Condiciones Regulatorias y Ambientales
   const [isFrontierZone, setIsFrontierZone] = useState(false);
   const [isAgroEventual, setIsAgroEventual] = useState(false);
@@ -158,6 +198,21 @@ export const ClientModal: React.FC<ClientModalProps> = ({
         Boolean(initialClient.isAgroEventual) ||
           initialClient.pistaSubtype === 'aerodromo privado para uso agroaereo'
       );
+
+      if (initialClient.thresholds) {
+        setThr1Lat(initialClient.thresholds.threshold1.lat);
+        setThr1Lng(initialClient.thresholds.threshold1.lng);
+        setThr2Lat(initialClient.thresholds.threshold2.lat);
+        setThr2Lng(initialClient.thresholds.threshold2.lng);
+        if (initialClient.thresholds.magneticDeclinationDeg !== undefined) {
+          setMagneticDeclination(initialClient.thresholds.magneticDeclinationDeg);
+        }
+      } else if (initialClient.coordinates) {
+        setThr1Lat(initialClient.coordinates.lat);
+        setThr1Lng(initialClient.coordinates.lng);
+        setThr2Lat(Number((initialClient.coordinates.lat + 0.006).toFixed(6)));
+        setThr2Lng(Number((initialClient.coordinates.lng + 0.008).toFixed(6)));
+      }
     } else {
       // Valores por defecto para nuevo expediente
       setCategory('Pistas');
@@ -208,6 +263,11 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setLat(-34.6037);
       setLng(-58.3816);
       setMagneticOrientation('050° / 230°');
+      setThr1Lat(-34.6);
+      setThr1Lng(-58.38);
+      setThr2Lat(-34.59368);
+      setThr2Lng(-58.37192);
+      setMagneticDeclination(-8.2);
       setElevationMsl(25);
       setReferenceTemperatureC(31.0);
       setTerrainLengthAvailableM(1000);
@@ -301,6 +361,21 @@ export const ClientModal: React.FC<ClientModalProps> = ({
     const effectiveIsAgro =
       isAgroEventual || pistaSubtype === 'aerodromo privado para uso agroaereo';
 
+    const thresholdsData: RunwayThresholdsData | undefined =
+      category === 'Pistas' && thresholdsCalc && thresholdsCalc.distanceMeters > 0
+        ? {
+            threshold1: { lat: Number(thr1Lat), lng: Number(thr1Lng) },
+            threshold2: { lat: Number(thr2Lat), lng: Number(thr2Lng) },
+            lengthMeters: thresholdsCalc.distanceMeters,
+            trueHeadingDeg: thresholdsCalc.trueHeading1to2,
+            reciprocalTrueHeadingDeg: thresholdsCalc.trueHeading2to1,
+            magneticHeadingDeg: thresholdsCalc.magneticHeading1to2,
+            reciprocalMagneticHeadingDeg: thresholdsCalc.magneticHeading2to1,
+            magneticDeclinationDeg: Number(magneticDeclination),
+            qfuLabel: thresholdsCalc.qfuLabel
+          }
+        : initialClient?.thresholds;
+
     const updatedClient: Client = {
       id: initialClient?.id || `cli-${Date.now()}`,
       name: finalName,
@@ -324,6 +399,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
         lat: Number(lat) || -34.6037,
         lng: Number(lng) || -58.3816
       },
+      thresholds: thresholdsData,
       magneticOrientation: magneticOrientation.trim() || '050° / 230°',
       elevationMsl: Number(elevationMsl) || 0,
       referenceTemperatureC: Number(referenceTemperatureC) || 30.0,
@@ -993,49 +1069,219 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               </div>
             </div>
 
-            {/* Coordenadas WGS-84 y Orientación Magnética */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Latitud WGS-84 (Dec.)
-                </label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  value={lat}
-                  onChange={e => setLat(parseFloat(e.target.value))}
-                  placeholder="-34.6037"
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                />
-              </div>
+            {/* Coordenadas Geográficas: Umbrales con Cálculo Automático de Rumbo y Orientación Magnética */}
+            {category === 'Pistas' ? (
+              <div className="p-3.5 bg-blue-50/40 border border-blue-200 rounded-xl space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Compass className="h-4 w-4 text-blue-700" />
+                    <span className="font-bold text-xs text-[#0f2942]">
+                      Coordenadas Geográficas de los Umbrales (WGS-84)
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-semibold text-blue-800 bg-blue-100/70 border border-blue-200 px-2 py-0.5 rounded">
+                    Cálculo Automático de Rumbo y QFU
+                  </span>
+                </div>
 
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Longitud WGS-84 (Dec.)
-                </label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  value={lng}
-                  onChange={e => setLng(parseFloat(e.target.value))}
-                  placeholder="-58.3816"
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                />
-              </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Umbral Cabecera 1 */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-2">
+                    <div className="font-bold text-[11px] text-slate-800 flex items-center justify-between">
+                      <span>Umbral Cabecera 1 (THR 1)</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Punto Inicial</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                          Latitud (Dec.)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={thr1Lat}
+                          onChange={e => setThr1Lat(parseFloat(e.target.value))}
+                          placeholder="-34.600000"
+                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                          Longitud (Dec.)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={thr1Lng}
+                          onChange={e => setThr1Lng(parseFloat(e.target.value))}
+                          placeholder="-58.380000"
+                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Orientación Magnética (QFU / Rumbo)
-                </label>
-                <input
-                  type="text"
-                  value={magneticOrientation}
-                  onChange={e => setMagneticOrientation(e.target.value)}
-                  placeholder="Ej. 050° / 230° (QFU 05/23)"
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                />
+                  {/* Umbral Cabecera 2 */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-2">
+                    <div className="font-bold text-[11px] text-slate-800 flex items-center justify-between">
+                      <span>Umbral Cabecera 2 (THR 2)</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Punto Final</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                          Latitud (Dec.)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={thr2Lat}
+                          onChange={e => setThr2Lat(parseFloat(e.target.value))}
+                          placeholder="-34.593680"
+                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                          Longitud (Dec.)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={thr2Lng}
+                          onChange={e => setThr2Lng(parseFloat(e.target.value))}
+                          placeholder="-58.371920"
+                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Declinación magnética y longitud geodésica */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-slate-600">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-medium text-slate-700">Declinación Magnética:</span>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={magneticDeclination}
+                      onChange={e => setMagneticDeclination(parseFloat(e.target.value))}
+                      className="w-16 bg-white border border-slate-300 rounded px-1.5 py-0.5 font-mono text-center text-xs font-bold text-slate-800"
+                      title="Declinación magnética (+ Este, - Oeste). Típica Argentina: -8.2° W"
+                    />
+                    <span className="text-[10px] text-slate-400">° (ej. -8.2° W)</span>
+                  </div>
+
+                  {thresholdsCalc && thresholdsCalc.distanceMeters > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-blue-900 bg-blue-100/60 px-2 py-0.5 rounded border border-blue-200">
+                        Longitud geodésica:{' '}
+                        <strong>{thresholdsCalc.distanceMeters.toLocaleString()} m</strong>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setTerrainLengthAvailableM(thresholdsCalc.distanceMeters)}
+                        className="flex items-center gap-1 text-[10px] font-bold text-blue-700 hover:text-blue-900 bg-white border border-blue-300 hover:bg-blue-50 px-2 py-0.5 rounded transition cursor-pointer"
+                        title="Aplicar longitud entre umbrales al campo de largo disponible"
+                      >
+                        <Ruler className="h-3 w-3" />
+                        <span>Aplicar a Largo Disp.</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tarjeta de resultados automáticos: Rumbo y Orientación Magnética */}
+                {thresholdsCalc && thresholdsCalc.distanceMeters > 0 ? (
+                  <div className="bg-white border border-blue-200 rounded-lg p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                    <div className="p-1.5 bg-slate-50 rounded border border-slate-100">
+                      <span className="text-[10px] text-slate-500 block">Rumbo Verdadero</span>
+                      <span className="font-mono font-bold text-xs text-slate-800">
+                        {thresholdsCalc.trueHeading1to2.toFixed(1)}° /{' '}
+                        {thresholdsCalc.trueHeading2to1.toFixed(1)}°
+                      </span>
+                    </div>
+
+                    <div className="p-1.5 bg-blue-50/60 rounded border border-blue-100">
+                      <span className="text-[10px] text-blue-700 block font-medium">
+                        Rumbo Magnético
+                      </span>
+                      <span className="font-mono font-bold text-xs text-blue-900">
+                        {thresholdsCalc.magneticHeading1to2.toFixed(1)}° /{' '}
+                        {thresholdsCalc.magneticHeading2to1.toFixed(1)}°
+                      </span>
+                    </div>
+
+                    <div className="p-1.5 bg-emerald-50 rounded border border-emerald-100">
+                      <span className="text-[10px] text-emerald-700 block font-medium">
+                        Orientación QFU
+                      </span>
+                      <span className="font-mono font-bold text-xs text-emerald-900">
+                        {thresholdsCalc.qfuLabel}
+                      </span>
+                    </div>
+
+                    <div className="p-1.5 bg-slate-50 rounded border border-slate-100">
+                      <span className="text-[10px] text-slate-500 block">Centro Pista (ARP)</span>
+                      <span className="font-mono text-[10px] text-slate-700">
+                        {thresholdsCalc.midpoint.lat.toFixed(4)}°,{' '}
+                        {thresholdsCalc.midpoint.lng.toFixed(4)}°
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 text-center">
+                    Ingresa las coordenadas de ambos umbrales para calcular automáticamente el rumbo
+                    y la orientación magnética.
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              /* Coordenadas estándar para Gestoría u otras categorías */
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div>
+                  <label className="block font-medium text-slate-700 mb-1">
+                    Latitud WGS-84 (Dec.)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    value={lat}
+                    onChange={e => setLat(parseFloat(e.target.value))}
+                    placeholder="-34.6037"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-slate-700 mb-1">
+                    Longitud WGS-84 (Dec.)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    value={lng}
+                    onChange={e => setLng(parseFloat(e.target.value))}
+                    placeholder="-58.3816"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-slate-700 mb-1">
+                    Orientación Magnética (QFU / Rumbo)
+                  </label>
+                  <input
+                    type="text"
+                    value={magneticOrientation}
+                    onChange={e => setMagneticOrientation(e.target.value)}
+                    placeholder="Ej. 050° / 230° (QFU 05/23)"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                  />
+                </div>
+              </div>
+            )}
 
             {category === 'Pistas' && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

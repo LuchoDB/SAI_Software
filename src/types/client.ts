@@ -60,6 +60,24 @@ export interface ClientCoordinates {
   formatted?: string;
 }
 
+export interface RunwayThresholdCoordinates {
+  lat: number;
+  lng: number;
+  elevationMsl?: number;
+}
+
+export interface RunwayThresholdsData {
+  threshold1: RunwayThresholdCoordinates;
+  threshold2: RunwayThresholdCoordinates;
+  lengthMeters?: number;
+  trueHeadingDeg?: number;
+  reciprocalTrueHeadingDeg?: number;
+  magneticHeadingDeg?: number;
+  reciprocalMagneticHeadingDeg?: number;
+  magneticDeclinationDeg?: number;
+  qfuLabel?: string;
+}
+
 export interface TitularData {
   id: string;
   nombre: string;
@@ -108,6 +126,7 @@ export interface Client {
   locationName: string;
   province: string;
   coordinates: ClientCoordinates;
+  thresholds?: RunwayThresholdsData; // Coordenadas geográficas de los umbrales calculadas
   magneticOrientation?: number | string; // Rumbo magnético ej. 050° / QFU 05-23
   elevationMsl: number; // Metros sobre el nivel del mar
   referenceTemperatureC?: number; // Temperatura de referencia mes más caluroso
