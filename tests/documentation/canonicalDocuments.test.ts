@@ -2,8 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   CANONICAL_DOCUMENTS_LIST,
   generateCanonicalDocumentation,
-  generateInitialChecklist,
-  getCorporateDocuments
+  generateInitialChecklist
 } from '../../src/data/regulatoryRequirements';
 
 describe('Documentación Regulatoria Canónica - SAI Consult', () => {

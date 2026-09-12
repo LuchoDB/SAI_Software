@@ -94,7 +94,10 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
       subtitle:
         'Nota de presentación, formulario oficial unificado (Anexo IX), arancel CAD y registro de movimientos',
       icon: ShieldCheck,
-      filter: d => (d.organismo === 'ANAC' || d.category === 'ANAC') && d.id !== 'AGRO-FORM-DENUNCIA' && d.id !== 'AGRO-CROQUIS-COORD'
+      filter: d =>
+        (d.organismo === 'ANAC' || d.category === 'ANAC') &&
+        d.id !== 'AGRO-FORM-DENUNCIA' &&
+        d.id !== 'AGRO-CROQUIS-COORD'
     },
     {
       id: 'group-agro-dnso',
@@ -161,16 +164,15 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
               </h2>
               <span
                 className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
-                  percent === 100
-                    ? 'bg-emerald-100 text-emerald-800'
-                    : 'bg-blue-50 text-blue-800'
+                  percent === 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-50 text-blue-800'
                 }`}
               >
                 {percent}% listo
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Los documentos se presentan todos en un único trámite. Marca cada documento a medida que se encuentre adjunto y listo.
+              Los documentos se presentan todos en un único trámite. Marca cada documento a medida
+              que se encuentre adjunto y listo.
             </p>
           </div>
 
@@ -392,10 +394,13 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
           <span>Presentación de Documentación y Requisitos Normativos</span>
         </div>
         <p className="text-[11px] text-slate-500">
-          Toda la documentación debe presentarse de forma simultánea ante mesa de entradas de ANAC o vía Trámites a Distancia (TAD). En caso de campos eventuales agroaéreos (RAAC 137), únicamente se presentan el formulario de denuncia, la autorización del predio, el croquis operacional y la conformidad del suelo, sin necesidad de trámites arancelarios ni libros de aeródromo.
+          Toda la documentación debe presentarse de forma simultánea ante mesa de entradas de ANAC o
+          vía Trámites a Distancia (TAD). En caso de campos eventuales agroaéreos (RAAC 137),
+          únicamente se presentan el formulario de denuncia, la autorización del predio, el croquis
+          operacional y la conformidad del suelo, sin necesidad de trámites arancelarios ni libros
+          de aeródromo.
         </p>
       </div>
     </div>
   );
 };
-

@@ -24,12 +24,7 @@ export type SociedadType =
   | 'Otra';
 
 export type DocumentCategory =
-  | 'ANAC'
-  | 'ESCRIBANÍA'
-  | 'AMBIENTAL'
-  | 'DEFENSA'
-  | 'GESTORÍA'
-  | 'LOCACIÓN';
+  'ANAC' | 'ESCRIBANÍA' | 'AMBIENTAL' | 'DEFENSA' | 'GESTORÍA' | 'LOCACIÓN';
 
 export type CanonicalDocumentStatus = 'Pendiente' | 'En trámite' | 'Observado' | 'Aprobado';
 export type LegacyDocumentStatus = 'PENDING' | 'IN_PROGRESS' | 'OBSERVED' | 'APPROVED';
@@ -132,4 +127,3 @@ export interface Client {
   createdAt: string;
   updatedAt: string;
 }
-

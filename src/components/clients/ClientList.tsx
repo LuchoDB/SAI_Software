@@ -48,10 +48,7 @@ export const ClientList: React.FC<ClientListProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'pending' | 'archived'>('pending');
 
-  const pendingClientsCount = useMemo(
-    () => clients.filter(c => !c.isArchived).length,
-    [clients]
-  );
+  const pendingClientsCount = useMemo(() => clients.filter(c => !c.isArchived).length, [clients]);
   const archivedClientsCount = useMemo(
     () => clients.filter(c => Boolean(c.isArchived)).length,
     [clients]
@@ -59,8 +56,7 @@ export const ClientList: React.FC<ClientListProps> = ({
 
   const filteredClients = useMemo(() => {
     return clients.filter(c => {
-      const isMatchArchived =
-        activeTab === 'archived' ? Boolean(c.isArchived) : !c.isArchived;
+      const isMatchArchived = activeTab === 'archived' ? Boolean(c.isArchived) : !c.isArchived;
       if (!isMatchArchived) return false;
 
       const term = searchTerm.toLowerCase();
@@ -117,9 +113,7 @@ export const ClientList: React.FC<ClientListProps> = ({
             <span>Trabajos Pendientes</span>
             <span
               className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
-                activeTab === 'pending'
-                  ? 'bg-[#1a365d] text-white'
-                  : 'bg-slate-200 text-slate-600'
+                activeTab === 'pending' ? 'bg-[#1a365d] text-white' : 'bg-slate-200 text-slate-600'
               }`}
             >
               {pendingClientsCount}
@@ -138,9 +132,7 @@ export const ClientList: React.FC<ClientListProps> = ({
             <span>Finalizados / Archivados</span>
             <span
               className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
-                activeTab === 'archived'
-                  ? 'bg-amber-800 text-white'
-                  : 'bg-slate-200 text-slate-600'
+                activeTab === 'archived' ? 'bg-amber-800 text-white' : 'bg-slate-200 text-slate-600'
               }`}
             >
               {archivedClientsCount}
@@ -429,4 +421,3 @@ export const ClientList: React.FC<ClientListProps> = ({
     </div>
   );
 };
-

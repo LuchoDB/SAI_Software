@@ -1,18 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import {
-  Printer,
-  Copy,
-  Check,
-  Edit3,
-  RotateCcw,
-  FileText,
-  Building,
-  Compass,
-  MapPin,
-  Send,
-  Users,
-  User
-} from 'lucide-react';
+import { Printer, Copy, Check, Edit3, RotateCcw, Send } from 'lucide-react';
 import saiLogoEmblem from '../../assets/sai_logo_emblem.png';
 import { Client } from '../../types/client';
 
@@ -64,7 +51,7 @@ export const NotaPresentacionView: React.FC<NotaPresentacionViewProps> = ({
     const isRental = c.category === 'Alquiler de Aeronave';
 
     // 1. Organismo Destinatario
-    let organoDestinatario = '';
+    let organoDestinatario: string;
     if (isAgro) {
       organoDestinatario = `A la Administración Nacional de Aviación Civil (ANAC)
 Dirección Nacional de Seguridad Operacional (DNSO)
@@ -86,8 +73,8 @@ Balcarce 290, Ciudad Autónoma de Buenos Aires`;
     }
 
     // 2. Encabezado de Sujeto (Concordancia gramatical: El que suscribe / Los que suscriben / La firma)
-    let encabezadoSujeto = '';
-    let petitorioPlural = '';
+    let encabezadoSujeto: string;
+    let petitorioPlural: string;
 
     if (ownership === 'Razon Social') {
       const representante = c.contactPerson || 'Representante Legal';
@@ -107,7 +94,7 @@ Balcarce 290, Ciudad Autónoma de Buenos Aires`;
     }
 
     // 3. Objeto de la presentación
-    let objetoFormal = '';
+    let objetoFormal: string;
     if (isAgro) {
       objetoFormal = `OBJETO: Denuncia formal de Campo Eventual para Operaciones Agroaéreas conforme a la RAAC Parte 137 Subparte E (Sección 137.41) en el predio denominado "${c.locationName}".`;
     } else if (isGestoria) {
@@ -204,7 +191,8 @@ ${c.ownershipType === 'Razon Social' ? `${c.sociedadType} - ${c.name}` : `DNI / 
             <h1 className="text-base font-bold font-heading">Nota de Presentación Normativa</h1>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Generador oficial de nota formal con concordancia gramatical (el / los / la firma) ante ANAC / DNSO
+            Generador oficial de nota formal con concordancia gramatical (el / los / la firma) ante
+            ANAC / DNSO
           </p>
         </div>
 
@@ -238,9 +226,7 @@ ${c.ownershipType === 'Razon Social' ? `${c.sociedadType} - ${c.name}` : `DNI / 
           <button
             onClick={handleCopy}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition cursor-pointer shadow-2xs ${
-              copied
-                ? 'bg-emerald-600 text-white'
-                : 'bg-[#1a365d] hover:bg-[#0f2942] text-white'
+              copied ? 'bg-emerald-600 text-white' : 'bg-[#1a365d] hover:bg-[#0f2942] text-white'
             }`}
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -299,7 +285,9 @@ ${c.ownershipType === 'Razon Social' ? `${c.sociedadType} - ${c.name}` : `DNI / 
 
           <div className="text-right text-[11px] text-slate-500 font-mono">
             <div>Formulario Oficial ANAC / DNSO</div>
-            <div className="font-bold text-slate-800">EXPTE: {selectedClient?.id || 'SAI-2026'}</div>
+            <div className="font-bold text-slate-800">
+              EXPTE: {selectedClient?.id || 'SAI-2026'}
+            </div>
           </div>
         </div>
 

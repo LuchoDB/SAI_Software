@@ -56,8 +56,22 @@ export const ClientModal: React.FC<ClientModalProps> = ({
 
   // Titulares varios (lista dinámica)
   const [titulares, setTitulares] = useState<TitularData[]>([
-    { id: 'tit-1', nombre: '', dniCuit: '', telefono: '', email: '', porcentajeParticipacion: '50%' },
-    { id: 'tit-2', nombre: '', dniCuit: '', telefono: '', email: '', porcentajeParticipacion: '50%' }
+    {
+      id: 'tit-1',
+      nombre: '',
+      dniCuit: '',
+      telefono: '',
+      email: '',
+      porcentajeParticipacion: '50%'
+    },
+    {
+      id: 'tit-2',
+      nombre: '',
+      dniCuit: '',
+      telefono: '',
+      email: '',
+      porcentajeParticipacion: '50%'
+    }
   ]);
 
   // 3. Alquiler de Aeronave
@@ -131,7 +145,9 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setLat(initialClient.coordinates.lat);
       setLng(initialClient.coordinates.lng);
       setMagneticOrientation(
-        initialClient.magneticOrientation ? String(initialClient.magneticOrientation) : '050° / 230°'
+        initialClient.magneticOrientation
+          ? String(initialClient.magneticOrientation)
+          : '050° / 230°'
       );
       setElevationMsl(initialClient.elevationMsl);
       setReferenceTemperatureC(initialClient.referenceTemperatureC || 31.0);
@@ -160,8 +176,22 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setPhone('');
 
       setTitulares([
-        { id: 'tit-1', nombre: '', dniCuit: '', telefono: '', email: '', porcentajeParticipacion: '50%' },
-        { id: 'tit-2', nombre: '', dniCuit: '', telefono: '', email: '', porcentajeParticipacion: '50%' }
+        {
+          id: 'tit-1',
+          nombre: '',
+          dniCuit: '',
+          telefono: '',
+          email: '',
+          porcentajeParticipacion: '50%'
+        },
+        {
+          id: 'tit-2',
+          nombre: '',
+          dniCuit: '',
+          telefono: '',
+          email: '',
+          porcentajeParticipacion: '50%'
+        }
       ]);
 
       setRentalClient('');
@@ -219,9 +249,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
   };
 
   const handleUpdateTitular = (id: string, field: keyof TitularData, value: string) => {
-    setTitulares(prev =>
-      prev.map(t => (t.id === id ? { ...t, [field]: value } : t))
-    );
+    setTitulares(prev => prev.map(t => (t.id === id ? { ...t, [field]: value } : t)));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -430,7 +458,11 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                   if (val === 'aerodromo privado para uso agroaereo') {
                     setIsAgroEventual(true);
                   }
-                  if (val === 'LADH' || val === 'Helipuerto Privado' || val === 'helipuerto publico') {
+                  if (
+                    val === 'LADH' ||
+                    val === 'Helipuerto Privado' ||
+                    val === 'helipuerto publico'
+                  ) {
                     setTerrainLengthAvailableM(35);
                     setTerrainWidthAvailableM(35);
                   } else {
@@ -1104,4 +1136,3 @@ export const ClientModal: React.FC<ClientModalProps> = ({
     </div>
   );
 };
-

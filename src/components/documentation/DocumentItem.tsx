@@ -9,9 +9,7 @@ interface DocumentItemProps {
 
 export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateStatus }) => {
   const isCompleted =
-    Boolean(document.completed) ||
-    document.estado === 'Aprobado' ||
-    document.status === 'APPROVED';
+    Boolean(document.completed) || document.estado === 'Aprobado' || document.status === 'APPROVED';
 
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(document.notes || document.observaciones || '');
@@ -192,4 +190,3 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({ document, onUpdateSt
     </div>
   );
 };
-

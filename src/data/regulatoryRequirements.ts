@@ -366,8 +366,7 @@ export function getCorporateDocuments(
         {
           ...basePoder,
           titulo: 'Poder Notarial del Administrador (S.A.S.)',
-          descripcion:
-            'Poder notarial otorgado por el Administrador Titular de la S.A.S.'
+          descripcion: 'Poder notarial otorgado por el Administrador Titular de la S.A.S.'
         }
       ];
     case 'Fideicomiso':
@@ -626,4 +625,3 @@ export function generateInitialChecklist(
 ): DocumentItemModel[] {
   return generateCanonicalDocumentation(options);
 }
-
