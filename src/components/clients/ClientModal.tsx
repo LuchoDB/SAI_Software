@@ -103,7 +103,6 @@ export const ClientModal: React.FC<ClientModalProps> = ({
   // 6. Condiciones Regulatorias y Ambientales
   const [isFrontierZone, setIsFrontierZone] = useState(false);
   const [isAgroEventual, setIsAgroEventual] = useState(false);
-  const [usoConformeSuelo, setUsoConformeSuelo] = useState(true);
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
@@ -158,9 +157,6 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setIsAgroEventual(
         Boolean(initialClient.isAgroEventual) ||
           initialClient.pistaSubtype === 'aerodromo privado para uso agroaereo'
-      );
-      setUsoConformeSuelo(
-        initialClient.usoConformeSuelo !== undefined ? initialClient.usoConformeSuelo : true
       );
     } else {
       // Valores por defecto para nuevo expediente
@@ -219,7 +215,6 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       setNotes('');
       setIsFrontierZone(false);
       setIsAgroEventual(false);
-      setUsoConformeSuelo(true);
     }
   }, [initialClient, isOpen]);
 
@@ -337,7 +332,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
       notes: notes.trim(),
       isFrontierZone,
       isAgroEventual: effectiveIsAgro,
-      usoConformeSuelo,
+      usoConformeSuelo: true,
       isArchived: initialClient?.isArchived || false,
 
       documents:
@@ -351,7 +346,6 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               sociedadType,
               isFrontierZone,
               isAgroEventual: effectiveIsAgro,
-              usoConformeSuelo,
               gestoriaData
             }),
 
@@ -484,7 +478,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
               </select>
 
               {/* Checkboxes de condiciones especiales */}
-              <div className="pt-2 border-t border-blue-200/60 grid grid-cols-1 sm:grid-cols-3 gap-2 text-slate-700 text-[11px]">
+              <div className="pt-2 border-t border-blue-200/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 text-[11px]">
                 <label className="flex items-center gap-1.5 cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -494,18 +488,6 @@ export const ClientModal: React.FC<ClientModalProps> = ({
                   />
                   <span>
                     <strong>Campo Eventual</strong> (RAAC 137)
-                  </span>
-                </label>
-
-                <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={usoConformeSuelo}
-                    onChange={e => setUsoConformeSuelo(e.target.checked)}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-slate-300 cursor-pointer"
-                  />
-                  <span>
-                    <strong>Uso Conforme del Suelo</strong>
                   </span>
                 </label>
 
