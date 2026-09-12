@@ -374,40 +374,55 @@ export const ClientModal: React.FC<ClientModalProps> = ({
             magneticDeclinationDeg: Number(magneticDeclination),
             qfuLabel: thresholdsCalc.qfuLabel
           }
-        : initialClient?.thresholds;
+        : category === 'Pistas'
+          ? initialClient?.thresholds
+          : undefined;
 
     const updatedClient: Client = {
       id: initialClient?.id || `cli-${Date.now()}`,
       name: finalName,
-      cuit: cuit.trim() || '20-00000000-0',
-      contactPerson: contactPerson.trim() || finalName,
-      email: email.trim(),
-      phone: phone.trim(),
+      cuit: category === 'Alquiler de Aeronave' ? '' : cuit.trim() || '20-00000000-0',
+      contactPerson:
+        category === 'Alquiler de Aeronave'
+          ? rentalClient.trim() || finalName
+          : contactPerson.trim() || finalName,
+      email: category === 'Alquiler de Aeronave' ? '' : email.trim(),
+      phone: category === 'Alquiler de Aeronave' ? '' : phone.trim(),
       projectType: computedProjectType,
 
       category,
-      pistaSubtype,
-      ownershipType,
-      sociedadType,
-      titulares: ownershipType === 'Titulares Varios' ? titulares : undefined,
+      pistaSubtype: category === 'Pistas' ? pistaSubtype : undefined,
+      ownershipType: category === 'Alquiler de Aeronave' ? undefined : ownershipType,
+      sociedadType: category === 'Alquiler de Aeronave' ? undefined : sociedadType,
+      titulares:
+        category !== 'Alquiler de Aeronave' && ownershipType === 'Titulares Varios'
+          ? titulares
+          : undefined,
       aircraftRentalData,
       gestoriaData,
 
-      locationName: locationName.trim() || 'Emplazamiento Proyectado',
-      province,
+      locationName:
+        category === 'Alquiler de Aeronave'
+          ? rentalDestination.trim() || 'Operación Aérea'
+          : locationName.trim() || 'Emplazamiento Proyectado',
+      province: category === 'Alquiler de Aeronave' ? 'Nacional' : province,
       coordinates: {
         lat: Number(lat) || -34.6037,
         lng: Number(lng) || -58.3816
       },
       thresholds: thresholdsData,
-      magneticOrientation: magneticOrientation.trim() || '050° / 230°',
-      elevationMsl: Number(elevationMsl) || 0,
-      referenceTemperatureC: Number(referenceTemperatureC) || 30.0,
-      terrainLengthAvailableM: Number(terrainLengthAvailableM) || (isHeli ? 35 : 1000),
-      terrainWidthAvailableM: Number(terrainWidthAvailableM) || (isHeli ? 35 : 100),
+      magneticOrientation:
+        category === 'Pistas' ? magneticOrientation.trim() || '050° / 230°' : undefined,
+      elevationMsl: category === 'Pistas' ? Number(elevationMsl) || 0 : 0,
+      referenceTemperatureC:
+        category === 'Pistas' ? Number(referenceTemperatureC) || 30.0 : undefined,
+      terrainLengthAvailableM:
+        category === 'Pistas' ? Number(terrainLengthAvailableM) || (isHeli ? 35 : 1000) : undefined,
+      terrainWidthAvailableM:
+        category === 'Pistas' ? Number(terrainWidthAvailableM) || (isHeli ? 35 : 100) : undefined,
       notes: notes.trim(),
-      isFrontierZone,
-      isAgroEventual: effectiveIsAgro,
+      isFrontierZone: category === 'Pistas' ? isFrontierZone : false,
+      isAgroEventual: category === 'Pistas' ? effectiveIsAgro : false,
       usoConformeSuelo: true,
       isArchived: initialClient?.isArchived || false,
 
@@ -417,11 +432,11 @@ export const ClientModal: React.FC<ClientModalProps> = ({
           : generateInitialChecklist({
               category,
               projectType: computedProjectType,
-              pistaSubtype,
-              ownershipType,
-              sociedadType,
-              isFrontierZone,
-              isAgroEventual: effectiveIsAgro,
+              pistaSubtype: category === 'Pistas' ? pistaSubtype : undefined,
+              ownershipType: category === 'Alquiler de Aeronave' ? undefined : ownershipType,
+              sociedadType: category === 'Alquiler de Aeronave' ? undefined : sociedadType,
+              isFrontierZone: category === 'Pistas' ? isFrontierZone : false,
+              isAgroEventual: category === 'Pistas' ? effectiveIsAgro : false,
               gestoriaData
             }),
 
@@ -587,7 +602,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({
             <div className="p-4 bg-purple-50/40 border border-purple-200 rounded-xl space-y-3">
               <div className="font-bold text-[#0f2942] text-xs flex items-center gap-1.5">
                 <Navigation className="h-4 w-4 text-purple-700" />
-                <span>Datos del Alquiler y Operación de Aeronave</span>
+                <span>Datos de Alquiler</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -753,580 +768,610 @@ export const ClientModal: React.FC<ClientModalProps> = ({
             </div>
           )}
 
-          {/* 5. Selector de Personería / Titularidad */}
-          <div className="pt-2 border-t border-slate-200">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Personería & Titularidad del Inmueble / Solicitante
-              </label>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2.5 mb-3">
-              <button
-                type="button"
-                onClick={() => setOwnershipType('Razon Social')}
-                className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${
-                  ownershipType === 'Razon Social'
-                    ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
-                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <Building className="h-3.5 w-3.5" />
-                <span>Razón Social</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setOwnershipType('Titular Unico')}
-                className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${
-                  ownershipType === 'Titular Unico'
-                    ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
-                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <User className="h-3.5 w-3.5" />
-                <span>Titular Único</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setOwnershipType('Titulares Varios')}
-                className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${
-                  ownershipType === 'Titulares Varios'
-                    ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
-                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <Users className="h-3.5 w-3.5" />
-                <span>Titulares Varios</span>
-              </button>
-            </div>
-
-            {/* CASO A: RAZÓN SOCIAL (Sociedad Anónima, SRL, Cooperativas, etc.) */}
-            {ownershipType === 'Razon Social' && (
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                      Tipo de Sociedad *
-                    </label>
-                    <select
-                      value={sociedadType}
-                      onChange={e => setSociedadType(e.target.value as SociedadType)}
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-medium focus:outline-none focus:border-blue-600 shadow-2xs cursor-pointer"
-                    >
-                      <option value="S.A.">S.A. (Sociedad Anónima)</option>
-                      <option value="S.R.L.">S.R.L. (Resp. Limitada)</option>
-                      <option value="Cooperativa">Cooperativa (INAES)</option>
-                      <option value="S.A.S.">S.A.S. (Acciones Simplificadas)</option>
-                      <option value="Fideicomiso">Fideicomiso (Inmobiliario / Agropecuario)</option>
-                      <option value="Asociación Civil / Aeroclub">
-                        Asociación Civil / Aeroclub
-                      </option>
-                      <option value="Sociedad de Hecho / Consorcio">
-                        Sociedad de Hecho / Consorcio
-                      </option>
-                      <option value="Otra">Otra Persona Jurídica</option>
-                    </select>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block font-medium text-slate-700 mb-1">
-                      Razón Social Completa *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder={`Ej. AgroAérea Pergamino ${sociedadType}`}
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-                    />
-                  </div>
+          {/* 5. Selector de Personería / Titularidad (Exclusivo Pistas y Gestoría - No aplica a Alquiler) */}
+          {category !== 'Alquiler de Aeronave' && (
+            <>
+              <div className="pt-2 border-t border-slate-200">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    {category === 'Gestoria'
+                      ? 'Personería y Titular de Aeronave'
+                      : 'Personería y Titularidad de la Pista'}
+                  </label>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                      CUIT de la Sociedad *
-                    </label>
-                    <input
-                      type="text"
-                      value={cuit}
-                      onChange={e => setCuit(e.target.value)}
-                      placeholder="30-71234567-9"
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                      Representante Legal / Presidente / Gerente *
-                    </label>
-                    <input
-                      type="text"
-                      value={contactPerson}
-                      onChange={e => setContactPerson(e.target.value)}
-                      placeholder="Nombre y cargo del apoderado o presidente"
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-blue-800 bg-blue-50/70 p-2.5 rounded-lg border border-blue-200">
-                  <ShieldCheck className="h-3.5 w-3.5 inline mr-1 text-blue-700" />
-                  <strong>Documentación societaria requerida ({sociedadType}):</strong> Estatuto /
-                  Contrato Social inscripto, Acta de designación de autoridades vigentes y
-                  Autorización expresa del Directorio, Gerencia o Consejo de Administración.
-                </div>
-              </div>
-            )}
-
-            {/* CASO B: TITULAR ÚNICO */}
-            {ownershipType === 'Titular Unico' && (
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                      Nombre y Apellido del Titular *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder="Ej. Juan Carlos Rossi"
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-slate-700 mb-1">
-                      DNI / CUIT / CUIL *
-                    </label>
-                    <input
-                      type="text"
-                      value={cuit}
-                      onChange={e => setCuit(e.target.value)}
-                      placeholder="20-25894123-4 o DNI 25.894.123"
-                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* CASO C: TITULARES VARIOS (Condominio con múltiples titulares) */}
-            {ownershipType === 'Titulares Varios' && (
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-700 text-xs">
-                    Nómina de Cotitulares / Condóminos ({titulares.length}):
-                  </span>
+                <div className="grid grid-cols-3 gap-2.5 mb-3">
                   <button
                     type="button"
-                    onClick={handleAddTitular}
-                    className="flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-white border border-blue-300 px-2.5 py-1 rounded-lg hover:bg-blue-50 transition cursor-pointer"
+                    onClick={() => setOwnershipType('Razon Social')}
+                    className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${
+                      ownershipType === 'Razon Social'
+                        ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
                   >
-                    <Plus className="h-3 w-3" />
-                    <span>Agregar Titular</span>
+                    <Building className="h-3.5 w-3.5" />
+                    <span>Razón Social</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setOwnershipType('Titular Unico')}
+                    className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${
+                      ownershipType === 'Titular Unico'
+                        ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <User className="h-3.5 w-3.5" />
+                    <span>Titular Único</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setOwnershipType('Titulares Varios')}
+                    className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${
+                      ownershipType === 'Titulares Varios'
+                        ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Users className="h-3.5 w-3.5" />
+                    <span>Titulares Varios</span>
                   </button>
                 </div>
 
-                <div className="space-y-2.5">
-                  {titulares.map((tit, index) => (
-                    <div
-                      key={tit.id}
-                      className="bg-white border border-slate-200 p-2.5 rounded-lg grid grid-cols-1 sm:grid-cols-12 gap-2 items-center"
-                    >
-                      <div className="sm:col-span-1 text-center font-mono font-bold text-slate-400 text-xs">
-                        #{index + 1}
+                {/* CASO A: RAZÓN SOCIAL (Sociedad Anónima, SRL, Cooperativas, etc.) */}
+                {ownershipType === 'Razon Social' && (
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block font-medium text-slate-700 mb-1">
+                          Tipo de Sociedad *
+                        </label>
+                        <select
+                          value={sociedadType}
+                          onChange={e => setSociedadType(e.target.value as SociedadType)}
+                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-medium focus:outline-none focus:border-blue-600 shadow-2xs cursor-pointer"
+                        >
+                          <option value="S.A.">S.A. (Sociedad Anónima)</option>
+                          <option value="S.R.L.">S.R.L. (Resp. Limitada)</option>
+                          <option value="Cooperativa">Cooperativa (INAES)</option>
+                          <option value="S.A.S.">S.A.S. (Acciones Simplificadas)</option>
+                          <option value="Fideicomiso">
+                            Fideicomiso (Inmobiliario / Agropecuario)
+                          </option>
+                          <option value="Asociación Civil / Aeroclub">
+                            Asociación Civil / Aeroclub
+                          </option>
+                          <option value="Sociedad de Hecho / Consorcio">
+                            Sociedad de Hecho / Consorcio
+                          </option>
+                          <option value="Otra">Otra Persona Jurídica</option>
+                        </select>
                       </div>
 
-                      <div className="sm:col-span-4">
+                      <div className="sm:col-span-2">
+                        <label className="block font-medium text-slate-700 mb-1">
+                          Razón Social Completa *
+                        </label>
                         <input
                           type="text"
                           required
-                          value={tit.nombre}
-                          onChange={e => handleUpdateTitular(tit.id, 'nombre', e.target.value)}
-                          placeholder="Nombre y Apellido"
-                          className="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-600"
+                          value={name}
+                          onChange={e => setName(e.target.value)}
+                          placeholder={`Ej. AgroAérea Pergamino ${sociedadType}`}
+                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
                         />
                       </div>
+                    </div>
 
-                      <div className="sm:col-span-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block font-medium text-slate-700 mb-1">
+                          CUIT de la Sociedad *
+                        </label>
                         <input
                           type="text"
-                          value={tit.dniCuit}
-                          onChange={e => handleUpdateTitular(tit.id, 'dniCuit', e.target.value)}
-                          placeholder="DNI / CUIT"
-                          className="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-blue-600"
+                          value={cuit}
+                          onChange={e => setCuit(e.target.value)}
+                          placeholder="30-71234567-9"
+                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
                         />
                       </div>
 
-                      <div className="sm:col-span-3">
+                      <div>
+                        <label className="block font-medium text-slate-700 mb-1">
+                          Representante Legal / Presidente / Gerente *
+                        </label>
                         <input
                           type="text"
-                          value={tit.porcentajeParticipacion || ''}
-                          onChange={e =>
-                            handleUpdateTitular(tit.id, 'porcentajeParticipacion', e.target.value)
-                          }
-                          placeholder="% Parte (ej. 50%)"
-                          className="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-600"
+                          value={contactPerson}
+                          onChange={e => setContactPerson(e.target.value)}
+                          placeholder="Nombre y cargo del apoderado o presidente"
+                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
                         />
                       </div>
-
-                      <div className="sm:col-span-1 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveTitular(tit.id)}
-                          className="p-1 text-slate-400 hover:text-red-600 transition"
-                          title="Quitar titular"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
                     </div>
-                  ))}
-                </div>
 
-                <div className="text-[11px] text-slate-600 bg-white p-2 rounded border border-slate-200">
-                  <ShieldCheck className="h-3.5 w-3.5 inline mr-1 text-blue-700" />
-                  Se incorporará automáticamente el requerimiento notarial de{' '}
-                  <strong>Autorización Mancomunada / Poder entre Condóminos</strong>.
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 6. Datos de Contacto Generales */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Correo Electrónico</label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="contacto@empresa.com.ar"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Teléfono de Contacto</label>
-              <input
-                type="text"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                placeholder="+54 9 343 611-8305"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-              />
-            </div>
-          </div>
-
-          {/* 7. Ubicación, Coordenadas y Orientación Magnética (Para Pistas y Gestoría) */}
-          <div className="pt-2 border-t border-slate-200 space-y-3">
-            <div className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-              <Compass className="h-4 w-4 text-blue-700" />
-              <span>Emplazamiento, Coordenadas y Orientación Magnética</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Localidad / Nombre del Predio
-                </label>
-                <input
-                  type="text"
-                  value={locationName}
-                  onChange={e => setLocationName(e.target.value)}
-                  placeholder="Ej. Pergamino / Campo El Trébol"
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">Provincia</label>
-                <select
-                  value={province}
-                  onChange={e => setProvince(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs cursor-pointer"
-                >
-                  <option value="Buenos Aires">Buenos Aires</option>
-                  <option value="Córdoba">Córdoba</option>
-                  <option value="Santa Fe">Santa Fe</option>
-                  <option value="Entre Ríos">Entre Ríos</option>
-                  <option value="La Pampa">La Pampa</option>
-                  <option value="Chaco">Chaco</option>
-                  <option value="Corrientes">Corrientes</option>
-                  <option value="Santiago del Estero">Santiago del Estero</option>
-                  <option value="Mendoza">Mendoza</option>
-                  <option value="Salta">Salta</option>
-                  <option value="Neuquén">Neuquén</option>
-                  <option value="Río Negro">Río Negro</option>
-                  <option value="Otra">Otra</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Coordenadas Geográficas: Umbrales con Cálculo Automático de Rumbo y Orientación Magnética */}
-            {category === 'Pistas' ? (
-              <div className="p-3.5 bg-blue-50/40 border border-blue-200 rounded-xl space-y-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Compass className="h-4 w-4 text-blue-700" />
-                    <span className="font-bold text-xs text-[#0f2942]">
-                      Coordenadas Geográficas de los Umbrales (WGS-84)
-                    </span>
+                    <div className="text-[11px] text-blue-800 bg-blue-50/70 p-2.5 rounded-lg border border-blue-200">
+                      <ShieldCheck className="h-3.5 w-3.5 inline mr-1 text-blue-700" />
+                      <strong>Documentación societaria requerida ({sociedadType}):</strong> Estatuto
+                      / Contrato Social inscripto, Acta de designación de autoridades vigentes y
+                      Autorización expresa del Directorio, Gerencia o Consejo de Administración.
+                    </div>
                   </div>
-                  <span className="text-[10px] font-semibold text-blue-800 bg-blue-100/70 border border-blue-200 px-2 py-0.5 rounded">
-                    Cálculo Automático de Rumbo y QFU
-                  </span>
-                </div>
+                )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Umbral Cabecera 1 */}
-                  <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-2">
-                    <div className="font-bold text-[11px] text-slate-800 flex items-center justify-between">
-                      <span>Umbral Cabecera 1 (THR 1)</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Punto Inicial</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
+                {/* CASO B: TITULAR ÚNICO */}
+                {ownershipType === 'Titular Unico' && (
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
-                          Latitud (Dec.)
+                        <label className="block font-medium text-slate-700 mb-1">
+                          Nombre y Apellido del Titular *
                         </label>
                         <input
-                          type="number"
-                          step="0.000001"
-                          value={thr1Lat}
-                          onChange={e => setThr1Lat(parseFloat(e.target.value))}
-                          placeholder="-34.600000"
-                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                          type="text"
+                          required
+                          value={name}
+                          onChange={e => setName(e.target.value)}
+                          placeholder="Ej. Juan Carlos Rossi"
+                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
                         />
                       </div>
+
                       <div>
-                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
-                          Longitud (Dec.)
+                        <label className="block font-medium text-slate-700 mb-1">
+                          DNI / CUIT / CUIL *
                         </label>
                         <input
-                          type="number"
-                          step="0.000001"
-                          value={thr1Lng}
-                          onChange={e => setThr1Lng(parseFloat(e.target.value))}
-                          placeholder="-58.380000"
-                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                          type="text"
+                          value={cuit}
+                          onChange={e => setCuit(e.target.value)}
+                          placeholder="20-25894123-4 o DNI 25.894.123"
+                          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
                         />
                       </div>
                     </div>
                   </div>
+                )}
 
-                  {/* Umbral Cabecera 2 */}
-                  <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-2">
-                    <div className="font-bold text-[11px] text-slate-800 flex items-center justify-between">
-                      <span>Umbral Cabecera 2 (THR 2)</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Punto Final</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
-                          Latitud (Dec.)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.000001"
-                          value={thr2Lat}
-                          onChange={e => setThr2Lat(parseFloat(e.target.value))}
-                          placeholder="-34.593680"
-                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
-                          Longitud (Dec.)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.000001"
-                          value={thr2Lng}
-                          onChange={e => setThr2Lng(parseFloat(e.target.value))}
-                          placeholder="-58.371920"
-                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Declinación magnética y longitud geodésica */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-slate-600">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-medium text-slate-700">Declinación Magnética:</span>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={magneticDeclination}
-                      onChange={e => setMagneticDeclination(parseFloat(e.target.value))}
-                      className="w-16 bg-white border border-slate-300 rounded px-1.5 py-0.5 font-mono text-center text-xs font-bold text-slate-800"
-                      title="Declinación magnética (+ Este, - Oeste). Típica Argentina: -8.2° W"
-                    />
-                    <span className="text-[10px] text-slate-400">° (ej. -8.2° W)</span>
-                  </div>
-
-                  {thresholdsCalc && thresholdsCalc.distanceMeters > 0 && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-blue-900 bg-blue-100/60 px-2 py-0.5 rounded border border-blue-200">
-                        Longitud geodésica:{' '}
-                        <strong>{thresholdsCalc.distanceMeters.toLocaleString()} m</strong>
+                {/* CASO C: TITULARES VARIOS (Condominio con múltiples titulares) */}
+                {ownershipType === 'Titulares Varios' && (
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-700 text-xs">
+                        Nómina de Cotitulares / Condóminos ({titulares.length}):
                       </span>
                       <button
                         type="button"
-                        onClick={() => setTerrainLengthAvailableM(thresholdsCalc.distanceMeters)}
-                        className="flex items-center gap-1 text-[10px] font-bold text-blue-700 hover:text-blue-900 bg-white border border-blue-300 hover:bg-blue-50 px-2 py-0.5 rounded transition cursor-pointer"
-                        title="Aplicar longitud entre umbrales al campo de largo disponible"
+                        onClick={handleAddTitular}
+                        className="flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-white border border-blue-300 px-2.5 py-1 rounded-lg hover:bg-blue-50 transition cursor-pointer"
                       >
-                        <Ruler className="h-3 w-3" />
-                        <span>Aplicar a Largo Disp.</span>
+                        <Plus className="h-3 w-3" />
+                        <span>Agregar Titular</span>
                       </button>
                     </div>
-                  )}
-                </div>
 
-                {/* Tarjeta de resultados automáticos: Rumbo y Orientación Magnética */}
-                {thresholdsCalc && thresholdsCalc.distanceMeters > 0 ? (
-                  <div className="bg-white border border-blue-200 rounded-lg p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                    <div className="p-1.5 bg-slate-50 rounded border border-slate-100">
-                      <span className="text-[10px] text-slate-500 block">Rumbo Verdadero</span>
-                      <span className="font-mono font-bold text-xs text-slate-800">
-                        {thresholdsCalc.trueHeading1to2.toFixed(1)}° /{' '}
-                        {thresholdsCalc.trueHeading2to1.toFixed(1)}°
-                      </span>
+                    <div className="space-y-2.5">
+                      {titulares.map((tit, index) => (
+                        <div
+                          key={tit.id}
+                          className="bg-white border border-slate-200 p-2.5 rounded-lg grid grid-cols-1 sm:grid-cols-12 gap-2 items-center"
+                        >
+                          <div className="sm:col-span-1 text-center font-mono font-bold text-slate-400 text-xs">
+                            #{index + 1}
+                          </div>
+
+                          <div className="sm:col-span-4">
+                            <input
+                              type="text"
+                              required
+                              value={tit.nombre}
+                              onChange={e => handleUpdateTitular(tit.id, 'nombre', e.target.value)}
+                              placeholder="Nombre y Apellido"
+                              className="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-600"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-3">
+                            <input
+                              type="text"
+                              value={tit.dniCuit}
+                              onChange={e => handleUpdateTitular(tit.id, 'dniCuit', e.target.value)}
+                              placeholder="DNI / CUIT"
+                              className="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-blue-600"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-3">
+                            <input
+                              type="text"
+                              value={tit.porcentajeParticipacion || ''}
+                              onChange={e =>
+                                handleUpdateTitular(
+                                  tit.id,
+                                  'porcentajeParticipacion',
+                                  e.target.value
+                                )
+                              }
+                              placeholder="% Parte (ej. 50%)"
+                              className="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-600"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-1 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveTitular(tit.id)}
+                              className="p-1 text-slate-400 hover:text-red-600 transition"
+                              title="Quitar titular"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
-                    <div className="p-1.5 bg-blue-50/60 rounded border border-blue-100">
-                      <span className="text-[10px] text-blue-700 block font-medium">
-                        Rumbo Magnético
-                      </span>
-                      <span className="font-mono font-bold text-xs text-blue-900">
-                        {thresholdsCalc.magneticHeading1to2.toFixed(1)}° /{' '}
-                        {thresholdsCalc.magneticHeading2to1.toFixed(1)}°
-                      </span>
+                    <div className="text-[11px] text-slate-600 bg-white p-2 rounded border border-slate-200">
+                      <ShieldCheck className="h-3.5 w-3.5 inline mr-1 text-blue-700" />
+                      Se incorporará automáticamente el requerimiento notarial de{' '}
+                      <strong>Autorización Mancomunada / Poder entre Condóminos</strong>.
                     </div>
-
-                    <div className="p-1.5 bg-emerald-50 rounded border border-emerald-100">
-                      <span className="text-[10px] text-emerald-700 block font-medium">
-                        Orientación QFU
-                      </span>
-                      <span className="font-mono font-bold text-xs text-emerald-900">
-                        {thresholdsCalc.qfuLabel}
-                      </span>
-                    </div>
-
-                    <div className="p-1.5 bg-slate-50 rounded border border-slate-100">
-                      <span className="text-[10px] text-slate-500 block">Centro Pista (ARP)</span>
-                      <span className="font-mono text-[10px] text-slate-700">
-                        {thresholdsCalc.midpoint.lat.toFixed(4)}°,{' '}
-                        {thresholdsCalc.midpoint.lng.toFixed(4)}°
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 text-center">
-                    Ingresa las coordenadas de ambos umbrales para calcular automáticamente el rumbo
-                    y la orientación magnética.
                   </div>
                 )}
               </div>
-            ) : (
-              /* Coordenadas estándar para Gestoría u otras categorías */
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+
+              {/* 6. Datos de Contacto Generales */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-medium text-slate-700 mb-1">
-                    Latitud WGS-84 (Dec.)
+                    Correo Electrónico
                   </label>
                   <input
-                    type="number"
-                    step="0.0001"
-                    value={lat}
-                    onChange={e => setLat(parseFloat(e.target.value))}
-                    placeholder="-34.6037"
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="contacto@empresa.com.ar"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
                   />
                 </div>
 
                 <div>
                   <label className="block font-medium text-slate-700 mb-1">
-                    Longitud WGS-84 (Dec.)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={lng}
-                    onChange={e => setLng(parseFloat(e.target.value))}
-                    placeholder="-58.3816"
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    Orientación Magnética (QFU / Rumbo)
+                    Teléfono de Contacto
                   </label>
                   <input
                     type="text"
-                    value={magneticOrientation}
-                    onChange={e => setMagneticOrientation(e.target.value)}
-                    placeholder="Ej. 050° / 230° (QFU 05/23)"
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    placeholder="+54 9 343 611-8305"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
                   />
                 </div>
               </div>
-            )}
 
-            {category === 'Pistas' && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Elevación (m MSL)</label>
-                  <input
-                    type="number"
-                    value={elevationMsl}
-                    onChange={e => setElevationMsl(parseFloat(e.target.value))}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                  />
+              {/* 7. Ubicación, Coordenadas y Orientación Magnética (Para Pistas y Gestoría) */}
+              <div className="pt-2 border-t border-slate-200 space-y-3">
+                <div className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                  <Compass className="h-4 w-4 text-blue-700" />
+                  <span>Emplazamiento, Coordenadas y Orientación Magnética</span>
                 </div>
 
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Temp. Ref. (°C)</label>
-                  <input
-                    type="number"
-                    value={referenceTemperatureC}
-                    onChange={e => setReferenceTemperatureC(parseFloat(e.target.value))}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">
+                      Localidad / Nombre del Predio
+                    </label>
+                    <input
+                      type="text"
+                      value={locationName}
+                      onChange={e => setLocationName(e.target.value)}
+                      placeholder="Ej. Pergamino / Campo El Trébol"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-700 mb-1">Provincia</label>
+                    <select
+                      value={province}
+                      onChange={e => setProvince(e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600 shadow-2xs cursor-pointer"
+                    >
+                      <option value="Buenos Aires">Buenos Aires</option>
+                      <option value="Córdoba">Córdoba</option>
+                      <option value="Santa Fe">Santa Fe</option>
+                      <option value="Entre Ríos">Entre Ríos</option>
+                      <option value="La Pampa">La Pampa</option>
+                      <option value="Chaco">Chaco</option>
+                      <option value="Corrientes">Corrientes</option>
+                      <option value="Santiago del Estero">Santiago del Estero</option>
+                      <option value="Mendoza">Mendoza</option>
+                      <option value="Salta">Salta</option>
+                      <option value="Neuquén">Neuquén</option>
+                      <option value="Río Negro">Río Negro</option>
+                      <option value="Otra">Otra</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Largo Disp. (m)</label>
-                  <input
-                    type="number"
-                    value={terrainLengthAvailableM}
-                    onChange={e => setTerrainLengthAvailableM(parseFloat(e.target.value))}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                  />
-                </div>
+                {/* Coordenadas Geográficas: Umbrales con Cálculo Automático de Rumbo y Orientación Magnética */}
+                {category === 'Pistas' ? (
+                  <div className="p-3.5 bg-blue-50/40 border border-blue-200 rounded-xl space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Compass className="h-4 w-4 text-blue-700" />
+                        <span className="font-bold text-xs text-[#0f2942]">
+                          Coordenadas Geográficas de los Umbrales (WGS-84)
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-semibold text-blue-800 bg-blue-100/70 border border-blue-200 px-2 py-0.5 rounded">
+                        Cálculo Automático de Rumbo y QFU
+                      </span>
+                    </div>
 
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Ancho Disp. (m)</label>
-                  <input
-                    type="number"
-                    value={terrainWidthAvailableM}
-                    onChange={e => setTerrainWidthAvailableM(parseFloat(e.target.value))}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
-                  />
-                </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Umbral Cabecera 1 */}
+                      <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-2">
+                        <div className="font-bold text-[11px] text-slate-800 flex items-center justify-between">
+                          <span>Umbral Cabecera 1 (THR 1)</span>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            Punto Inicial
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                              Latitud (Dec.)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.000001"
+                              value={thr1Lat}
+                              onChange={e => setThr1Lat(parseFloat(e.target.value))}
+                              placeholder="-34.600000"
+                              className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                              Longitud (Dec.)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.000001"
+                              value={thr1Lng}
+                              onChange={e => setThr1Lng(parseFloat(e.target.value))}
+                              placeholder="-58.380000"
+                              className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Umbral Cabecera 2 */}
+                      <div className="bg-white border border-slate-200 rounded-lg p-2.5 space-y-2">
+                        <div className="font-bold text-[11px] text-slate-800 flex items-center justify-between">
+                          <span>Umbral Cabecera 2 (THR 2)</span>
+                          <span className="text-[10px] text-slate-400 font-mono">Punto Final</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                              Latitud (Dec.)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.000001"
+                              value={thr2Lat}
+                              onChange={e => setThr2Lat(parseFloat(e.target.value))}
+                              placeholder="-34.593680"
+                              className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-medium text-slate-600 block mb-0.5">
+                              Longitud (Dec.)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.000001"
+                              value={thr2Lng}
+                              onChange={e => setThr2Lng(parseFloat(e.target.value))}
+                              placeholder="-58.371920"
+                              className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-800 font-mono text-xs focus:outline-none focus:border-blue-600 shadow-2xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Declinación magnética y longitud geodésica */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-slate-600">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium text-slate-700">Declinación Magnética:</span>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={magneticDeclination}
+                          onChange={e => setMagneticDeclination(parseFloat(e.target.value))}
+                          className="w-16 bg-white border border-slate-300 rounded px-1.5 py-0.5 font-mono text-center text-xs font-bold text-slate-800"
+                          title="Declinación magnética (+ Este, - Oeste). Típica Argentina: -8.2° W"
+                        />
+                        <span className="text-[10px] text-slate-400">° (ej. -8.2° W)</span>
+                      </div>
+
+                      {thresholdsCalc && thresholdsCalc.distanceMeters > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] text-blue-900 bg-blue-100/60 px-2 py-0.5 rounded border border-blue-200">
+                            Longitud geodésica:{' '}
+                            <strong>{thresholdsCalc.distanceMeters.toLocaleString()} m</strong>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setTerrainLengthAvailableM(thresholdsCalc.distanceMeters)
+                            }
+                            className="flex items-center gap-1 text-[10px] font-bold text-blue-700 hover:text-blue-900 bg-white border border-blue-300 hover:bg-blue-50 px-2 py-0.5 rounded transition cursor-pointer"
+                            title="Aplicar longitud entre umbrales al campo de largo disponible"
+                          >
+                            <Ruler className="h-3 w-3" />
+                            <span>Aplicar a Largo Disp.</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Tarjeta de resultados automáticos: Rumbo y Orientación Magnética */}
+                    {thresholdsCalc && thresholdsCalc.distanceMeters > 0 ? (
+                      <div className="bg-white border border-blue-200 rounded-lg p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                        <div className="p-1.5 bg-slate-50 rounded border border-slate-100">
+                          <span className="text-[10px] text-slate-500 block">Rumbo Verdadero</span>
+                          <span className="font-mono font-bold text-xs text-slate-800">
+                            {thresholdsCalc.trueHeading1to2.toFixed(1)}° /{' '}
+                            {thresholdsCalc.trueHeading2to1.toFixed(1)}°
+                          </span>
+                        </div>
+
+                        <div className="p-1.5 bg-blue-50/60 rounded border border-blue-100">
+                          <span className="text-[10px] text-blue-700 block font-medium">
+                            Rumbo Magnético
+                          </span>
+                          <span className="font-mono font-bold text-xs text-blue-900">
+                            {thresholdsCalc.magneticHeading1to2.toFixed(1)}° /{' '}
+                            {thresholdsCalc.magneticHeading2to1.toFixed(1)}°
+                          </span>
+                        </div>
+
+                        <div className="p-1.5 bg-emerald-50 rounded border border-emerald-100">
+                          <span className="text-[10px] text-emerald-700 block font-medium">
+                            Orientación QFU
+                          </span>
+                          <span className="font-mono font-bold text-xs text-emerald-900">
+                            {thresholdsCalc.qfuLabel}
+                          </span>
+                        </div>
+
+                        <div className="p-1.5 bg-slate-50 rounded border border-slate-100">
+                          <span className="text-[10px] text-slate-500 block">
+                            Centro Pista (ARP)
+                          </span>
+                          <span className="font-mono text-[10px] text-slate-700">
+                            {thresholdsCalc.midpoint.lat.toFixed(4)}°,{' '}
+                            {thresholdsCalc.midpoint.lng.toFixed(4)}°
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 text-center">
+                        Ingresa las coordenadas de ambos umbrales para calcular automáticamente el
+                        rumbo y la orientación magnética.
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Coordenadas estándar para Gestoría u otras categorías */
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Latitud WGS-84 (Dec.)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.0001"
+                        value={lat}
+                        onChange={e => setLat(parseFloat(e.target.value))}
+                        placeholder="-34.6037"
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Longitud WGS-84 (Dec.)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.0001"
+                        value={lng}
+                        onChange={e => setLng(parseFloat(e.target.value))}
+                        placeholder="-58.3816"
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Orientación Magnética (QFU / Rumbo)
+                      </label>
+                      <input
+                        type="text"
+                        value={magneticOrientation}
+                        onChange={e => setMagneticOrientation(e.target.value)}
+                        placeholder="Ej. 050° / 230° (QFU 05/23)"
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {category === 'Pistas' && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Elevación (m MSL)
+                      </label>
+                      <input
+                        type="number"
+                        value={elevationMsl}
+                        onChange={e => setElevationMsl(parseFloat(e.target.value))}
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Temp. Ref. (°C)
+                      </label>
+                      <input
+                        type="number"
+                        value={referenceTemperatureC}
+                        onChange={e => setReferenceTemperatureC(parseFloat(e.target.value))}
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Largo Disp. (m)
+                      </label>
+                      <input
+                        type="number"
+                        value={terrainLengthAvailableM}
+                        onChange={e => setTerrainLengthAvailableM(parseFloat(e.target.value))}
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-slate-700 mb-1">
+                        Ancho Disp. (m)
+                      </label>
+                      <input
+                        type="number"
+                        value={terrainWidthAvailableM}
+                        onChange={e => setTerrainWidthAvailableM(parseFloat(e.target.value))}
+                        className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-800 font-mono focus:outline-none focus:border-blue-600 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
 
           {/* Observaciones generales */}
           <div>

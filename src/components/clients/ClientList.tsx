@@ -253,7 +253,18 @@ export const ClientList: React.FC<ClientListProps> = ({
                       </span>
                     )}
 
-                    <span className="text-xs text-slate-400 font-mono">CUIT: {client.cuit}</span>
+                    {client.cuit && (
+                      <span className="text-xs text-slate-400 font-mono">CUIT: {client.cuit}</span>
+                    )}
+
+                    {isRental && client.aircraftRentalData?.aircraftOwner && (
+                      <span className="text-xs text-slate-500">
+                        Titular:{' '}
+                        <strong className="text-slate-700">
+                          {client.aircraftRentalData.aircraftOwner}
+                        </strong>
+                      </span>
+                    )}
 
                     {client.isArchived && (
                       <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded">
@@ -281,11 +292,19 @@ export const ClientList: React.FC<ClientListProps> = ({
                     <span className="flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span>
-                        {client.locationName}, {client.province}
+                        {isRental && client.aircraftRentalData
+                          ? `Destino: ${client.aircraftRentalData.destinationOrUse}`
+                          : `${client.locationName}, ${client.province}`}
                       </span>
                     </span>
 
-                    {client.magneticOrientation && (
+                    {isRental && client.aircraftRentalData?.contractedHoursOrKm && (
+                      <span className="flex items-center gap-1 font-mono text-[11px] text-purple-800 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">
+                        <span>{client.aircraftRentalData.contractedHoursOrKm}</span>
+                      </span>
+                    )}
+
+                    {client.category === 'Pistas' && client.magneticOrientation && (
                       <span className="flex items-center gap-1 font-mono text-[11px] text-blue-700">
                         <Compass className="h-3.5 w-3.5 shrink-0" />
                         <span>Rumbo: {client.magneticOrientation}</span>

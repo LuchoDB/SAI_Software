@@ -226,6 +226,15 @@ describe('Documentación Regulatoria Canónica - SAI Consult', () => {
     expect(ids).toContain('ESC-AUTORIZ-DIR');
   });
 
+  it('generates only rental requirements when personeria is not specified for Alquiler de Aeronave', () => {
+    const rentalDocs = generateCanonicalDocumentation({
+      category: 'Alquiler de Aeronave'
+    });
+    const ids = rentalDocs.map(d => d.id);
+
+    expect(ids).toEqual(['ALQ-CONTRATO', 'ALQ-POLIZA', 'ALQ-CERT-AERO', 'ALQ-TRIPULACION']);
+  });
+
   it('includes FRONT-LEY when isFrontierZone is true and omits when false', () => {
     const frontierDocs = generateCanonicalDocumentation({
       category: 'Pistas',

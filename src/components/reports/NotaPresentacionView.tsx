@@ -85,11 +85,22 @@ Balcarce 290, Ciudad Autónoma de Buenos Aires`;
         c.titulares && c.titulares.length > 0
           ? c.titulares.map(t => `${t.nombre} (DNI/CUIT Nº ${t.dniCuit})`).join(', ')
           : c.name;
-      encabezadoSujeto = `Los que suscriben, ${listaTitulares}, en nuestro carácter de cotitulares y condóminos del inmueble individualizado en la presente actuación, con domicilio constituido en ${c.locationName}, Provincia de ${c.province}, acreditando derecho sobre el predio mediante título dominial y autorización mancomunada notarial adjunta, nos dirigimos respetuosamente a esa autoridad aeronáutica nacional y manifestamos:`;
+      const calidadSujeto = isGestoria
+        ? 'de la aeronave individualizada en la presente actuación'
+        : 'del predio / lugar de emplazamiento individualizado en la presente actuación';
+      const acreditacion = isGestoria
+        ? 'acreditando derecho sobre la aeronave mediante título de propiedad y autorización mancomunada notarial adjunta'
+        : 'acreditando derecho sobre el predio mediante título dominial y autorización mancomunada notarial adjunta';
+      encabezadoSujeto = `Los que suscriben, ${listaTitulares}, en nuestro carácter de cotitulares y condóminos ${calidadSujeto}, con domicilio constituido en ${c.locationName}, Provincia de ${c.province}, ${acreditacion}, nos dirigimos respetuosamente a esa autoridad aeronáutica nacional y manifestamos:`;
       petitorioPlural = 'los presentantes solicitamos respetuosamente a esa autoridad';
     } else {
       // Titular Único
-      encabezadoSujeto = `El que suscribe, ${c.name}, DNI / CUIT Nº ${c.cuit}, con domicilio real y legal en ${c.locationName}, Provincia de ${c.province}, en mi carácter de titular exclusivo del inmueble / solicitante, ante esa autoridad aeronáutica nacional me presento respetuosamente y manifiesto:`;
+      const calidadSujeto = isRental
+        ? 'locatario y titular del contrato de alquiler de la aeronave'
+        : isGestoria
+          ? 'titular de la aeronave / solicitante'
+          : 'titular de la pista / solicitante';
+      encabezadoSujeto = `El que suscribe, ${c.name}, DNI / CUIT Nº ${c.cuit}, con domicilio real y legal en ${c.locationName}, Provincia de ${c.province}, en mi carácter de ${calidadSujeto}, ante esa autoridad aeronáutica nacional me presento respetuosamente y manifiesto:`;
       petitorioPlural = 'el presentante solicita respetuosamente a esa autoridad';
     }
 
@@ -110,6 +121,22 @@ Balcarce 290, Ciudad Autónoma de Buenos Aires`;
     const orientacionMag = c.magneticOrientation || '050° / 230° (QFU 05/23)';
     const coordsStr = `Latitud: ${c.coordinates.lat.toFixed(5)}° S, Longitud: ${c.coordinates.lng.toFixed(5)}° W`;
 
+    const seccionTecnica = isRental
+      ? `I. DATOS DE LA OPERACIÓN Y AERONAVE LOCADA:
+   • Cliente / Arrendatario: "${c.aircraftRentalData?.clientName || c.name}"
+   • Titular de la Aeronave: ${c.aircraftRentalData?.aircraftOwner || 'Según Contrato'}
+   • Aeronave y Matrícula: ${c.aircraftRentalData?.aircraftType || 'Aeronave designada'}
+   • Destino / Uso operativo: ${c.aircraftRentalData?.destinationOrUse || c.locationName}
+   • Horas / Kilómetros contratados: ${c.aircraftRentalData?.contractedHoursOrKm || 'Según contrato'}`
+      : `I. DATOS DE EMPLAZAMIENTO Y CARACTERÍSTICAS TÉCNICAS:
+   • Denominación propuesta del lugar: "${c.locationName || c.name}"
+   • Ubicación territorial: ${c.locationName}, Provincia de ${c.province}
+   • Coordenadas Geográficas (WGS-84): ${coordsStr}
+   • Elevación sobre el nivel del mar: ${c.elevationMsl} metros MSL
+   • Orientación Magnética / Designador de Pista: ${orientacionMag}
+   • Dimensiones disponibles en predio: ${c.terrainLengthAvailableM || 1000} m de longitud x ${c.terrainWidthAvailableM || 100} m de franja
+   • Conformidad territorial y ambiental: Acreditada mediante Certificado de Uso Conforme del Suelo municipal y Declaración Jurada Ambiental Ley 25.675.`;
+
     // 5. Listado de Documentación Acompañada
     const docsLines = c.documents.map((d, index) => {
       const obs = d.notes || d.observaciones ? ` (Ref: ${d.notes || d.observaciones})` : '';
@@ -127,14 +154,7 @@ DE NUESTRA MAYOR CONSIDERACIÓN:
 
 ${encabezadoSujeto}
 
-I. DATOS DE EMPLAZAMIENTO Y CARACTERÍSTICAS TÉCNICAS:
-   • Denominación propuesta del lugar: "${c.locationName || c.name}"
-   • Ubicación territorial: ${c.locationName}, Provincia de ${c.province}
-   • Coordenadas Geográficas (WGS-84): ${coordsStr}
-   • Elevación sobre el nivel del mar: ${c.elevationMsl} metros MSL
-   • Orientación Magnética / Designador de Pista: ${orientacionMag}
-   • Dimensiones disponibles en predio: ${c.terrainLengthAvailableM || 1000} m de longitud x ${c.terrainWidthAvailableM || 100} m de franja
-   • Conformidad territorial y ambiental: Acreditada mediante Certificado de Uso Conforme del Suelo municipal y Declaración Jurada Ambiental Ley 25.675.
+${seccionTecnica}
 
 II. NÓMINA DE DOCUMENTACIÓN INTEGRAL ADJUNTA:
 Que a fin de dar cabal cumplimiento a las exigencias normativas vigentes, se acompaña en legal forma la siguiente documentación canónica:

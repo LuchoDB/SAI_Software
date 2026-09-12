@@ -103,7 +103,7 @@ export const CANONICAL_DOCUMENTS_LIST: CanonicalDocDefinition[] = [
     organismo_dependencia: 'Escribano público',
     titulo: 'Autorización Mancomunada de Condóminos',
     descripcion:
-      'Consentimiento notarial expreso o poder especial otorgado por todos los cotitulares del inmueble para la afectación del predio.'
+      'Consentimiento notarial expreso o poder especial otorgado por todos los cotitulares de la aeronave o predio para el trámite o afectación correspondiente.'
   },
   {
     id: 'ESC-DNI-TITULARES',
@@ -514,7 +514,8 @@ export function generateCanonicalDocumentation(
       docMap.get('ALQ-TRIPULACION')!
     );
 
-    if (ownershipType === 'Razon Social') {
+    // Solo si se especificó personería expresamente en opciones (alquiler típicamente no requiere personería de pista)
+    if (options?.ownershipType === 'Razon Social') {
       selectedList.push(
         ...getCorporateDocuments(
           sociedadType,
@@ -523,9 +524,9 @@ export function generateCanonicalDocumentation(
           docMap.get('ESC-PODER')!
         )
       );
-    } else if (ownershipType === 'Titulares Varios') {
+    } else if (options?.ownershipType === 'Titulares Varios') {
       selectedList.push(docMap.get('ESC-CONDOM')!, docMap.get('ESC-DNI-TITULARES')!);
-    } else {
+    } else if (options?.ownershipType === 'Titular Unico') {
       selectedList.push(docMap.get('ESC-DNI-TITULARES')!);
     }
   }
