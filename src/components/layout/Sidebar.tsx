@@ -13,9 +13,18 @@ import {
 } from 'lucide-react';
 import { Client } from '../../types/client';
 import saiLogoEmblem from '../../assets/sai_logo_emblem.png';
+import { Send } from 'lucide-react';
 
 export type MainView =
-  'clients' | 'checklist' | 'wind' | 'lad' | 'ladh' | 'dossier' | 'backups' | 'manual';
+  | 'clients'
+  | 'checklist'
+  | 'presentationNote'
+  | 'wind'
+  | 'lad'
+  | 'ladh'
+  | 'dossier'
+  | 'backups'
+  | 'manual';
 
 interface SidebarProps {
   currentView: MainView;
@@ -42,6 +51,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Documentación',
       icon: CheckSquare,
       iconColor: 'text-[#0284c7]'
+    },
+    {
+      id: 'presentationNote' as MainView,
+      label: 'Nota de Presentación',
+      icon: Send,
+      iconColor: 'text-[#2563eb]'
     },
     {
       id: 'wind' as MainView,

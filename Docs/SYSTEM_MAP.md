@@ -98,6 +98,7 @@ graph TD
 - `Docs/SYSTEM_MAP.md`: Este archivo maestro; mapa integral de componentes, flujos e índice para agentes y humanos.
 - `Docs/NORMATIVA_ANAC_ENACOM.md`: Compendio normativo detallado (RAAC 153, RAAC 154, Ley 17.285, requerimientos ENACOM).
 - `Docs/CALCULOS_AERONAUTICOS.md`: Fórmulas matemáticas y aerodinámicas de corrección de pistas, vientos y helipuertos.
+- `Docs/INFORME_TECNICO_SAI_CONSULT.md`: Informe técnico y académico integral del software de ingeniería y la landing web con fundamentos matemáticos, arquitecturas y fuentes normativas.
 - `src/main.tsx`: Punto de montaje raíz de React en el DOM con manejo de errores.
 - `src/App.tsx`: Orquestador de vistas principales, estados de navegación, notificaciones y llamadas a agentes.
 - `src/index.css`: Estilos globales, variables de color de aviónica, utilidades de impresión (@media print) y scrollbars.

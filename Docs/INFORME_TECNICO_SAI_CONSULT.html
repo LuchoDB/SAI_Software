@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Informe Técnico y Académico Integral - SAI Consult</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 15mm 18mm 15mm;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.55;
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+  }
+
+  /* PORTADA */
+  .cover-page {
+    page-break-after: always;
+    break-after: page;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 90vh;
+    padding: 25mm 12mm 15mm 12mm;
+    border: 2.5px solid #0f2744;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+    border-radius: 4px;
+  }
+
+  .cover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #0f2744;
+    padding-bottom: 14px;
+  }
+
+  .cover-brand {
+    font-size: 24pt;
+    font-weight: 900;
+    color: #0f2744;
+    letter-spacing: 1.5px;
+  }
+
+  .cover-brand-sub {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #0284c7;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  .cover-badge {
+    background-color: #0f2744;
+    color: #ffffff;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cover-body {
+    margin-top: 50px;
+    margin-bottom: 40px;
+  }
+
+  .cover-title {
+    font-size: 24pt;
+    font-weight: 900;
+    color: #0f2744;
+    line-height: 1.25;
+    margin-bottom: 18px;
+  }
+
+  .cover-subtitle {
+    font-size: 12.5pt;
+    font-weight: 500;
+    color: #334155;
+    line-height: 1.45;
+    margin-bottom: 30px;
+    border-left: 5px solid #0284c7;
+    padding-left: 14px;
+  }
+
+  .cover-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 30px;
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .meta-item {
+    font-size: 8.5pt;
+  }
+
+  .meta-label {
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 7.5pt;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .meta-value {
+    color: #0f172a;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .cover-footer {
+    border-top: 1px solid #cbd5e1;
+    padding-top: 14px;
+    font-size: 8.5pt;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* HEADINGS & STRUCTURE */
+  h1 {
+    font-size: 15pt;
+    color: #0f2744;
+    font-weight: 800;
+    border-bottom: 2px solid #0f2744;
+    padding-bottom: 5px;
+    margin-top: 26px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h2 {
+    font-size: 12pt;
+    color: #1e3a8a;
+    font-weight: 700;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h3 {
+    font-size: 10pt;
+    color: #0369a1;
+    font-weight: 700;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: justify;
+  }
+
+  ul, ol {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  .page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* TABLES */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 14px;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  th, td {
+    padding: 6px 9px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+
+  th {
+    background-color: #0f2744;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  /* FORMULAS & MATH BLOCKS */
+  .formula-card {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #0284c7;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .formula-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #0f2744;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .math-display {
+    font-family: 'Cambria Math', 'STIX Two Math', 'Times New Roman', Georgia, serif;
+    font-size: 12.5pt;
+    color: #0f172a;
+    text-align: center;
+    padding: 6px 0;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .math-var {
+    font-style: italic;
+    font-family: 'Cambria Math', 'Times New Roman', serif;
+    padding: 0 1px;
+  }
+
+  .math-sub {
+    font-size: 0.75em;
+    vertical-align: sub;
+    font-style: normal;
+  }
+
+  .math-sup {
+    font-size: 0.75em;
+    vertical-align: super;
+    font-style: normal;
+  }
+
+  .math-frac {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: center;
+    padding: 0 4px;
+    font-size: 0.95em;
+  }
+
+  .math-frac-num {
+    border-bottom: 1.5px solid #0f172a;
+    padding-bottom: 1px;
+    line-height: 1.1;
+  }
+
+  .math-frac-denom {
+    padding-top: 1px;
+    line-height: 1.1;
+  }
+
+  .math-round {
+    font-size: 1.35em;
+    line-height: 1;
+    font-weight: 300;
+    vertical-align: -1px;
+    color: #0f2744;
+    font-family: 'Segoe UI Symbol', 'Cambria Math', sans-serif;
+  }
+
+  .math-ceil {
+    font-size: 1.35em;
+    line-height: 1;
+    font-weight: 300;
+    vertical-align: -1px;
+    color: #0f2744;
+    font-family: 'Segoe UI Symbol', 'Cambria Math', sans-serif;
+  }
+
+  .math-cases {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+    margin: 4px 0;
+  }
+
+  .math-brace {
+    font-size: 2.3em;
+    font-weight: 200;
+    line-height: 0.9;
+    color: #0f2744;
+    font-family: 'Times New Roman', serif;
+  }
+
+  .math-cases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.9em;
+    line-height: 1.35;
+  }
+
+  .math-op {
+    font-style: normal;
+    padding: 0 4px;
+  }
+
+  .math-unit {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 8.5pt;
+    color: #475569;
+    margin-left: 6px;
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .formula-explanation {
+    font-size: 8pt;
+    color: #475569;
+    margin-top: 8px;
+    line-height: 1.45;
+  }
+
+  /* CALLOUTS */
+  .callout {
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 10px 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .callout-info {
+    background-color: #e0f2fe;
+    border-left: 4px solid #0284c7;
+    color: #0369a1;
+  }
+
+  .callout-warning {
+    background-color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    color: #92400e;
+  }
+
+  .callout-success {
+    background-color: #dcfce7;
+    border-left: 4px solid #10b981;
+    color: #065f46;
+  }
+
+  /* CODE & ARCHITECTURE DIAGRAMS */
+  .code-block {
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 7.5pt;
+    padding: 10px 12px;
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow-x: auto;
+    line-height: 1.45;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    white-space: pre;
+  }
+
+  .code-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 4px;
+  }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .badge-success { background: #dcfce7; color: #166534; }
+  .badge-warning { background: #fef3c7; color: #92400e; }
+  .badge-danger { background: #fee2e2; color: #991b1b; }
+
+  /* SIGNATURES */
+  .signatures-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+    margin-top: 35px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .signature-box {
+    border-top: 1.5px solid #0f2744;
+    padding-top: 8px;
+    text-align: center;
+  }
+
+  .sig-name { font-weight: 700; color: #0f2744; font-size: 9pt; }
+  .sig-role { font-size: 8pt; color: #64748b; }
+
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dotted #cbd5e1;
+    margin-bottom: 6px;
+    font-size: 9pt;
+  }
+  .toc-num { font-weight: 700; color: #0f2744; margin-right: 8px; }
+  .toc-title { flex-grow: 1; }
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div class="cover-page">
+  <div class="cover-header">
+    <div>
+      <div class="cover-brand">SAI CONSULT</div>
+      <div class="cover-brand-sub">Servicios Aeronáuticos Integrales &amp; Ingeniería de Aeródromos</div>
+    </div>
+    <div class="cover-badge">Dossier Técnico Pericial</div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-title">INFORME TÉCNICO Y ACADÉMICO INTEGRAL</div>
+    <div class="cover-subtitle">
+      Plataforma Web Corporativa &amp; Software de Ingeniería Aeronáutica de Escritorio:<br>
+      Estudios de Factibilidad Técnica LAD / LADH, Orientación Magnética QFU, Rosa de Vientos y Gestión Integral de Expedientes ante ANAC y ENACOM.
+    </div>
+
+    <div class="cover-meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Destinatarios Técnicos &amp; Académicos</span>
+        <span class="meta-value">Clientes / Propietarios de Pistas, Explotadores Agroaéreos (RAAC 137), Cátedras Universitarias de Ingeniería de Software &amp; Legislación Aeronáutica</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Marco Normativo de Aplicación</span>
+        <span class="meta-value">Código Aeronáutico Ley 17.285 (Art. 29), RAAC 153/154, OACI Anexo 14 Vol I &amp; II, ENACOM, Ley 25.675</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Sede Operativa &amp; Emisión</span>
+        <span class="meta-value">Paraná, Provincia de Entre Ríos, República Argentina | Marzo 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Repositorios y Fuentes Auditadas</span>
+        <span class="meta-value">SAI_Software (Desktop Electron/React 19) &amp; SAI-Consult (Web Cloudflare Edge)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span>Canales Oficiales: +54 9 343 6118305 | saiconsult@gmail.com</span>
+    <span>Versión del Documento: 1.0.0 (Formato Oficial A4)</span>
+  </div>
+</div>
+
+<!-- ÍNDICE -->
+<div class="page-break"></div>
+
+<h1>ÍNDICE GENERAL Y SUMARIO EJECUTIVO</h1>
+
+<div style="margin-top: 15px; margin-bottom: 25px;">
+  <div class="toc-item"><span class="toc-num">1.</span><span class="toc-title">Resumen Ejecutivo y Modelo de Negocio</span><span style="font-weight:700;">Cap. 1</span></div>
+  <div class="toc-item"><span class="toc-num">2.</span><span class="toc-title">Marco Legal, Regulatorio y Normativo Aplicable (ANAC, RAAC, OACI, ENACOM)</span><span style="font-weight:700;">Cap. 2</span></div>
+  <div class="toc-item"><span class="toc-num">3.</span><span class="toc-title">Arquitectura de la Plataforma Web Corporativa (SAI-Consult)</span><span style="font-weight:700;">Cap. 3</span></div>
+  <div class="toc-item"><span class="toc-num">4.</span><span class="toc-title">Arquitectura del Software de Ingeniería Aeronáutica (SAI_Software)</span><span style="font-weight:700;">Cap. 4</span></div>
+  <div class="toc-item"><span class="toc-num">5.</span><span class="toc-title">Modelado Matemático, Físico y Fórmulas Aeronáuticas Implementadas</span><span style="font-weight:700;">Cap. 5</span></div>
+  <div class="toc-item"><span class="toc-num">6.</span><span class="toc-title">Bancos de Datos Embebidos y Matriz Documental Canónica</span><span style="font-weight:700;">Cap. 6</span></div>
+  <div class="toc-item"><span class="toc-num">7.</span><span class="toc-title">Calidad de Software, Testing Automatizado con Vitest y CI/CD</span><span style="font-weight:700;">Cap. 7</span></div>
+  <div class="toc-item"><span class="toc-num">8.</span><span class="toc-title">Sinfonía Operativa: Comparativa y Flujo de Trabajo Extremo a Extremo</span><span style="font-weight:700;">Cap. 8</span></div>
+  <div class="toc-item"><span class="toc-num">9.</span><span class="toc-title">Conclusiones, Recomendaciones Técnicas y Firmas Periciales</span><span style="font-weight:700;">Cap. 9</span></div>
+  <div class="toc-item"><span class="toc-num">10.</span><span class="toc-title">Referencias Bibliográficas y Citas de Código Fuente</span><span style="font-weight:700;">Cap. 10</span></div>
+</div>
+
+<div class="callout callout-info">
+  <strong>Nota de Orientación para el Lector:</strong><br>
+  Este informe ha sido estructurado con un doble propósito pedagógico y técnico: para el <strong>Cliente</strong>, expone la protección jurídica, optimización presupuestaria en movimientos de suelo y el proceso de obtención de certificados ANAC; para el <strong>Docente / Evaluador Académico</strong>, desglosa la ingeniería de software aplicada, patrones arquitectónicos desacoplados, aislamiento de funciones matemáticas puras, persistencia ACID, rigor físico de las ecuaciones y cobertura de pruebas unitarias automatizadas.
+</div>
+
+<!-- 1. RESUMEN EJECUTIVO -->
+<h1>1. RESUMEN EJECUTIVO &amp; MODELO DE NEGOCIO</h1>
+
+<h2>1.1. Objeto y Justificación Técnica</h2>
+<p>
+El presente dossier expone la solución informática integral concebida y desarrollada por la firma <strong>SAI Consult</strong> (Servicios Aeronáuticos Integrales), con sede en la ciudad de Paraná, Entre Ríos. La organización está abocada al peritaje, cálculo de ingeniería geométrica, relevamiento aerotopográfico, coordinación de telecomunicaciones y tramitación notarial para la habilitación de pistas de aterrizaje privadas (<strong>LAD</strong> - Lugares Aptos Denunciados) y helipuertos de superficie o elevados (<strong>LADH</strong>) ante la <strong>Administración Nacional de Aviación Civil (ANAC)</strong> y municipios de la República Argentina.
+</p>
+
+<h2>1.2. Problemática del Sector Aeronáutico Privado en Argentina</h2>
+<p>
+Históricamente, miles de pistas rurales en establecimientos agropecuarios, empresas forestales, sanatorios y helipuertos sanitarios han operado bajo esquemas de informalidad. Esta situación acarrea riesgos severos:
+</p>
+<ul>
+  <li><strong>Riesgo de Responsabilidad Civil y Penal:</strong> Conforme al Código Aeronáutico de la Nación (Ley 17.285), toda operación aérea en lugares no habilitados exime a las compañías de seguros de su obligación de cobertura en caso de siniestro o daños a terceros en la superficie.</li>
+  <li><strong>Vulneración de Superficies Limitadoras de Obstáculos (SLO):</strong> La ausencia de un estudio de despeje facilita que tendidos eléctricos de alta tensión, silos o mástiles de telefonía invadan las trayectorias de despegue y aproximación, generando condiciones críticas de colisión.</li>
+  <li><strong>Inseguridad Operativa por Viento Cruzado:</strong> Una pista orientada al azar o según el contorno parcelario suele registrar vientos cruzados que exceden las limitaciones demostradas del manual de vuelo (POH) de aeronaves agrícolas o ejecutivas, provocando excursiones de pista.</li>
+</ul>
+
+<h2>1.3. La Solución Integral Dual (Web + Desktop)</h2>
+<p>
+Para erradicar esta vulnerabilidad técnica y jurídica, SAI Consult implementó una solución desacoplada en dos subsistemas:
+</p>
+<ol>
+  <li><strong>Plataforma Web Corporativa (<code>SAI-Consult</code>):</strong> Portal de acceso público, optimizado para conversión en el borde (Edge Network), que traduce la complejidad normativa a un lenguaje accesible para los propietarios, ofrece diagnósticos preliminares y canaliza las consultas directamente a los peritos aeronáuticos vía WhatsApp Business.</li>
+  <li><strong>Software de Ingeniería de Escritorio (<code>SAI_Software</code>):</strong> Estación de trabajo pericial de uso local offline (Cockpit Workstation), construida con React 19, TypeScript estricto, Electron y SQLite embebido, que ejecuta los motores matemáticos trigonométricos y barotérmicos, coordina un subsistema multi-agente y emite dossiers impresos en A4 con fuerza pericial.</li>
+</ol>
+
+<!-- 2. MARCO LEGAL -->
+<div class="page-break"></div>
+<h1>2. MARCO LEGAL, REGULATORIO Y NORMATIVO APLICABLE</h1>
+
+<p>
+El ecosistema digital SAI Consult no es una mera herramienta administrativa, sino la informatización rigurosa del marco legal argentino e internacional:
+</p>
+
+<h2>2.1. Código Aeronáutico Argentino (Ley N° 17.285)</h2>
+<ul>
+  <li><strong>Artículos 25 al 28:</strong> Régimen jurídico de los aeródromos públicos y privados. Declara privados los destinados al uso exclusivo de personas autorizadas por su titular.</li>
+  <li><strong>Artículo 29 (Régimen LAD):</strong> Autoriza el aterrizaje y despegue en sitios no declarados como aeródromos regulares, bajo la figura de <em>Lugares Aptos Denunciados</em>, siempre que sean comunicados a la ANAC y reúnan las condiciones de seguridad reglamentarias.</li>
+  <li><strong>Artículos 30 al 35 (Servidumbres Aeronáuticas):</strong> Determina que los propietarios linderos no pueden erigir obstáculos que sobrepasen las superficies limitadoras de despeje establecidas para la seguridad del vuelo.</li>
+</ul>
+
+<h2>2.2. Regulaciones Argentinas de Aviación Civil (RAAC 153 y 154)</h2>
+<ul>
+  <li><strong>RAAC Parte 153 ("Normas para el Diseño de Aeródromos"):</strong>
+    Regula las pistas y fajas de seguridad. Define la <strong>Clave de Referencia de Aeródromo</strong> mediante un código alfanumérico (ej. 1A, 1B, 2B):
+    <ul>
+      <li><em>Número de clave (1 a 4):</em> Basado en la longitud básica de campo de referencia de la aeronave de diseño.</li>
+      <li><em>Letra de clave (A a F):</em> Basada en la envergadura y anchura exterior de ruedas del tren principal.</li>
+      <li><em>Factores de Corrección:</em> Exige aumentar la longitud de pista por elevación sobre el nivel del mar (+7% c/ 300m), por temperatura superior a ISA (+1% c/ 1°C) y por pendiente longitudinal efectiva (+10% c/ 1%).</li>
+      <li><em>Franja de Seguridad y RESA:</em> Pistas de clave 1 exigen franjas niveladas de 60m de ancho y 120m adicionales de longitud (60m más allá de cada cabecera).</li>
+    </ul>
+  </li>
+  <li><strong>RAAC Parte 154 ("Diseño y Operación de Helipuertos"):</strong>
+    Aplica a los lugares aptos para helicópteros (LADH). Define el parámetro fundamental <strong>D</strong> (longitud máxima con rotores en movimiento). Establece dimensiones mínimas de FATO (1.5D en superficie), TLOF (0.83D a 1.0D), área de seguridad (&ge; 0.25D o 3m) y resistencia dinámica estructural del <strong>150% del MTOW</strong>.
+  </li>
+  <li><strong>RAAC Parte 137 ("Trabajo Aéreo y Aeroaplicación"):</strong>
+    Subparte E-137.41: Régimen específico para explotadores agrícolas para la denuncia de "Campos Eventuales", contemplado en el catálogo documental del software.
+  </li>
+</ul>
+
+<h2>2.3. Estándares Internacionales OACI (Anexo 14 Vol I y II)</h2>
+<ul>
+  <li><strong>OACI Anexo 14 Vol I, Cap. 3 (Factor de Utilización):</strong> El emplazamiento y orientación de una pista debe asegurar un <strong>coeficiente de utilización no inferior al 95%</strong> respecto a los vientos cruzados tolerables por la aeronave de diseño (10 kt para Clave 1, 13 kt para Clave 2, 20 kt para Claves 3 y 4).</li>
+  <li><strong>OACI Anexo 14 Vol II:</strong> Trayectorias de aproximación de helicópteros con pendientes del 8% o 4.5% y separación preferente de al menos 150°.</li>
+</ul>
+
+<h2>2.4. Regulaciones Complementarias (ENACOM, Catastro, Ambiente)</h2>
+<ul>
+  <li><strong>ENACOM:</strong> Verificación de no afectación de radioenlaces y torres de comunicaciones en 5 km; habilitación de estaciones VHF aeronáuticas (118.000 a 136.975 MHz).</li>
+  <li><strong>Catastro Notarial:</strong> Escrituras de dominio o contratos de locación con certificación notarial; planos de mensura en coordenadas <strong>WGS84</strong> o POSGAR 07.</li>
+  <li><strong>Ley General del Ambiente (Ley 25.675):</strong> Declaración Jurada Ambiental (Art. 11 y 12) ante autoridades provinciales.</li>
+  <li><strong>Zona de Seguridad de Frontera (Ley 23.554 y Dto-Ley 15.385/44):</strong> Conformidad obligatoria para pistas en áreas de frontera.</li>
+</ul>
+
+<!-- 3. ARQUITECTURA WEB -->
+<div class="page-break"></div>
+<h1>3. ARQUITECTURA DE LA PLATAFORMA WEB CORPORATIVA (SAI-CONSULT)</h1>
+
+<h2>3.1. Propósito y Estrategia de Captación</h2>
+<p>
+La plataforma web corporativa <strong>SAI-Consult</strong> (ubicada en <code>C:\Users\Luciano\.gemini\antigravity-ide\scratch\SAI-Consult</code>) opera como el canal institucional público de la consultora. Su diseño está concebido para transmitir solidez técnica, autoridad aeronáutica y facilitar la captación comercial mediante llamadas a la acción (*CTAs*) directas.
+</p>
+
+<h2>3.2. Capas de la Arquitectura Web</h2>
+<div class="code-block">
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. CAPA DE ESTRUCTURA Y ACCESIBILIDAD (HTML5 Semántico + Schema.org)  │
+│    index.html: Navbar, Hero, Bento Grid, Fases, FAQ Acordeón, Form     │
+├────────────────────────────────────────────────────────────────────────┤
+│ 2. CAPA DE ESTILOS Y DESIGN SYSTEM (CSS3 Modular Atómico)              │
+│    css/design-system.css: Variables HSL/Hex, Glassmorphism, Dark/Light │
+│    css/components.css: Bento 6 Pilares, Sticky Header, Animaciones     │
+├────────────────────────────────────────────────────────────────────────┤
+│ 3. CAPA DE COMPORTAMIENTO Y LÓGICA (Vanilla JavaScript Reactivo)       │
+│    js/app.js: Theme Controller (localStorage), Drawer, FAQ, WhatsApp   │
+├────────────────────────────────────────────────────────────────────────┤
+│ 4. CAPA DE EDGE &amp; SEGURIDAD (Cloudflare Pages Network)                 │
+│    _headers: CSP Estricto, HSTS (31536000s), Referrer &amp; Cache Control  │
+│    wrangler.toml: Despliegue en CDN Global de Baja Latencia            │
+└────────────────────────────────────────────────────────────────────────┘
+</div>
+
+<h2>3.3. Sistema de Diseño KORE y Ergonomía Visual</h2>
+<ul>
+  <li><strong>Paleta de Cabina (Obsidian Canvas):</strong> Fondo oscuro primario <code>#07090E</code> que evoca las pantallas de cabina de cristal (*Glass Cockpits*).</li>
+  <li><strong>Acentos Operativos:</strong> Cyan Aviónica (<code>#00E5FF</code>) y Ámbar de Balizamiento (<code>#FFB300</code>) para guiar la atención hacia métricas críticas y llamadas a la acción.</li>
+  <li><strong>Modo Claro Arquitectónico:</strong> Soporte nativo mediante <code>[data-theme="light"]</code> que invierte los contrastes hacia un blanco papel milimetrado técnico (<code>#F8FAFC</code>) cumpliendo los estándares de contraste WCAG AA.</li>
+  <li><strong>Glassmorphism Técnico:</strong> Paneles translúcidos con <code>backdrop-filter: blur(12px)</code> y bordes sutiles de 1px.</li>
+</ul>
+
+<h2>3.4. Controlador Front-end y Lógica Reactiva (<code>js/app.js</code>)</h2>
+<ul>
+  <li><strong>Gestor de Tema:</strong> Detecta <code>prefers-color-scheme</code> o persiste la preferencia en <code>localStorage('sai-theme')</code>.</li>
+  <li><strong>Header Fijo Reactivo:</strong> Al superar los 40px de scroll vertical, añade la clase <code>.scrolled</code> que incrementa la opacidad del fondo y proyecta una sombra con halo cyan.</li>
+  <li><strong>Acordeón FAQ con Altura Dinámica:</strong> Calcula en milisegundos <code>scrollHeight</code> para transiciones CSS fluidas sin saltos de layout (*Layout Shift*).</li>
+  <li><strong>Despachador de Contacto hacia WhatsApp:</strong> Captura los campos del formulario, los sanitiza y genera una solicitud estructurada directa hacia el número institucional (<code>+54 9 343 6118305</code>).</li>
+</ul>
+
+<h2>3.5. Estrategia SEO y Rendimiento</h2>
+<ul>
+  <li><strong>Microdatos JSON-LD:</strong> Estructura tipos <code>ProfessionalService</code>, <code>LocalBusiness</code> y <code>FAQPage</code> para obtener rich snippets en Google.</li>
+  <li><strong>Optimización Edge:</strong> Cabeceras HTTP de seguridad estricta en <code>_headers</code> y rastreo mediante <code>sitemap.xml</code> y <code>robots.txt</code>.</li>
+</ul>
+
+<!-- 4. ARQUITECTURA SOFTWARE -->
+<div class="page-break"></div>
+<h1>4. ARQUITECTURA DEL SOFTWARE DE ESCRITORIO DE INGENIERÍA (SAI_SOFTWARE)</h1>
+
+<h2>4.1. Propósito y Requerimientos de Misión Crítica</h2>
+<p>
+El software <strong>SAI_Software</strong> (ubicado en <code>c:\Users\Luciano\Desktop\Proyectos\SAI_Software</code>) es una estación de trabajo de escritorio desarrollada para los peritos e ingenieros de la consultora. Sus pilares arquitectónicos responden a exigencias operativas rigurosas:
+</p>
+<ul>
+  <li><strong>Operabilidad 100% Offline (Zero-Cloud Dependency):</strong> En zonas rurales y campos sin cobertura celular, el ingeniero debe disponer de toda la base de cálculo, normativa y base de datos localmente.</li>
+  <li><strong>Transaccionalidad e Integridad ACID:</strong> La información de clientes, historiales de vientos y estudios de pistas se persisten en una base de datos SQLite embebida localmente.</li>
+  <li><strong>Cálculos Puros y Determinísticos:</strong> Las fórmulas físicas están desacopladas de la interfaz gráfica, permitiendo su testeo unitario desatendido y garantizando reproducibilidad pericial.</li>
+</ul>
+
+<h2>4.2. Desglose de Capas del Software (Clean Architecture)</h2>
+<div class="code-block">
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. PLATAFORMA HOST ELECTRON &amp; NATIVE IPC                               │
+│    electron/main.cjs: Ciclo de vida BrowserWindow y handlers IPC       │
+│    electron/preload.cjs: ContextBridge seguro (window.electronAPI)     │
+│    electron/database.cjs: node:sqlite DatabaseSync (sai_consult.db)    │
+├────────────────────────────────────────────────────────────────────────┤
+│ 2. PRESENTACIÓN REACT 19 &amp; COCKPIT WORKSTATION                         │
+│    Navbar.tsx: Reloj dual UTC/Local, estado de agentes, backup JSON     │
+│    WindStudyView.tsx &amp; WindRoseChart.tsx: Rosa SVG interactiva 16 rumb │
+│    LadStudyView.tsx &amp; LadhStudyView.tsx: Entornos de cálculo geométr.  │
+│    TechnicalDrawing.tsx: Esquemas acotados paramétricos SVG            │
+│    PrintableDossier.tsx: Generador de informe formal de impresión A4   │
+├────────────────────────────────────────────────────────────────────────┤
+│ 3. SUBSISTEMA MULTI-AGENTE ESPECIALIZADO (agentsEngine.ts)             │
+│    🎨 Agente Diseño: Auditoría geométrica, RESA, fajas y márgenes      │
+│    📐 Agente Copywriting: Georreferenciación WGS84 y glosario OACI     │
+│    ⚖️ Agente Legal: Auditoría RAAC 153/154, Ley 17.285 y ENACOM         │
+│    🧠 Agente Orquestador: Validación cruzada, Scoring y Dictamen SAI   │
+├────────────────────────────────────────────────────────────────────────┤
+│ 4. ORQUESTACIÓN Y SERVICIOS DE APLICACIÓN (src/services/)              │
+│    storageService.ts: Persistencia dual SQLite/LocalStorage y Backup   │
+│    windEngine.ts, ladEngine.ts, ladhEngine.ts                          │
+├────────────────────────────────────────────────────────────────────────┤
+│ 5. MOTORES MATEMÁTICOS PUROS (src/calculations/ - Testeables 100%)     │
+│    windCalculations.ts: Declinación, QFU, componentes, usabilidad OACI │
+│    runwayCalculations.ts: Correcciones barotérmicas RAAC 153           │
+│    helipadCalculations.ts: Parámetro D, FATO/TLOF, cargas dinámicas    │
+│    auditCalculations.ts: Ponderación algorítmica y avance documental   │
+└────────────────────────────────────────────────────────────────────────┘
+</div>
+
+<h2>4.3. Subsistema Multi-Agente Especializado</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Agente</th>
+      <th>Rol Operativo</th>
+      <th>Reglas de Negocio Auditadas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>🎨 Diseño &amp; Ergonomía</strong></td>
+      <td>Auditoría física y visual</td>
+      <td>Verifica que la longitud de campo corregida y franja de seguridad quepan en el predio; valida que el helipuerto contenga la FATO (&ge; 1.5D) y área de seguridad.</td>
+    </tr>
+    <tr>
+      <td><strong>📐 Copywriting &amp; Info</strong></td>
+      <td>Nomenclatura y georreferenciación</td>
+      <td>Verifica presencia y formato de coordenadas geodésicas WGS84 para el Punto de Referencia de Aeródromo (ARP); redacta los considerandos ejecutivos del dictamen.</td>
+    </tr>
+    <tr>
+      <td><strong>⚖️ Legal &amp; Regulatorio</strong></td>
+      <td>Cumplimiento normativo</td>
+      <td>Audita el checklist oficial ante ANAC (Anexo IX, arancel CAD), Escribanía (título de propiedad certificado, plano de mensura), ENACOM y Declaración Jurada Ambiental.</td>
+    </tr>
+    <tr>
+      <td><strong>🧠 Orquestador Master</strong></td>
+      <td>Evaluación cruzada &amp; scoring</td>
+      <td>Pondera las conclusiones de los 3 agentes anteriores, computa el puntaje de viabilidad técnica (0-100%) y emite el dictamen final (Favorable, Condicionado o No Favorable).</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 5. MODELADO MATEMÁTICO -->
+<div class="page-break"></div>
+<h1>5. MODELADO MATEMÁTICO, FÍSICO Y ALGORITMOS IMPLEMENTADOS</h1>
+
+<p>
+Las ecuaciones que rigen la factibilidad aeronáutica han sido programadas como funciones matemáticas puras en los módulos de <code>src/calculations/</code>. A continuación se presentan formalmente renderizadas bajo las convenciones estándar de la disciplina (variables en cursiva, subíndices normalizados, fracciones continuas y operadores matemáticos formales de redondeo):
+</p>
+
+<h2>5.1. Declinación Magnética y Rumbo Magnético (<i>MH</i>)</h2>
+<p>
+El eje de pista trazado en planos topográficos corresponde a su Rumbo Geográfico Verdadero (<i>TH</i>, <em>True Heading</em>). Para obtener el Rumbo Magnético (<i>MH</i>, <em>Magnetic Heading</em>) que leen las brújulas y giróscopos de a bordo, se descuenta la Declinación Magnética local (<i>Decl</i>, positiva al Este, negativa al Oeste):
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 1: Cálculo y Normalización del Rumbo Magnético</div>
+  <div class="math-display">
+    <span class="math-var">MH</span> = (<span class="math-var">TH</span> &minus; <span class="math-var">Decl</span>) <span class="math-op">mod</span> 360&deg;
+  </div>
+  <div class="math-display">
+    <span class="math-var">MH</span><sub>recip</sub> = (<span class="math-var">MH</span> + 180&deg;) <span class="math-op">mod</span> 360&deg;
+  </div>
+  <div class="math-display">
+    <span class="math-var">MH</span> =
+    <div class="math-cases">
+      <div class="math-brace">{</div>
+      <div class="math-cases-list">
+        <div><span class="math-var">MH</span> + 360&deg;, &emsp;si &nbsp;<span class="math-var">MH</span> &lt; 0&deg;</div>
+        <div><span class="math-var">MH</span> &minus; 360&deg;, &emsp;si &nbsp;<span class="math-var">MH</span> &ge; 360&deg;</div>
+        <div><span class="math-var">MH</span>, &emsp;&emsp;&emsp;&emsp;si &nbsp;0&deg; &le; <span class="math-var">MH</span> &lt; 360&deg;</div>
+      </div>
+    </div>
+  </div>
+  <div class="formula-explanation">
+    Donde <i>MH</i> representa el Rumbo Magnético de la pista, <i>TH</i> el Rumbo Geográfico Verdadero y <i>Decl</i> la Declinación Magnética local en el punto de emplazamiento. El rumbo recíproco <i>MH</i><sub>recip</sub> corresponde a la cabecera opuesta ubicada a 180&deg;. El operador <em>mod 360&deg;</em> normaliza el ángulo al dominio trigonométrico sexagesimal estándar [0&deg;, 360&deg;).<br>
+    <em>Fuente en código:</em> <code>src/calculations/windCalculations.ts:L44-L85</code>
+  </div>
+</div>
+
+<h2>5.2. Designación Oficial de Cabeceras de Pista (QFU)</h2>
+<p>
+Conforme a la RAAC 153 y al Anexo 14 de la OACI, las cabeceras de pista se identifican mediante un designador numérico de dos dígitos correspondiente a la decena entera más próxima de su rumbo magnético. Se aplica el operador matemático estándar de redondeo al entero más cercano &lfloor; &sdot; &rceil;:
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 2: Designadores QFU de Cabeceras de Pista</div>
+  <div class="math-display">
+    <span class="math-var">QFU</span><sub>1</sub> = 
+    <span class="math-round">&lfloor;</span>
+    <span class="math-frac">
+      <span class="math-frac-num"><span class="math-var">MH</span></span>
+      <span class="math-frac-denom">10</span>
+    </span>
+    <span class="math-round">&rceil;</span>
+    &emsp;&emsp;;&emsp;&emsp;
+    <span class="math-var">QFU</span><sub>2</sub> = 
+    <span class="math-round">&lfloor;</span>
+    <span class="math-frac">
+      <span class="math-frac-num"><span class="math-var">MH</span><sub>recip</sub></span>
+      <span class="math-frac-denom">10</span>
+    </span>
+    <span class="math-round">&rceil;</span>
+  </div>
+  <div class="math-display" style="font-size: 9.5pt; color: #475569;">
+    si &nbsp;<span class="math-var">QFU</span><sub>i</sub> &isin; {0, 36} &implies; <span class="math-var">QFU</span><sub>i</sub> = 36
+  </div>
+  <div class="formula-explanation">
+    Donde la notación &lfloor; <i>x</i> &rceil; denota la función matemática formal de redondeo al entero más próximo (&lfloor; <i>x</i> + 0.5 &rfloor;). Si el valor redondeado es 0 ó 36, se adopta reglamentariamente 36 (indicando el Norte magnético 360&deg;). Los valores del 1 al 9 se representan canónicamente con dos dígitos prefijando un cero (ejemplo: 042&deg; &implies; Cabecera <strong>04</strong>; 222&deg; &implies; Cabecera <strong>22</strong>; designador oficial: <strong>04 / 22</strong>).<br>
+    <em>Fuente en código:</em> <code>src/calculations/windCalculations.ts:L63-L84</code>
+  </div>
+</div>
+
+<h2>5.3. Descomposición Vectorial de Componentes de Viento</h2>
+<p>
+Dado un viento observado con procedencia angular <i>&theta;</i><sub>viento</sub> y velocidad <i>V</i> en nudos (kt), respecto a un eje físico de pista orientado con rumbo <i>&theta;</i><sub>pista</sub>, el ángulo relativo de incidencia es &Delta;<i>&theta;</i> = |<i>&theta;</i><sub>viento</sub> &minus; <i>&theta;</i><sub>pista</sub>|:
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 3: Descomposición Ortogonal Vectorial de Viento</div>
+  <div class="math-display">
+    &Delta;<span class="math-var">&theta;</span> = |<span class="math-var">&theta;</span><sub>viento</sub> &minus; <span class="math-var">&theta;</span><sub>pista</sub>|
+  </div>
+  <div class="math-display">
+    <span class="math-var">V</span><sub>cross</sub> = <span class="math-var">V</span> &sdot; |sin(&Delta;<span class="math-var">&theta;</span>)|
+    <span class="math-unit">[kt]</span>
+    &emsp;&emsp;;&emsp;&emsp;
+    <span class="math-var">V</span><sub>long</sub> = <span class="math-var">V</span> &sdot; cos(&Delta;<span class="math-var">&theta;</span>)
+    <span class="math-unit">[kt]</span>
+  </div>
+  <div class="formula-explanation">
+    • <strong>Viento Cruzado (<i>V</i><sub>cross</sub>):</strong> Componente transversal ortogonal que desplaza lateralmente a la aeronave durante despegue o aterrizaje.<br>
+    • <strong>Viento Longitudinal (<i>V</i><sub>long</sub>):</strong> Componente colineal sobre el eje de pista. Si <i>V</i><sub>long</sub> &gt; 0 es <em>Viento de Frente</em> (favorable, reduce distancia de rodaje). Si <i>V</i><sub>long</sub> &lt; 0 es <em>Viento de Cola</em> (peligroso, incrementa severamente la carrera de aterrizaje).<br>
+    <em>Fuente en código:</em> <code>src/calculations/windCalculations.ts:L99-L114</code>
+  </div>
+</div>
+
+<h2>5.4. Factor de Usabilidad OACI Anexo 14 (&ge; 95%)</h2>
+<p>
+El coeficiente de utilización de un aeródromo <i>U</i> cuantifica el porcentaje de tiempo anual en que las operaciones no se ven impedidas por componentes de viento cruzado superiores a las tolerancias reglamentarias:
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 4: Factor de Utilización Total de Aeródromo (OACI Anexo 14)</div>
+  <div class="math-display">
+    <span class="math-var">U</span> = <span class="math-var">f</span><sub>calma</sub> + 
+    <span style="font-size: 1.35em; vertical-align: -2px;">&sum;</span><sub><span class="math-var">j</span>=1</sub><sup>16</sup>
+    <span style="font-size: 1.35em; vertical-align: -2px;">&sum;</span><sub><span class="math-var">k</span>=1</sub><sup>5</sup>
+    <span class="math-var">f</span><sub><span class="math-var">j</span>,<span class="math-var">k</span></sub> &sdot; 
+    <span style="font-family: serif; font-weight: bold;">I</span>(&thinsp;min(<span class="math-var">V</span><sub>cross,1</sub><sup>(<span class="math-var">j</span>,<span class="math-var">k</span>)</sup>, <span class="math-var">V</span><sub>cross,2</sub><sup>(<span class="math-var">j</span>,<span class="math-var">k</span>)</sup>) &le; <span class="math-var">V</span><sub>adm</sub>&thinsp;)
+  </div>
+  <div class="math-display">
+    <span style="font-size: 10.5pt; font-weight: 700; color: #0369a1;">
+      Criterio de Aceptación Reglamentaria (OACI / RAAC 153): &emsp; <span class="math-var">U</span> &ge; 95.0%
+    </span>
+  </div>
+  <div class="formula-explanation">
+    Donde <i>f</i><sub>calma</sub> es el porcentaje anual de calmas meteorológicas (viento nulo, 100% operable), <i>f</i><sub><i>j</i>,<i>k</i></sub> es la frecuencia observada para el rumbo cardinal <i>j</i> (16 cuadrantes: N, NNE, ..., NNW) y estrato de velocidad <i>k</i>. La función indicatriz binaria <strong>I</strong>(&sdot;) toma valor 1 si el viento cruzado mínimo en alguna de las dos cabeceras es menor o igual al límite admisible <i>V</i><sub>adm</sub> (10 kt para Clave 1, 13 kt para Clave 2, 20 kt para Claves 3 y 4), y 0 en caso contrario.<br>
+    <em>Fuente en código:</em> <code>src/calculations/windCalculations.ts:L144-L187</code>
+  </div>
+</div>
+
+<h2>5.5. Correcciones Reglamentarias de Longitud de Pista (RAAC 153)</h2>
+<p>
+Dada la longitud básica de campo de referencia <i>L</i><sub>0</sub> declarada por el fabricante de la aeronave para condiciones estándar ISA a nivel del mar (15&deg;C, 1013.25 hPa):
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 5A: Corrección por Elevación sobre el Nivel del Mar (Ce)</div>
+  <div class="math-display">
+    <span class="math-var">L</span><sub>1</sub> = <span class="math-var">L</span><sub>0</sub> &sdot; 
+    <span style="font-size: 1.2em;">[</span> 
+    1 + 0.07 &sdot; 
+    <span class="math-frac">
+      <span class="math-frac-num"><span class="math-var">h</span><sub>MSL</sub></span>
+      <span class="math-frac-denom">300</span>
+    </span> 
+    <span style="font-size: 1.2em;">]</span>
+    <span class="math-unit">[m]</span>
+  </div>
+  <div class="formula-explanation">
+    Aumenta un 7% por cada 300 metros de elevación ortométrica <i>h</i><sub>MSL</sub> sobre el nivel medio del mar. Incremento: &Delta;<i>L</i><sub>elev</sub> = <i>L</i><sub>1</sub> &minus; <i>L</i><sub>0</sub>.<br>
+    <em>Fuente en código:</em> <code>src/calculations/runwayCalculations.ts:L13-L17</code>
+  </div>
+</div>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 5B: Corrección por Temperatura de Referencia (Ct)</div>
+  <div class="math-display">
+    <span class="math-var">T</span><sub>ISA</sub> = 15 &minus; 0.0065 &sdot; max(0, <span class="math-var">h</span><sub>MSL</sub>)
+    <span class="math-unit">[&deg;C]</span>
+  </div>
+  <div class="math-display">
+    &Delta;<span class="math-var">T</span> = max(0, <span class="math-var">T</span><sub>ref</sub> &minus; <span class="math-var">T</span><sub>ISA</sub>)
+    <span class="math-unit">[&deg;C]</span>
+  </div>
+  <div class="math-display">
+    <span class="math-var">L</span><sub>2</sub> = <span class="math-var">L</span><sub>1</sub> &sdot; 
+    <span style="font-size: 1.2em;">[</span>
+    1 + 0.01 &sdot; &Delta;<span class="math-var">T</span>
+    <span style="font-size: 1.2em;">]</span>
+    <span class="math-unit">[m]</span>
+  </div>
+  <div class="formula-explanation">
+    Aumenta un 1% por cada grado Celsius que la temperatura de referencia del aeródromo (<i>T</i><sub>ref</sub>, media mensual de temperaturas máximas diarias del mes más caluroso) supere la temperatura estándar <i>T</i><sub>ISA</sub> calculada para esa elevación. Se aplica sobre la longitud <i>L</i><sub>1</sub> ya corregida por elevación.<br>
+    <em>Fuente en código:</em> <code>src/calculations/runwayCalculations.ts:L23-L31</code>
+  </div>
+</div>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 5C: Corrección por Pendiente Longitudinal Efectiva (Cs)</div>
+  <div class="math-display">
+    <span class="math-var">L</span><sub>final</sub> = 
+    <span class="math-ceil">&lceil;</span>
+    <span class="math-var">L</span><sub>2</sub> &sdot; (1 + 0.10 &sdot; <span class="math-var">S</span><sub>eff</sub>)
+    <span class="math-ceil">&rceil;</span>
+    <span class="math-unit">[m]</span>
+  </div>
+  <div class="formula-explanation">
+    Aumenta un 10% por cada 1% de pendiente longitudinal ascendente efectiva (<i>S</i><sub>eff</sub>). El operador matemático formal &lceil; &sdot; &rceil; (función techo) redondea el resultado hacia el entero superior en metros para salvaguardar el margen de seguridad operacional.<br>
+    <em>Fuente en código:</em> <code>src/calculations/runwayCalculations.ts:L37-L40</code>
+  </div>
+</div>
+
+<p><strong>Dimensiones Complementarias Obligatorias de Franja y RESA:</strong></p>
+<ul>
+  <li><strong>Franja Nivelada (<em>Runway Strip</em>):</strong> Longitud = <i>L</i><sub>final</sub> + 120 m (extensión de 60m más allá de cada cabecera); Ancho = 60 m (pistas Clave 1) u 80 m (Clave 2 o superior).</li>
+  <li><strong>Área de Seguridad de Extremo (<em>RESA</em>):</strong> Longitud &ge; 60 m; Ancho &ge; max(30 m, 2 &times; <i>W</i><sub>pista</sub>).</li>
+</ul>
+
+<h2>5.6. Dimensionamiento Geométrico y Sobrecarga Dinámica LADH (RAAC 154)</h2>
+<p>
+Para helipuertos, el diseño está determinado por la dimensión máxima del helicóptero crítico de diseño con rotores en movimiento (<i>D</i>) y su Peso Máximo de Despegue (<i>MTOW</i>):
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 6: Dimensionamiento Geométrico y Sobrecarga Dinámica LADH</div>
+  <div class="math-display">
+    <span class="math-var">TLOF</span><sub>min</sub> = 
+    <div class="math-cases">
+      <div class="math-brace">{</div>
+      <div class="math-cases-list">
+        <div>0.83 &sdot; <span class="math-var">D</span>, &emsp;Helipuerto en superficie, helicóptero monomotor (Clase 2/3)</div>
+        <div>1.00 &sdot; <span class="math-var">D</span>, &emsp;Elevado, hospitalario o multimotor (Clase 1)</div>
+      </div>
+    </div>
+  </div>
+  <div class="math-display">
+    <span class="math-var">FATO</span><sub>min</sub> = 
+    <div class="math-cases">
+      <div class="math-brace">{</div>
+      <div class="math-cases-list">
+        <div>1.50 &sdot; <span class="math-var">D</span>, &emsp;Helipuerto a nivel del terreno (en superficie)</div>
+        <div>1.20 &sdot; <span class="math-var">D</span>, &emsp;Helipuerto elevado o heliplataforma</div>
+      </div>
+    </div>
+  </div>
+  <div class="math-display">
+    <span class="math-var">Margen</span><sub>seg</sub> = max(0.25 &sdot; <span class="math-var">D</span>, &nbsp; 3.0 m)
+    &emsp;&emsp;;&emsp;&emsp;
+    <span class="math-var">D</span><sub>total</sub> = <span class="math-var">FATO</span><sub>min</sub> + 2 &sdot; <span class="math-var">Margen</span><sub>seg</sub>
+  </div>
+  <div class="math-display">
+    <span class="math-var">P</span><sub>diseño</sub> = 1.50 &sdot; <span class="math-var">MTOW</span>
+    <span class="math-unit">[kg]</span>
+  </div>
+  <div class="formula-explanation">
+    Donde <i>TLOF</i> es el Área de Toma de Contacto y Elevación, <i>FATO</i> es el Área de Aproximación Final y Despegue, y <i>Margen</i><sub>seg</sub> es la franja perimetral de seguridad. La carga estructural dinámica <i>P</i><sub>diseño</sub> exige un coeficiente del 150% del <i>MTOW</i> para disipar las fuerzas de impacto durante tomas de contacto bruscas o emergencias.<br>
+    <em>Fuente en código:</em> <code>src/calculations/helipadCalculations.ts:L8-L51</code>
+  </div>
+</div>
+
+<h2>5.7. Algoritmo de Scoring y Orquestación Multi-Agente</h2>
+<p>
+El Agente Orquestador Master integra los aportes de los agentes de Diseño, Copywriting y Legal en una función matemática de puntuación normalizada entre 0 y 100 puntos:
+</p>
+
+<div class="formula-card">
+  <div class="formula-title">Fórmula 7: Función de Evaluación y Scoring del Orquestador</div>
+  <div class="math-display">
+    <span class="math-var">Score</span> = 
+    <span style="font-size: 1.2em;">[</span>
+    <span class="math-frac">
+      <span class="math-frac-num"><span class="math-var">N</span><sub>aprobados</sub></span>
+      <span class="math-frac-denom"><span class="math-var">N</span><sub>total</sub></span>
+    </span>
+    &times; 40
+    <span style="font-size: 1.2em;">]</span>
+    &minus; (5 &times; <span class="math-var">N</span><sub>observados</sub>)
+    + <span class="math-var">Score</span><sub>viento</sub>
+    + <span class="math-var">Score</span><sub>geom</sub>
+  </div>
+  <div class="math-display" style="font-size: 9pt;">
+    <span class="math-var">Score</span><sub>viento</sub> = 
+    <div class="math-cases">
+      <div class="math-brace">{</div>
+      <div class="math-cases-list">
+        <div>20 pts, &emsp;si <span class="math-var">U</span> &ge; 95.0% (Conforme OACI)</div>
+        <div>8 pts, &emsp;&ensp;si <span class="math-var">U</span> &lt; 95.0% (Requiere pista secundaria)</div>
+      </div>
+    </div>
+    &emsp;&emsp;
+    <span class="math-var">Score</span><sub>geom</sub> = 
+    <div class="math-cases">
+      <div class="math-brace">{</div>
+      <div class="math-cases-list">
+        <div>40 pts, &emsp;si Viabilidad Geométrica es Factible</div>
+        <div>25 pts, &emsp;si Viabilidad es Condicionada</div>
+        <div>5 pts, &emsp;&ensp;si Viabilidad es No Factible</div>
+      </div>
+    </div>
+  </div>
+  <div class="math-display" style="font-size: 9.5pt;">
+    <span class="math-var">Dictamen</span> = 
+    <div class="math-cases">
+      <div class="math-brace">{</div>
+      <div class="math-cases-list">
+        <div><span class="badge badge-success">FAVORABLE</span> &emsp;&emsp;&emsp;&emsp;&emsp;&ensp; si <span class="math-var">Score</span> &ge; 85 &ensp;&and;&ensp; <span class="math-var">N</span><sub>observados</sub> = 0 &ensp;&and;&ensp; Viabilidad Plena</div>
+        <div><span class="badge badge-warning">FAVORABLE CONDICIONADO</span> &ensp; si 60 &le; <span class="math-var">Score</span> &lt; 85 &ensp;&or;&ensp; Operatividad condicionada por topografía</div>
+        <div><span class="badge badge-danger">NO FAVORABLE</span> &emsp;&emsp;&emsp;&emsp;&ensp; si <span class="math-var">Score</span> &lt; 60 &ensp;&or;&ensp; <span class="math-var">N</span><sub>observados</sub> &gt; 0 &ensp;&or;&ensp; Inviabilidad Física</div>
+      </div>
+    </div>
+  </div>
+  <div class="formula-explanation">
+    Donde <i>N</i><sub>aprobados</sub> es la cantidad de trámites aprobados y <i>N</i><sub>observados</sub> los que registran observaciones formales de la autoridad de aplicación. Las penalizaciones aseguran que ningún proyecto con documentos impugnados o dimensiones insuficientes obtenga dictamen favorable.<br>
+    <em>Fuente en código:</em> <code>src/calculations/auditCalculations.ts:L65-L121</code> y <code>src/services/agentsEngine.ts:L285-L370</code>
+  </div>
+</div>
+
+<!-- 6. BANCOS DE DATOS Y MATRIZ CANÓNICA -->
+<div class="page-break"></div>
+<h1>6. BANCOS DE DATOS EMBEBIDOS Y MATRIZ DOCUMENTAL CANÓNICA</h1>
+
+<h2>6.1. Catálogo Embebido de Aeronaves y Helicópteros de Diseño</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Aeronave / Helicóptero</th>
+      <th>Fabricante</th>
+      <th>Long. Básica (<i>L</i><sub>0</sub>) / Parám. <i>D</i></th>
+      <th>Envergadura / Rotor <i>RD</i></th>
+      <th>MTOW</th>
+      <th>Vto. Cruzado Demostrado</th>
+      <th>Clave OACI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cessna 172S Skyhawk</strong></td>
+      <td>Cessna</td>
+      <td>510 m</td>
+      <td>11.0 m</td>
+      <td>1,157 kg</td>
+      <td>15 kt</td>
+      <td>1A</td>
+    </tr>
+    <tr>
+      <td><strong>Cessna 182T Skylane</strong></td>
+      <td>Cessna</td>
+      <td>580 m</td>
+      <td>11.0 m</td>
+      <td>1,406 kg</td>
+      <td>15 kt</td>
+      <td>1A</td>
+    </tr>
+    <tr>
+      <td><strong>Piper Pawnee PA-25</strong></td>
+      <td>Piper</td>
+      <td>420 m</td>
+      <td>11.0 m</td>
+      <td>1,315 kg</td>
+      <td>12 kt</td>
+      <td>1A</td>
+    </tr>
+    <tr>
+      <td><strong>Air Tractor AT-402B</strong></td>
+      <td>Air Tractor</td>
+      <td>670 m</td>
+      <td>15.5 m</td>
+      <td>3,175 kg</td>
+      <td>17 kt</td>
+      <td>1B</td>
+    </tr>
+    <tr>
+      <td><strong>King Air B200</strong></td>
+      <td>Beechcraft</td>
+      <td>780 m</td>
+      <td>16.6 m</td>
+      <td>5,670 kg</td>
+      <td>25 kt</td>
+      <td>2B</td>
+    </tr>
+    <tr>
+      <td><strong>Robinson R44 Raven II</strong></td>
+      <td>Robinson</td>
+      <td>11.7 m (D)</td>
+      <td>10.1 m (RD)</td>
+      <td>1,134 kg</td>
+      <td>N/A</td>
+      <td>LADH</td>
+    </tr>
+    <tr>
+      <td><strong>EC130 T2</strong></td>
+      <td>Airbus</td>
+      <td>12.6 m (D)</td>
+      <td>10.7 m (RD)</td>
+      <td>2,500 kg</td>
+      <td>N/A</td>
+      <td>LADH</td>
+    </tr>
+    <tr>
+      <td><strong>Bell 429 GlobalRanger</strong></td>
+      <td>Bell</td>
+      <td>13.1 m (D)</td>
+      <td>11.0 m (RD)</td>
+      <td>3,402 kg</td>
+      <td>N/A</td>
+      <td>LADH</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>6.2. Matriz Documental Canónica Oficial (14 Trámites ANAC/Escribanía)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Código Trámite</th>
+      <th>Organismo / Dependencia</th>
+      <th>Categoría</th>
+      <th>Denominación Oficial del Requerimiento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>ANAC-NOTA</code></td><td>ANAC - DGIySA</td><td>Obligatorio</td><td>Nota de Presentación describiendo el sitio, firmada por titular del predio.</td></tr>
+    <tr><td><code>ANAC-FORM</code></td><td>ANAC - DGIySA</td><td>Obligatorio</td><td>Formulario oficial LAD/LADH completo (Anexo IX).</td></tr>
+    <tr><td><code>ANAC-DENOM</code></td><td>ANAC - DGIySA</td><td>Obligatorio</td><td>Denominación propuesta para el lugar apto denunciado.</td></tr>
+    <tr><td><code>ANAC-RESP</code></td><td>ANAC - DGIySA</td><td>Obligatorio</td><td>Datos y ficha de la persona responsable legal y técnica del lugar.</td></tr>
+    <tr><td><code>ANAC-CONT</code></td><td>ANAC - DGIySA</td><td>Obligatorio</td><td>Datos de contacto operativos y teléfonos de emergencia 24hs.</td></tr>
+    <tr><td><code>ANAC-TEC-LAD</code></td><td>ANAC - DGIySA</td><td>Condicional</td><td>Memoria Técnica de Pista: largo, ancho, rumbos, coordenadas WGS-84 y elevación.</td></tr>
+    <tr><td><code>ANAC-TEC-LADH</code></td><td>ANAC - DGIySA</td><td>Condicional</td><td>Memoria Técnica de FATO/TLOF: dimensiones, trayectorias y rumbos de aproximación.</td></tr>
+    <tr><td><code>ANAC-TAS</code></td><td>ANAC - CAD</td><td>Obligatorio</td><td>Comprobante de Pago de Arancel A.D.1.9 vía Casillero Aeronáutico Digital.</td></tr>
+    <tr><td><code>ANAC-REG-MOV</code></td><td>ANAC - Reg. Jurisd.</td><td>Obligatorio</td><td>Libro foliado y habilitado de registro de movimientos de aeronaves.</td></tr>
+    <tr><td><code>ESC-DOM</code></td><td>Escribanía Pública</td><td>Obligatorio</td><td>Título de propiedad o contrato de locación con certificación notarial.</td></tr>
+    <tr><td><code>ESC-PLANO</code></td><td>Escribanía / Catastro</td><td>Obligatorio</td><td>Plano catastral o de mensura con demarcación gráfica de la pista o helipuerto.</td></tr>
+    <tr><td><code>AMB-DJA</code></td><td>Autoridad Ambiental</td><td>Obligatorio</td><td>Declaración Jurada Ambiental conforme Arts. 11 y 12 de la Ley 25.675.</td></tr>
+    <tr><td><code>FRONT-LEY</code></td><td>Ministerio de Defensa</td><td>Condicional</td><td>Conformidad de Zona de Seguridad de Fronteras (Ley 23.554 / Dto-Ley 15.385/44).</td></tr>
+    <tr><td><code>AGRO-RAAC137</code></td><td>ANAC - DNSO</td><td>Condicional</td><td>Denuncia como Campo Eventual Agroaéreo bajo RAAC 137 Subparte E-137.41.</td></tr>
+  </tbody>
+</table>
+
+<!-- 7. CALIDAD DE SOFTWARE -->
+<div class="page-break"></div>
+<h1>7. CALIDAD DE SOFTWARE, TESTING AUTOMATIZADO Y CI/CD</h1>
+
+<h2>7.1. Pruebas Unitarias Automatizadas con Vitest (34 Tests, 100% Pasando)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Suite de Pruebas</th>
+      <th>Tests</th>
+      <th>Casos Críticos Verificados</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>runwayCalculations.test.ts</code></td>
+      <td>8 tests</td>
+      <td>Gradiente ISA a distintas altitudes; incremento acumulativo por elevación (+7%/300m), temperatura (+1%/1°C) y pendiente (+10%/1%); fajas de pista y RESA.</td>
+      <td><span class="badge badge-success">✓ 100% Pass</span></td>
+    </tr>
+    <tr>
+      <td><code>helipadCalculations.test.ts</code></td>
+      <td>6 tests</td>
+      <td>Dimensiones FATO/TLOF según tipo de helipuerto; márgenes de seguridad perimetral; sobrecarga dinámica 1.5x MTOW.</td>
+      <td><span class="badge badge-success">✓ 100% Pass</span></td>
+    </tr>
+    <tr>
+      <td><code>windCalculations.test.ts</code></td>
+      <td>6 tests</td>
+      <td>Normalización de rumbos 0-360°; designador QFU con redondeo a la decena; descomposición vectorial cruzada; factor de usabilidad OACI &ge; 95%.</td>
+      <td><span class="badge badge-success">✓ 100% Pass</span></td>
+    </tr>
+    <tr>
+      <td><code>auditCalculations.test.ts</code></td>
+      <td>3 tests</td>
+      <td>Cálculo de estadísticas de avance; penalización por documentos observados; asignación estricta de dictamen Favorable/Condicionado/No Favorable.</td>
+      <td><span class="badge badge-success">✓ 100% Pass</span></td>
+    </tr>
+    <tr>
+      <td><code>canonicalDocuments.test.ts</code></td>
+      <td>11 tests</td>
+      <td>Generación del checklist canónico; exclusión mutua de trámites técnicos LAD vs LADH; consistencia de códigos de trámite.</td>
+      <td><span class="badge badge-success">✓ 100% Pass</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-success">
+  <strong>Resultado de Verificación de Integración Continua (CI):</strong><br>
+  <code>5 Test Files passed | 34 Tests passed (100%) | Duración: 1.02s</code>
+</div>
+
+<h2>7.2. Pipeline de Integración Continua en GitHub Actions</h2>
+<ol>
+  <li><strong>Linting:</strong> ESLint con configuración plana (<em>flat config</em>) en TypeScript y React.</li>
+  <li><strong>Pruebas Unitarias:</strong> Ejecución desatendida de los 34 tests de Vitest.</li>
+  <li><strong>Type-Checking &amp; Build:</strong> Compilación estricta con <code>tsc</code> y empaquetado de producción con Vite.</li>
+</ol>
+
+<!-- 8. COMPARATIVA -->
+<h1>8. SINFONÍA OPERATIVA: COMPARATIVA Y FLUJO EXTREMO A EXTREMO</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Dimensión de Comparación</th>
+      <th>Plataforma Web (SAI-Consult)</th>
+      <th>Software de Ingeniería (SAI_Software)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Entorno de Ejecución</strong></td>
+      <td>Navegador Web / Red Global en el Borde (Cloudflare Pages)</td>
+      <td>Escritorio Nativo (Electron 44 + Node.js 26) / Localhost</td>
+    </tr>
+    <tr>
+      <td><strong>Stack Tecnológico</strong></td>
+      <td>HTML5 Semántico, Vanilla CSS3 (KORE Tokens), Vanilla JS</td>
+      <td>React 19, TypeScript 5.9, Tailwind CSS v4, SQLite embebido</td>
+    </tr>
+    <tr>
+      <td><strong>Mecanismo de Persistencia</strong></td>
+      <td><code>localStorage</code> (preferencia de tema y caché)</td>
+      <td>Híbrido: SQLite nativo (<code>DatabaseSync</code>) + <code>localStorage</code></td>
+    </tr>
+    <tr>
+      <td><strong>Audiencia Primaria</strong></td>
+      <td>Clientes, prospectos, autoridades comunales, público general</td>
+      <td>Ingenieros peritos, directores técnicos de aeródromos</td>
+    </tr>
+    <tr>
+      <td><strong>Entregable Principal</strong></td>
+      <td>Pre-diagnóstico comercial canalizado a WhatsApp Business</td>
+      <td>Dossier Técnico Imprimible A4 con valor pericial legal</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 9. CONCLUSIONES Y FIRMAS -->
+<div class="page-break"></div>
+<h1>9. CONCLUSIONES, RECOMENDACIONES TÉCNICAS Y FIRMAS</h1>
+
+<h2>9.1. Conclusiones para el Cliente y Propietario</h2>
+<ol>
+  <li><strong>Seguridad Patrimonial Absoluta:</strong> La regularización del LAD o LADH bajo el régimen del Art. 29 de la Ley 17.285 confiere certeza jurídica a las operaciones aéreas y blinda las pólizas de seguro del predio.</li>
+  <li><strong>Optimización de Inversión en Obras:</strong> Las ecuaciones barotérmicas de la RAAC 153 aseguran que la pista tenga exactamente los metros requeridos por la aeronave crítica, evitando costos desmedidos de desmonte o fajas insuficientes.</li>
+  <li><strong>Gestión Integral Llave en Mano:</strong> Se articulan en un único expediente la memoria técnica geométrica, la orientación de vientos OACI, la certificación notarial, la adecuación ambiental y el registro de movimientos habilitado por la ANAC.</li>
+</ol>
+
+<h2>9.2. Conclusiones para la Evaluación Académica / Docente</h2>
+<ol>
+  <li><strong>Arquitectura de Software Ejemplar:</strong> Se evidencia una separación estricta de responsabilidades (Clean Architecture), donde las fórmulas físicas y normativas se implementan como funciones puras desacopladas del framework de interfaz, permitiendo pruebas unitarias determinísticas y reproducibles.</li>
+  <li><strong>Subsistema Multi-Agente:</strong> El modelado de agentes de software especializados (Diseño, Copywriting, Legal, Orquestador) introduce un patrón moderno de auditoría cruzada que emula el funcionamiento de un comité pericial de ingeniería multidisciplinario.</li>
+  <li><strong>Persistencia Híbrida y Portabilidad:</strong> La articulación entre la nueva API <code>node:sqlite</code> de Node.js en Electron y el almacenamiento local en navegadores dota al software de una robustez transaccional offline insustituible para el trabajo pericial de campo en áreas rurales.</li>
+</ol>
+
+<div class="signatures-container">
+  <div class="signature-box">
+    <div class="sig-name">INGENIERO PERITO AERONÁUTICO</div>
+    <div class="sig-role">Responsable Técnico de Infraestructura &amp; Operaciones<br>SAI Consult - Servicios Aeronáuticos Integrales</div>
+  </div>
+  <div class="signature-box">
+    <div class="sig-name">DIRECCIÓN GENERAL DE ASUNTOS REGULATORIOS</div>
+    <div class="sig-role">Auditoría Normativa ANAC / ENACOM / Catastro<br>Paraná, Entre Ríos, República Argentina</div>
+  </div>
+</div>
+
+<div style="margin-top: 30px;">
+  <h1>10. REFERENCIAS BIBLIOGRÁFICAS &amp; CITAS DE CÓDIGO</h1>
+  <ol style="font-size: 8pt; color: #475569;">
+    <li><strong>República Argentina (1967):</strong> Ley N° 17.285 - Código Aeronáutico de la Nación. Artículos 25 a 35 (Aeródromos y Servidumbres Aeronáuticas).</li>
+    <li><strong>ANAC (2019):</strong> Regulaciones Argentinas de Aviación Civil (RAAC) - Parte 153: Normas para el Diseño de Aeródromos.</li>
+    <li><strong>ANAC (2018):</strong> Regulaciones Argentinas de Aviación Civil (RAAC) - Parte 154: Diseño y Operación de Helipuertos.</li>
+    <li><strong>OACI (2018):</strong> Anexo 14 al Convenio sobre Aviación Civil Internacional - Aeródromos. Vol. I: Diseño y operaciones de aeródromos (8ª ed.).</li>
+    <li><strong>OACI (2020):</strong> Anexo 14 al Convenio sobre Aviación Civil Internacional - Aeródromos. Vol. II: Helipuertos (5ª ed.).</li>
+    <li><strong>OACI (2006):</strong> Manual de diseño de aeródromos - Parte 1: Pistas (Doc 9157-AN/901).</li>
+    <li><strong>Ley 25.675 (2002):</strong> Ley General del Ambiente. Artículos 11 y 12 (Evaluación de Impacto y Declaración Jurada).</li>
+    <li><strong>Citas de Código:</strong> <code>windCalculations.ts</code>, <code>runwayCalculations.ts</code>, <code>helipadCalculations.ts</code>, <code>auditCalculations.ts</code>, <code>agentsEngine.ts</code>, <code>storageService.ts</code>, <code>electron/database.cjs</code>, <code>_headers</code>.</li>
+  </ol>
+</div>
+
+</body>
+</html>

@@ -8,6 +8,7 @@ import { WindStudyView } from './components/wind/WindStudyView';
 import { LadStudyView } from './components/feasibility/LadStudyView';
 import { LadhStudyView } from './components/feasibility/LadhStudyView';
 import { PrintableDossier } from './components/reports/PrintableDossier';
+import { NotaPresentacionView } from './components/reports/NotaPresentacionView';
 import { WelcomeSplash } from './components/welcome/WelcomeSplash';
 
 import { Client, DocumentStatus } from './types/client';
@@ -98,12 +99,26 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleToggleArchiveClient = (client: Client) => {
+    const updatedClient: Client = {
+      ...client,
+      isArchived: !client.isArchived
+    };
+    handleSaveClient(updatedClient);
+  };
+
   const handleToggleFrontierZone = (isFrontier: boolean) => {
     if (!selectedClient) return;
     const newDocs = generateCanonicalDocumentation({
+      category: selectedClient.category,
       projectType: selectedClient.projectType,
+      pistaSubtype: selectedClient.pistaSubtype,
+      ownershipType: selectedClient.ownershipType,
+      sociedadType: selectedClient.sociedadType,
       isFrontierZone: isFrontier,
-      isAgroEventual: selectedClient.isAgroEventual
+      isAgroEventual: selectedClient.isAgroEventual,
+      usoConformeSuelo: selectedClient.usoConformeSuelo,
+      gestoriaData: selectedClient.gestoriaData
     });
     const oldMap = new Map(selectedClient.documents.map(d => [d.id, d]));
     const mergedDocs = newDocs.map(nd => {
@@ -113,7 +128,9 @@ export const App: React.FC = () => {
           ...nd,
           status: old.status,
           estado: old.estado,
+          completed: old.completed,
           notes: old.notes,
+          observaciones: old.observaciones || old.notes,
           submittedDate: old.submittedDate,
           approvalDate: old.approvalDate
         };
@@ -133,9 +150,15 @@ export const App: React.FC = () => {
   const handleToggleAgroEventual = (isAgro: boolean) => {
     if (!selectedClient) return;
     const newDocs = generateCanonicalDocumentation({
+      category: selectedClient.category,
       projectType: selectedClient.projectType,
+      pistaSubtype: selectedClient.pistaSubtype,
+      ownershipType: selectedClient.ownershipType,
+      sociedadType: selectedClient.sociedadType,
       isFrontierZone: selectedClient.isFrontierZone,
-      isAgroEventual: isAgro
+      isAgroEventual: isAgro,
+      usoConformeSuelo: selectedClient.usoConformeSuelo,
+      gestoriaData: selectedClient.gestoriaData
     });
     const oldMap = new Map(selectedClient.documents.map(d => [d.id, d]));
     const mergedDocs = newDocs.map(nd => {
@@ -145,7 +168,9 @@ export const App: React.FC = () => {
           ...nd,
           status: old.status,
           estado: old.estado,
+          completed: old.completed,
           notes: old.notes,
+          observaciones: old.observaciones || old.notes,
           submittedDate: old.submittedDate,
           approvalDate: old.approvalDate
         };
@@ -249,6 +274,7 @@ export const App: React.FC = () => {
                 setIsClientModalOpen(true);
               }}
               onDeleteClient={handleDeleteClient}
+              onToggleArchiveClient={handleToggleArchiveClient}
               onNavigateToStudy={(view, client) => {
                 setSelectedClient(client);
                 setCurrentView(view);
@@ -308,6 +334,15 @@ export const App: React.FC = () => {
                 </button>
               </div>
             ))}
+
+          {/* Vista 2.5: Nota de Presentación Formal */}
+          {currentView === 'presentationNote' && (
+            <NotaPresentacionView
+              clients={clients}
+              selectedClient={selectedClient}
+              onSelectClient={c => setSelectedClient(c)}
+            />
+          )}
 
           {/* Vista 3: Orientación & Viento Cruzado */}
           {currentView === 'wind' && (

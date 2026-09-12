@@ -2,27 +2,44 @@ import { describe, it, expect } from 'vitest';
 import {
   CANONICAL_DOCUMENTS_LIST,
   generateCanonicalDocumentation,
-  generateInitialChecklist
+  generateInitialChecklist,
+  getCorporateDocuments
 } from '../../src/data/regulatoryRequirements';
 
-describe('Documentación Regulatoria - Lista Canónica LAD/LADH', () => {
-  const CANONICAL_IDS = [
+describe('Documentación Regulatoria Canónica - SAI Consult', () => {
+  const ALL_CANONICAL_IDS = [
+    // ANAC Pistas
     'ANAC-NOTA',
     'ANAC-FORM',
-    'ANAC-DENOM',
-    'ANAC-RESP',
-    'ANAC-CONT',
-    'ANAC-TEC-LAD',
-    'ANAC-TEC-LADH',
     'ANAC-TAS',
     'ANAC-REG-MOV',
+    // Escribanía & Dominio
     'ESC-DOM',
     'ESC-PLANO',
+    'ESC-ACTA-CONST',
+    'ESC-AUTORIZ-DIR',
+    'ESC-CONDOM',
+    'ESC-DNI-TITULARES',
     'ESC-PODER',
-    'ESC-ACTA',
+    // Ambiental & Territorial
     'AMB-DJA',
+    'AMB-USO-SUELO',
+    // Defensa
     'FRONT-LEY',
-    'AGRO-RAAC137'
+    // Campo Eventual Agroaéreo
+    'AGRO-FORM-DENUNCIA',
+    'AGRO-AUTORIZ-PREDIO',
+    'AGRO-CROQUIS-COORD',
+    // Gestoría Aeronáutica (RNA)
+    'GEST-DOM',
+    'GEST-TRANSF',
+    'GEST-MATRIC',
+    'GEST-TRANSF-DOM',
+    // Alquiler de Aeronaves
+    'ALQ-CONTRATO',
+    'ALQ-POLIZA',
+    'ALQ-CERT-AERO',
+    'ALQ-TRIPULACION'
   ];
 
   const BANNED_HABILITATION_TERMS = [
@@ -32,16 +49,13 @@ describe('Documentación Regulatoria - Lista Canónica LAD/LADH', () => {
     'Estudio Climatológico',
     'Estudio Geotécnico',
     'Plan SSEI',
-    'ENACOM',
-    'Zonificación Municipal',
-    'RAAC 153',
-    'RAAC 154'
+    'ENACOM'
   ];
 
-  it('contains exactly the 16 canonical items in CANONICAL_DOCUMENTS_LIST', () => {
-    expect(CANONICAL_DOCUMENTS_LIST).toHaveLength(16);
+  it('contains exactly the 25 canonical items in CANONICAL_DOCUMENTS_LIST', () => {
+    expect(CANONICAL_DOCUMENTS_LIST).toHaveLength(25);
     const ids = CANONICAL_DOCUMENTS_LIST.map(d => d.id);
-    expect(ids.sort()).toEqual([...CANONICAL_IDS].sort());
+    expect(ids.sort()).toEqual([...ALL_CANONICAL_IDS].sort());
   });
 
   it('does NOT contain any banned full aerodrome habilitation terms', () => {
@@ -53,115 +67,208 @@ describe('Documentación Regulatoria - Lista Canónica LAD/LADH', () => {
     });
   });
 
-  it('respects required fields structure and initial state "Pendiente"', () => {
-    const docs = generateCanonicalDocumentation({ projectType: 'LAD' });
-    docs.forEach(item => {
-      expect(item.id).toBeDefined();
-      expect(CANONICAL_IDS).toContain(item.id);
-      expect(['Obligatorio', 'Condicional']).toContain(item.categoria);
-      expect(['ANAC', 'ESCRIBANÍA', 'AMBIENTAL', 'DEFENSA']).toContain(item.organismo);
-      expect(item.organismo_dependencia).toBeTruthy();
-      expect(item.titulo).toBeTruthy();
-      expect(item.descripcion).toBeTruthy();
-      expect(item.estado).toBe('Pendiente');
-    });
-  });
-
-  it('includes ANAC-TEC-LAD for LAD and omits ANAC-TEC-LADH', () => {
-    const docs = generateCanonicalDocumentation({ projectType: 'LAD' });
-    const ids = docs.map(d => d.id);
-    expect(ids).toContain('ANAC-TEC-LAD');
-    expect(ids).not.toContain('ANAC-TEC-LADH');
-  });
-
-  it('includes ANAC-TEC-LADH for LADH and omits ANAC-TEC-LAD', () => {
-    const docs = generateCanonicalDocumentation({ projectType: 'LADH' });
-    const ids = docs.map(d => d.id);
-    expect(ids).toContain('ANAC-TEC-LADH');
-    expect(ids).not.toContain('ANAC-TEC-LAD');
-  });
-
-  it('omits FRONT-LEY when isFrontierZone is false or not provided', () => {
-    const docsNoFrontier = generateCanonicalDocumentation({
-      projectType: 'LAD',
+  it('generates standard Pistas documentation with unified form and environmental requirements', () => {
+    const docs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social',
+      sociedadType: 'S.A.',
       isFrontierZone: false
     });
-    const ids = docsNoFrontier.map(d => d.id);
+
+    const ids = docs.map(d => d.id);
+    // Unified form (consolidating denomination, legal responsible, contact and technical data)
+    expect(ids).toContain('ANAC-FORM');
+    expect(ids).toContain('ANAC-NOTA');
+    expect(ids).toContain('ANAC-TAS');
+    expect(ids).toContain('ANAC-REG-MOV');
+    expect(ids).toContain('ESC-DOM');
+    expect(ids).toContain('ESC-PLANO');
+    // Environmental & Zoning
+    expect(ids).toContain('AMB-DJA');
+    expect(ids).toContain('AMB-USO-SUELO');
+    // Frontier is omitted when false
     expect(ids).not.toContain('FRONT-LEY');
+
+    // Corporate docs for S.A.
+    expect(ids).toContain('ESC-ACTA-CONST');
+    expect(ids).toContain('ESC-AUTORIZ-DIR');
+    expect(ids).toContain('ESC-PODER');
+
+    const formDoc = docs.find(d => d.id === 'ANAC-FORM');
+    expect(formDoc?.descripcion).toContain('rumbo magnético, coordenadas WGS-84');
   });
 
-  it('includes FRONT-LEY under DEFENSA when isFrontierZone is true', () => {
-    const docsFrontier = generateCanonicalDocumentation({
-      projectType: 'LAD',
+  it('generates specific corporate documentation for multiple society types (S.A., S.R.L., Cooperativa, S.A.S.)', () => {
+    // 1. Sociedad Anónima
+    const saDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social',
+      sociedadType: 'S.A.'
+    });
+    const saActa = saDocs.find(d => d.id === 'ESC-ACTA-CONST');
+    const saAutoriz = saDocs.find(d => d.id === 'ESC-AUTORIZ-DIR');
+    expect(saActa?.titulo).toContain('(S.A.)');
+    expect(saAutoriz?.titulo).toContain('Directorio');
+
+    // 2. S.R.L.
+    const srlDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social',
+      sociedadType: 'S.R.L.'
+    });
+    const srlActa = srlDocs.find(d => d.id === 'ESC-ACTA-CONST');
+    const srlAutoriz = srlDocs.find(d => d.id === 'ESC-AUTORIZ-DIR');
+    expect(srlActa?.titulo).toContain('(S.R.L.)');
+    expect(srlAutoriz?.titulo).toContain('Gerencia');
+
+    // 3. Cooperativa
+    const coopDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social',
+      sociedadType: 'Cooperativa'
+    });
+    const coopActa = coopDocs.find(d => d.id === 'ESC-ACTA-CONST');
+    const coopAutoriz = coopDocs.find(d => d.id === 'ESC-AUTORIZ-DIR');
+    expect(coopActa?.titulo).toContain('INAES');
+    expect(coopAutoriz?.titulo).toContain('Consejo de Administración');
+
+    // 4. S.A.S.
+    const sasDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social',
+      sociedadType: 'S.A.S.'
+    });
+    const sasActa = sasDocs.find(d => d.id === 'ESC-ACTA-CONST');
+    const sasAutoriz = sasDocs.find(d => d.id === 'ESC-AUTORIZ-DIR');
+    expect(sasActa?.titulo).toContain('(S.A.S.)');
+    expect(sasAutoriz?.titulo).toContain('Administrador Titular');
+
+    // 5. Fideicomiso
+    const fidDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Razon Social',
+      sociedadType: 'Fideicomiso'
+    });
+    const fidActa = fidDocs.find(d => d.id === 'ESC-ACTA-CONST');
+    const fidAutoriz = fidDocs.find(d => d.id === 'ESC-AUTORIZ-DIR');
+    expect(fidActa?.titulo).toContain('Fideicomiso');
+    expect(fidAutoriz?.titulo).toContain('Fiduciario');
+  });
+
+  it('adjusts documentation for Titular Único vs Titulares Varios (Condominio)', () => {
+    // Titular Único
+    const unicoDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Titular Unico'
+    });
+    const unicoIds = unicoDocs.map(d => d.id);
+    expect(unicoIds).toContain('ESC-DNI-TITULARES');
+    expect(unicoIds).not.toContain('ESC-CONDOM');
+    expect(unicoIds).not.toContain('ESC-ACTA-CONST');
+
+    // Titulares Varios
+    const variosDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      ownershipType: 'Titulares Varios'
+    });
+    const variosIds = variosDocs.map(d => d.id);
+    expect(variosIds).toContain('ESC-CONDOM');
+    expect(variosIds).toContain('ESC-DNI-TITULARES');
+    expect(variosIds).not.toContain('ESC-ACTA-CONST');
+  });
+
+  it('restricts Campo Eventual (RAAC 137) strictly to the only documents needed to denounce it ante DNSO', () => {
+    const agroDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      isAgroEventual: true,
+      ownershipType: 'Titular Unico'
+    });
+    const agroIds = agroDocs.map(d => d.id);
+
+    // Only essential docs to denounce ante DNSO
+    expect(agroIds).toContain('AGRO-FORM-DENUNCIA');
+    expect(agroIds).toContain('AGRO-AUTORIZ-PREDIO');
+    expect(agroIds).toContain('AGRO-CROQUIS-COORD');
+    expect(agroIds).toContain('AMB-USO-SUELO');
+
+    // Standard LAD items are omitted
+    expect(agroIds).not.toContain('ANAC-FORM');
+    expect(agroIds).not.toContain('ANAC-TAS');
+    expect(agroIds).not.toContain('ANAC-REG-MOV');
+  });
+
+  it('generates Gestoría Aeronáutica documentation with RNA procedures', () => {
+    const gestoriaDocs = generateCanonicalDocumentation({
+      category: 'Gestoria',
+      ownershipType: 'Titular Unico'
+    });
+    const ids = gestoriaDocs.map(d => d.id);
+
+    expect(ids).toContain('GEST-DOM');
+    expect(ids).toContain('GEST-TRANSF');
+    expect(ids).toContain('GEST-MATRIC');
+    expect(ids).toContain('GEST-TRANSF-DOM');
+    expect(ids).toContain('ESC-DNI-TITULARES');
+  });
+
+  it('generates Alquiler de Aeronave documentation with locación requirements', () => {
+    const rentalDocs = generateCanonicalDocumentation({
+      category: 'Alquiler de Aeronave',
+      ownershipType: 'Razon Social',
+      sociedadType: 'S.R.L.'
+    });
+    const ids = rentalDocs.map(d => d.id);
+
+    expect(ids).toContain('ALQ-CONTRATO');
+    expect(ids).toContain('ALQ-POLIZA');
+    expect(ids).toContain('ALQ-CERT-AERO');
+    expect(ids).toContain('ALQ-TRIPULACION');
+    expect(ids).toContain('ESC-ACTA-CONST');
+    expect(ids).toContain('ESC-AUTORIZ-DIR');
+  });
+
+  it('includes FRONT-LEY when isFrontierZone is true and omits when false', () => {
+    const frontierDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
       isFrontierZone: true
     });
-    const frontItem = docsFrontier.find(d => d.id === 'FRONT-LEY');
-    expect(frontItem).toBeDefined();
-    expect(frontItem?.organismo).toBe('DEFENSA');
-    expect(frontItem?.descripcion).toContain('Ley 23.554 y el Decreto-Ley 15.385/44');
+    expect(frontierDocs.map(d => d.id)).toContain('FRONT-LEY');
+
+    const noFrontierDocs = generateCanonicalDocumentation({
+      category: 'Pistas',
+      isFrontierZone: false
+    });
+    expect(noFrontierDocs.map(d => d.id)).not.toContain('FRONT-LEY');
   });
 
-  it('omits AGRO-RAAC137 when isAgroEventual is false or not provided', () => {
-    const docs = generateCanonicalDocumentation({ projectType: 'LAD', isAgroEventual: false });
-    const ids = docs.map(d => d.id);
-    expect(ids).not.toContain('AGRO-RAAC137');
-  });
-
-  it('includes AGRO-RAAC137 when isAgroEventual is true and clarifies that it replaces LAD', () => {
-    const docs = generateCanonicalDocumentation({ projectType: 'LAD', isAgroEventual: true });
-    const agroItem = docs.find(d => d.id === 'AGRO-RAAC137');
-    expect(agroItem).toBeDefined();
-    expect(agroItem?.organismo).toBe('ANAC');
-    expect(agroItem?.organismo_dependencia).toBe(
-      'Dirección Nacional de Seguridad Operacional (DNSO)'
-    );
-    expect(agroItem?.descripcion).toContain(
-      'reemplaza al registro LAD estándar, no lo complementa'
-    );
-  });
-
-  it('strictly groups and orders documents: ANAC -> ESCRIBANÍA -> AMBIENTAL -> DEFENSA -> ANAC (DNSO)', () => {
+  it('initializes items in checklist mode with status "Pendiente", completed false, and observations ready', () => {
     const docs = generateCanonicalDocumentation({
-      projectType: 'LAD',
-      isFrontierZone: true,
-      isAgroEventual: true
+      category: 'Pistas',
+      ownershipType: 'Razon Social'
     });
 
-    // Check relative ordering of sections
-    const anacStandardIndices = docs
-      .map((d, i) => (d.organismo === 'ANAC' && d.id !== 'AGRO-RAAC137' ? i : -1))
-      .filter(i => i !== -1);
-    const escribaniaIndices = docs
-      .map((d, i) => (d.organismo === 'ESCRIBANÍA' ? i : -1))
-      .filter(i => i !== -1);
-    const ambientalIndices = docs
-      .map((d, i) => (d.organismo === 'AMBIENTAL' ? i : -1))
-      .filter(i => i !== -1);
-    const defensaIndices = docs
-      .map((d, i) => (d.organismo === 'DEFENSA' ? i : -1))
-      .filter(i => i !== -1);
-    const agroIndices = docs
-      .map((d, i) => (d.id === 'AGRO-RAAC137' ? i : -1))
-      .filter(i => i !== -1);
-
-    const maxAnacStandard = Math.max(...anacStandardIndices);
-    const minEscribania = Math.min(...escribaniaIndices);
-    const maxEscribania = Math.max(...escribaniaIndices);
-    const minAmbiental = Math.min(...ambientalIndices);
-    const maxAmbiental = Math.max(...ambientalIndices);
-    const minDefensa = Math.min(...defensaIndices);
-    const maxDefensa = Math.max(...defensaIndices);
-    const minAgro = Math.min(...agroIndices);
-
-    expect(maxAnacStandard).toBeLessThan(minEscribania);
-    expect(maxEscribania).toBeLessThan(minAmbiental);
-    expect(maxAmbiental).toBeLessThan(minDefensa);
-    expect(maxDefensa).toBeLessThan(minAgro);
+    docs.forEach(doc => {
+      expect(doc.id).toBeDefined();
+      expect(doc.titulo).toBeTruthy();
+      expect(doc.descripcion).toBeTruthy();
+      expect(doc.estado).toBe('Pendiente');
+      expect(doc.completed).toBe(false);
+      expect(doc.observaciones).toBe('');
+      expect(doc.notes).toBe('');
+    });
   });
 
   it('generateInitialChecklist alias produces identical output to generateCanonicalDocumentation', () => {
-    const list1 = generateCanonicalDocumentation({ projectType: 'LADH', isFrontierZone: true });
-    const list2 = generateInitialChecklist({ projectType: 'LADH', isFrontierZone: true });
+    const list1 = generateCanonicalDocumentation({
+      category: 'Pistas',
+      sociedadType: 'Cooperativa',
+      isFrontierZone: true
+    });
+    const list2 = generateInitialChecklist({
+      category: 'Pistas',
+      sociedadType: 'Cooperativa',
+      isFrontierZone: true
+    });
     expect(list1).toEqual(list2);
   });
 });

@@ -4,11 +4,13 @@ import {
   Landmark,
   Leaf,
   CheckCircle2,
-  Clock,
-  AlertCircle,
+  Circle,
   FileCheck,
   Plane,
-  Info
+  Navigation,
+  Info,
+  CheckCheck,
+  RotateCcw
 } from 'lucide-react';
 import { DocumentItemModel, DocumentStatus, DocumentCategory } from '../../types/client';
 import { DocumentItem } from './DocumentItem';
@@ -31,7 +33,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
   onToggleAgroEventual
 }) => {
   const [activeCategory, setActiveCategory] = useState<DocumentCategory | 'ALL'>('ALL');
-  const [statusFilter, setStatusFilter] = useState<DocumentStatus | 'ALL'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'COMPLETED' | 'PENDING'>('ALL');
 
   const categories: Array<{
     id: DocumentCategory;
@@ -39,62 +41,44 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
     icon: React.ComponentType<{ className?: string }>;
   }> = [
     { id: 'ANAC', label: 'ANAC (Aeródromos & Tasas)', icon: ShieldCheck },
-    { id: 'ESCRIBANÍA', label: 'Escribanía (Títulos & Planos)', icon: Landmark },
-    { id: 'AMBIENTAL', label: 'Medio Ambiente (DJA)', icon: Leaf },
-    { id: 'DEFENSA', label: 'Defensa (Frontera)', icon: ShieldCheck }
+    { id: 'ESCRIBANÍA', label: 'Escribanía & Personería', icon: Landmark },
+    { id: 'AMBIENTAL', label: 'Medio Ambiente & Suelo', icon: Leaf },
+    { id: 'DEFENSA', label: 'Defensa (Frontera)', icon: ShieldCheck },
+    { id: 'GESTORÍA', label: 'Gestoría (RNA)', icon: FileCheck },
+    { id: 'LOCACIÓN', label: 'Alquiler de Aeronaves', icon: Navigation }
   ];
 
   const totalCount = documents.length;
-  const approvedCount = documents.filter(
-    d => d.status === 'APPROVED' || d.estado === 'Aprobado'
+  const completedCount = documents.filter(
+    d => d.completed || d.status === 'APPROVED' || d.estado === 'Aprobado'
   ).length;
-  const inProgressCount = documents.filter(
-    d => d.status === 'IN_PROGRESS' || d.estado === 'En trámite'
-  ).length;
-  const observedCount = documents.filter(
-    d => d.status === 'OBSERVED' || d.estado === 'Observado'
-  ).length;
-  const pendingCount = documents.filter(
-    d => d.status === 'PENDING' || d.estado === 'Pendiente'
-  ).length;
+  const pendingCount = totalCount - completedCount;
+  const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  // Acciones en lote: Marcar todos o desmarcar todos
+  const handleMarkAll = (completed: boolean) => {
+    const targetStatus: DocumentStatus = completed ? 'Aprobado' : 'Pendiente';
+    documents.forEach(doc => {
+      onUpdateDocumentStatus(doc.id, targetStatus, doc.notes || doc.observaciones);
+    });
+  };
 
   // Filtrado de documentos
   const filteredDocuments = documents.filter(doc => {
     const org = doc.organismo || doc.category;
     const matchesCat = activeCategory === 'ALL' || org === activeCategory;
 
-    const normalizedDocStatus =
-      doc.estado === 'Aprobado' || doc.status === 'APPROVED'
-        ? 'APPROVED'
-        : doc.estado === 'En trámite' || doc.status === 'IN_PROGRESS'
-          ? 'IN_PROGRESS'
-          : doc.estado === 'Observado' || doc.status === 'OBSERVED'
-            ? 'OBSERVED'
-            : 'PENDING';
-
-    const normalizedFilterStatus =
-      statusFilter === 'APPROVED' || statusFilter === 'Aprobado'
-        ? 'APPROVED'
-        : statusFilter === 'IN_PROGRESS' || statusFilter === 'En trámite'
-          ? 'IN_PROGRESS'
-          : statusFilter === 'OBSERVED' || statusFilter === 'Observado'
-            ? 'OBSERVED'
-            : statusFilter === 'PENDING' || statusFilter === 'Pendiente'
-              ? 'PENDING'
-              : 'ALL';
+    const isDocCompleted =
+      Boolean(doc.completed) || doc.estado === 'Aprobado' || doc.status === 'APPROVED';
 
     const matchesStatus =
-      normalizedFilterStatus === 'ALL' || normalizedDocStatus === normalizedFilterStatus;
+      statusFilter === 'ALL' ||
+      (statusFilter === 'COMPLETED' && isDocCompleted) ||
+      (statusFilter === 'PENDING' && !isDocCompleted);
 
     return matchesCat && matchesStatus;
   });
 
-  // Orden Canónico Oficial por Organismo:
-  // 1. ANAC
-  // 2. ESCRIBANÍA
-  // 3. AMBIENTAL
-  // 4. DEFENSA (solo si frontera)
-  // 5. ANAC (DNSO, solo caso agroaéreo)
   const canonicalGroups: Array<{
     id: string;
     organismo: string;
@@ -108,127 +92,166 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
       organismo: 'ANAC',
       title: 'ANAC — Dirección de Aeródromos / DGIySA / CAD',
       subtitle:
-        'Trámites de presentación formal, datos técnicos, arancel A.D.1.9 y libros de registro',
+        'Nota de presentación, formulario oficial unificado (Anexo IX), arancel CAD y registro de movimientos',
       icon: ShieldCheck,
-      filter: d => (d.organismo === 'ANAC' || d.category === 'ANAC') && d.id !== 'AGRO-RAAC137'
+      filter: d => (d.organismo === 'ANAC' || d.category === 'ANAC') && d.id !== 'AGRO-FORM-DENUNCIA' && d.id !== 'AGRO-CROQUIS-COORD'
+    },
+    {
+      id: 'group-agro-dnso',
+      organismo: 'ANAC (DNSO)',
+      title: 'ANAC (DNSO) — Campo Eventual Agroaéreo (RAAC 137)',
+      subtitle:
+        'Única documentación requerida para la denuncia de campo eventual agroaéreo ante DNSO',
+      icon: Plane,
+      filter: d => d.id === 'AGRO-FORM-DENUNCIA' || d.id === 'AGRO-CROQUIS-COORD'
     },
     {
       id: 'group-escribania',
       organismo: 'ESCRIBANÍA',
-      title: 'ESCRIBANÍA — Instrumentos Notariales & Dominiales',
+      title: 'ESCRIBANÍA & PERSONERÍA — Instrumentos Notariales & Dominiales',
       subtitle:
-        'Título o contrato certificado, plano de mensura y acreditación de personería jurídica',
+        'Título/contrato de locación, plano georreferenciado, estatutos societarios o poderes condomiales',
       icon: Landmark,
       filter: d => d.organismo === 'ESCRIBANÍA' || d.category === 'ESCRIBANÍA'
     },
     {
       id: 'group-ambiental',
       organismo: 'AMBIENTAL',
-      title: 'AMBIENTAL — Autoridad Ambiental Competente',
-      subtitle: 'Declaración Jurada Ambiental conforme Ley 25.675 (Art. 11° y 12°)',
+      title: 'AMBIENTAL & TERRITORIAL — Declaración Jurada y Zonificación',
+      subtitle:
+        'Declaración Jurada Ambiental Ley 25.675 y Certificado de Uso Conforme del Suelo municipal',
       icon: Leaf,
       filter: d => d.organismo === 'AMBIENTAL' || d.category === 'AMBIENTAL'
     },
     {
       id: 'group-defensa',
       organismo: 'DEFENSA',
-      title: 'DEFENSA — Zona de Frontera',
-      subtitle:
-        'Aplica a predios en zona de seguridad de frontera (Ley 23.554 y Decreto-Ley 15.385/44)',
+      title: 'DEFENSA — Zona de Seguridad de Fronteras',
+      subtitle: 'Aplica a predios en zona fronteriza (Ley 23.554 y Decreto-Ley 15.385/44)',
       icon: ShieldCheck,
       filter: d => d.organismo === 'DEFENSA' || d.category === 'DEFENSA' || d.id === 'FRONT-LEY'
     },
     {
-      id: 'group-anac-dnso',
-      organismo: 'ANAC (DNSO)',
-      title: 'ANAC (DNSO) — Explotadores Agroaéreos (RAAC 137)',
-      subtitle: 'Denuncia como campo eventual agroaéreo (reemplaza al registro LAD estándar)',
-      icon: Plane,
-      filter: d => d.id === 'AGRO-RAAC137'
+      id: 'group-gestoria',
+      organismo: 'GESTORÍA',
+      title: 'GESTORÍA AERONÁUTICA — Registro Nacional de Aeronaves',
+      subtitle: 'Dominio, transferencia, matriculación y titularidad de aeronaves',
+      icon: FileCheck,
+      filter: d => d.organismo === 'GESTORÍA' || d.category === 'GESTORÍA'
+    },
+    {
+      id: 'group-locacion',
+      organismo: 'LOCACIÓN',
+      title: 'LOCACIÓN & OPERACIÓN — Alquiler de Aeronaves',
+      subtitle: 'Contrato de locación, seguros vigentes, aeronavegabilidad y licencias de vuelo',
+      icon: Navigation,
+      filter: d => d.organismo === 'LOCACIÓN' || d.category === 'LOCACIÓN'
     }
   ];
 
   return (
     <div className="space-y-5">
-      {/* Resumen Superior de Estados */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <button
-          onClick={() =>
-            setStatusFilter(
-              statusFilter === 'APPROVED' || statusFilter === 'Aprobado' ? 'ALL' : 'APPROVED'
-            )
-          }
-          className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-            statusFilter === 'APPROVED' || statusFilter === 'Aprobado'
-              ? 'bg-emerald-50 border-emerald-300 shadow-xs'
-              : 'bg-white border-slate-200 hover:bg-slate-50'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Aprobados</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+      {/* Panel Superior de Checklist y Avance */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-[#0f2942] font-heading">
+                Checklist de Presentación de Documentación
+              </h2>
+              <span
+                className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                  percent === 100
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-blue-50 text-blue-800'
+                }`}
+              >
+                {percent}% listo
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Los documentos se presentan todos en un único trámite. Marca cada documento a medida que se encuentre adjunto y listo.
+            </p>
           </div>
-          <div className="text-xl font-bold text-emerald-700 mt-1">{approvedCount}</div>
-        </button>
 
-        <button
-          onClick={() =>
-            setStatusFilter(
-              statusFilter === 'IN_PROGRESS' || statusFilter === 'En trámite'
-                ? 'ALL'
-                : 'IN_PROGRESS'
-            )
-          }
-          className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-            statusFilter === 'IN_PROGRESS' || statusFilter === 'En trámite'
-              ? 'bg-blue-50 border-blue-300 shadow-xs'
-              : 'bg-white border-slate-200 hover:bg-slate-50'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">En Trámite</span>
-            <Clock className="h-4 w-4 text-blue-600" />
-          </div>
-          <div className="text-xl font-bold text-blue-700 mt-1">{inProgressCount}</div>
-        </button>
+          {/* Botones de acción masiva */}
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <button
+              onClick={() => handleMarkAll(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs"
+            >
+              <CheckCheck className="h-3.5 w-3.5" />
+              <span>Marcar todos</span>
+            </button>
 
-        <button
-          onClick={() =>
-            setStatusFilter(
-              statusFilter === 'OBSERVED' || statusFilter === 'Observado' ? 'ALL' : 'OBSERVED'
-            )
-          }
-          className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-            statusFilter === 'OBSERVED' || statusFilter === 'Observado'
-              ? 'bg-red-50 border-red-300 shadow-xs'
-              : 'bg-white border-slate-200 hover:bg-slate-50'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Observados</span>
-            <AlertCircle className="h-4 w-4 text-red-600" />
+            <button
+              onClick={() => handleMarkAll(false)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-300 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Desmarcar todos</span>
+            </button>
           </div>
-          <div className="text-xl font-bold text-red-700 mt-1">{observedCount}</div>
-        </button>
+        </div>
 
-        <button
-          onClick={() =>
-            setStatusFilter(
-              statusFilter === 'PENDING' || statusFilter === 'Pendiente' ? 'ALL' : 'PENDING'
-            )
-          }
-          className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-            statusFilter === 'PENDING' || statusFilter === 'Pendiente'
-              ? 'bg-slate-100 border-slate-300 shadow-xs'
-              : 'bg-white border-slate-200 hover:bg-slate-50'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Pendientes</span>
-            <Clock className="h-4 w-4 text-slate-400" />
+        {/* Barra de Progreso Visual */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-xs font-medium text-slate-600">
+            <span>
+              Estado de la Carpeta:{' '}
+              <strong className="text-slate-800">
+                {completedCount} de {totalCount} documentos listos
+              </strong>
+            </span>
+            <span className="font-bold text-slate-800 font-mono">{percent}%</span>
           </div>
-          <div className="text-xl font-bold text-slate-700 mt-1">{pendingCount}</div>
-        </button>
+
+          <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div
+              className={`h-full transition-all duration-300 rounded-full ${
+                percent === 100 ? 'bg-emerald-600' : 'bg-blue-600'
+              }`}
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Filtro Rápido de Estado */}
+        <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-xs">
+          <span className="font-semibold text-slate-500 text-[11px]">Ver:</span>
+          <button
+            onClick={() => setStatusFilter('ALL')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              statusFilter === 'ALL'
+                ? 'bg-slate-800 text-white'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            Todos ({totalCount})
+          </button>
+          <button
+            onClick={() => setStatusFilter('COMPLETED')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${
+              statusFilter === 'COMPLETED'
+                ? 'bg-emerald-600 text-white'
+                : 'text-emerald-700 hover:bg-emerald-50'
+            }`}
+          >
+            <CheckCircle2 className="h-3 w-3" />
+            <span>Listos ({completedCount})</span>
+          </button>
+          <button
+            onClick={() => setStatusFilter('PENDING')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${
+              statusFilter === 'PENDING'
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <Circle className="h-3 w-3" />
+            <span>Pendientes ({pendingCount})</span>
+          </button>
+        </div>
       </div>
 
       {/* Condicionales del Predio (Frontera y Campo Eventual Agroaéreo) */}
@@ -237,7 +260,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 text-blue-600 shrink-0" />
             <span className="font-semibold text-slate-700">
-              Condiciones Específicas del Predio:
+              Condiciones Específicas del Trámite:
             </span>
           </div>
 
@@ -269,7 +292,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
         </div>
       )}
 
-      {/* Barra de Filtros por Organismo */}
+      {/* Barra de Filtros por Organismo / Categoría */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
         <button
           onClick={() => setActiveCategory('ALL')}
@@ -286,8 +309,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
           const Icon = cat.icon;
           const count = documents.filter(d => (d.organismo || d.category) === cat.id).length;
 
-          // Si el organismo no tiene documentos aplicables en este cliente (ej. DEFENSA en zona no fronteriza), no mostrar la pestaña
-          if (count === 0 && cat.id === 'DEFENSA') return null;
+          if (count === 0) return null;
 
           const isActive = activeCategory === cat.id;
 
@@ -304,7 +326,9 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
               <Icon className="h-3.5 w-3.5" />
               <span>{cat.label}</span>
               <span
-                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                }`}
               >
                 {count}
               </span>
@@ -313,7 +337,7 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
         })}
       </div>
 
-      {/* Listado Agrupado en Orden Canónico: ANAC -> ESCRIBANÍA -> AMBIENTAL -> DEFENSA -> ANAC (DNSO) */}
+      {/* Listado Agrupado en Orden Canónico */}
       <div className="space-y-6">
         {canonicalGroups.map(group => {
           const groupDocs = filteredDocuments.filter(group.filter);
@@ -361,22 +385,17 @@ export const DocumentChecklist: React.FC<DocumentChecklistProps> = ({
         )}
       </div>
 
-      {/* Nota Canónica Normativa LAD/LADH */}
+      {/* Nota Normativa de Presentación */}
       <div className="mt-8 p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs leading-relaxed space-y-1">
         <div className="flex items-center gap-1.5 font-bold text-slate-800">
           <FileCheck className="h-4 w-4 text-blue-700" />
-          <span>Normativa Aplicable al Registro LAD/LADH (Anexo IX ANAC)</span>
+          <span>Presentación de Documentación y Requisitos Normativos</span>
         </div>
         <p className="text-[11px] text-slate-500">
-          Esta nómina constituye la lista canónica oficial requerida para el registro de Lugares
-          Aptos por Exclusividad (LAD / LADH). Los trámites propios de una habilitación completa de
-          aeródromo o helipuerto público/privado (Memoria Técnica con cálculo de resistencia, Plano
-          SLO perimétrico 360°, Estudio Climatológico, Estudio Geotécnico, Plan SSEI, dictámenes de
-          telecomunicaciones ENACOM, Catastro y Zonificación Municipal) corresponden a un régimen de
-          habilitación independiente (RAAC 153/154) y no forman parte del flujo simplificado
-          LAD/LADH.
+          Toda la documentación debe presentarse de forma simultánea ante mesa de entradas de ANAC o vía Trámites a Distancia (TAD). En caso de campos eventuales agroaéreos (RAAC 137), únicamente se presentan el formulario de denuncia, la autorización del predio, el croquis operacional y la conformidad del suelo, sin necesidad de trámites arancelarios ni libros de aeródromo.
         </p>
       </div>
     </div>
   );
 };
+

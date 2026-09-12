@@ -86,9 +86,15 @@ export class StorageService {
           return {
             ...c,
             documents: generateInitialChecklist({
+              category: c.category,
               projectType: c.projectType,
+              pistaSubtype: c.pistaSubtype,
+              ownershipType: c.ownershipType,
+              sociedadType: c.sociedadType,
               isFrontierZone: c.isFrontierZone,
-              isAgroEventual: c.isAgroEventual
+              isAgroEventual: c.isAgroEventual,
+              usoConformeSuelo: c.usoConformeSuelo,
+              gestoriaData: c.gestoriaData
             })
           };
         }
@@ -126,7 +132,17 @@ export class StorageService {
         documents:
           client.documents && client.documents.length > 0
             ? client.documents
-            : generateInitialChecklist(),
+            : generateInitialChecklist({
+                category: client.category,
+                projectType: client.projectType,
+                pistaSubtype: client.pistaSubtype,
+                ownershipType: client.ownershipType,
+                sociedadType: client.sociedadType,
+                isFrontierZone: client.isFrontierZone,
+                isAgroEventual: client.isAgroEventual,
+                usoConformeSuelo: client.usoConformeSuelo,
+                gestoriaData: client.gestoriaData
+              }),
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0]
       };
@@ -167,20 +183,22 @@ export class StorageService {
 
     const docIdx = client.documents.findIndex(d => d.id === documentId);
     if (docIdx >= 0) {
+      const isApproved = newStatus === 'APPROVED' || newStatus === 'Aprobado';
+      client.documents[docIdx].completed = isApproved;
       client.documents[docIdx].status = newStatus;
-      client.documents[docIdx].estado =
-        newStatus === 'APPROVED' || newStatus === 'Aprobado'
-          ? 'Aprobado'
-          : newStatus === 'IN_PROGRESS' || newStatus === 'En trámite'
-            ? 'En trámite'
-            : newStatus === 'OBSERVED' || newStatus === 'Observado'
-              ? 'Observado'
-              : 'Pendiente';
+      client.documents[docIdx].estado = isApproved
+        ? 'Aprobado'
+        : newStatus === 'IN_PROGRESS' || newStatus === 'En trámite'
+          ? 'En trámite'
+          : newStatus === 'OBSERVED' || newStatus === 'Observado'
+            ? 'Observado'
+            : 'Pendiente';
 
       if (notes !== undefined) {
         client.documents[docIdx].notes = notes;
+        client.documents[docIdx].observaciones = notes;
       }
-      if (newStatus === 'APPROVED' || newStatus === 'Aprobado') {
+      if (isApproved) {
         client.documents[docIdx].approvalDate = new Date().toISOString().split('T')[0];
       }
       if (
